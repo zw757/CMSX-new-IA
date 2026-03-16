@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Home</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .description-text { font-size: 16px; color: var(--text-secondary); line-height: 1.7; }
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .announcement-see-all {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 16px; color: var(--primary); font-weight: 500; cursor: pointer;
+      padding-top: 4px;
+    }
+    .announcement-see-all .material-icons { font-size: 18px; }
+    .log-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid var(--divider); font-size: 16px;
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-item-desc { color: var(--text-primary); }
+    .log-item-meta { color: var(--text-secondary); font-size: 13px; }
+    .email-form { display: flex; flex-direction: column; gap: 16px; }
+    .email-recipients { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .email-chip {
+      background: var(--primary-light); color: var(--primary);
+      border-radius: 100px; padding: 4px 12px; font-size: 14px;
+      display: flex; align-items: center; gap: 6px; cursor: pointer;
+    }
+    .email-chip .material-icons { font-size: 14px; }
+    .section-divider { height: 1px; background: var(--divider); margin: 0 0 16px; }
+    .course-info-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .course-info-list li { display: flex; align-items: center; gap: 12px; font-size: 16px; color: var(--text-secondary); }
+    .course-info-list li .material-icons { font-size: 18px; color: var(--primary); }
+    .course-info-list li strong { color: var(--text-primary); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item active">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item ">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="sidebar-account-icon" title="Profile">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">May Wu</span>
+          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        </div>
+        <a href="#" class="sidebar-logout-btn" title="Log out">
+          <span class="material-icons">exit_to_app</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">CS4998 Intro to CMSX</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="course-home.html">Home</a>
+          </nav>
+        </div>
+        <div class="stats-card">
+          <div class="stat-item">
+            <div class="stat-icon"><span class="material-icons">people</span></div>
+            <div class="stat-content">
+              <span class="stat-value">160</span>
+              <span class="stat-label">Students Enrolled</span>
+            </div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-icon"><span class="material-icons">assignment</span></div>
+            <div class="stat-content">
+              <span class="stat-value">8</span>
+              <span class="stat-label">Assignments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+
+        <!-- Course Description -->
+        <div class="home-card" style="grid-column:1/2;grid-row:1/2;">
+          <div class="home-card-title">
+            Course Description
+            <a href="#" class="btn btn-outlined" style="font-size:12px;padding:4px 12px;text-transform:none;">
+              <span class="material-icons" style="font-size:16px;">edit</span>
+              Edit
+            </a>
+          </div>
+          <div class="home-card-body">
+            <ul class="course-info-list" style="margin-bottom:16px;">
+              <li><span class="material-icons">schedule</span><span>Lectures: <strong>Mon / Wed / Fri, 10:10 – 11:00 AM</strong></span></li>
+              <li><span class="material-icons">location_on</span><span>Location: <strong>Gates Hall G01</strong></span></li>
+              <li><span class="material-icons">person</span><span>Instructor: <strong>Prof. Jane Smith</strong></span></li>
+              <li><span class="material-icons">email</span><span>Contact: <strong>jsmith@cornell.edu</strong></span></li>
+            </ul>
+            <div class="divider"></div>
+            <p class="description-text">
+              An introduction to the Cornell Management System (CMSX), covering assignment creation, grading workflows, enrollment management, and announcements. Students will learn how to interact with the system from both instructor and student perspectives.
+            </p>
+          </div>
+        </div>
+
+        <!-- Announcements -->
+        <div class="home-card" style="grid-column:2/3;align-self:start;" id="announcements">
+          <div class="home-card-title">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span class="material-icons" style="font-size:20px;color:var(--primary);">campaign</span>
+              Announcements
+            </span>
+            <a href="announcements.html" class="btn btn-primary" style="font-size:12px;padding:4px 12px;text-transform:none;">
+              <span class="material-icons" style="font-size:16px;">add</span>
+              New
+            </a>
+          </div>
+          <div class="home-card-body" style="display:flex;flex-direction:column;gap:0;">
+
+            <div class="announcement-item">
+              <div class="announcement-title">Midterm Exam – Room Change</div>
+              <div class="announcement-meta">Posted by Prof. Jane Smith &nbsp;·&nbsp; Mar 14, 2026 at 4:32 PM</div>
+              <div class="announcement-body">The midterm exam on March 18 has been moved to Statler Auditorium (Rm 196) due to a scheduling conflict. Please note the updated location on your calendars.</div>
+            </div>
+
+            <div class="announcement-item">
+              <div class="announcement-title">Assignment 3 – Extended Deadline</div>
+              <div class="announcement-meta">Posted by Prof. Jane Smith &nbsp;·&nbsp; Mar 12, 2026 at 11:15 AM</div>
+              <div class="announcement-body">Due to the campus-wide internet outage on Monday, the deadline for Assignment 3 has been extended to Friday, March 15 at 11:59 PM.</div>
+            </div>
+
+            <div class="announcement-item">
+              <div class="announcement-title">Office Hours Update – Spring Break</div>
+              <div class="announcement-meta">Posted by TA Alex Johnson &nbsp;·&nbsp; Mar 10, 2026 at 2:00 PM</div>
+              <div class="announcement-body">There will be no office hours during spring break (March 16–22). Regular office hours resume on March 23. Email for urgent questions.</div>
+            </div>
+
+            <a href="announcements.html" class="announcement-see-all">
+              See all announcements <span class="material-icons">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Search Logs (full width) -->
+        <div class="home-card" style="grid-column:1/-1;">
+          <div class="home-card-title">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span class="material-icons" style="font-size:20px;color:var(--primary);">manage_search</span>
+              Search Logs
+            </span>
+          </div>
+          <div class="home-card-body" style="display:flex;flex-direction:column;gap:16px;">
+
+            <!-- Filter rows: 2-column layout -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Course</label>
+                <div style="padding:10px 14px;font-size:16px;color:var(--text-primary);border:1px solid rgba(0,0,0,0.23);border-radius:4px;background:white;">CS 4998: Intro to CMSX</div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Assignment</label>
+                <select class="form-control">
+                  <option>Any Assignment</option>
+                  <option>Assignment 1 – Getting Started</option>
+                  <option>Assignment 2 – Data Structures</option>
+                  <option>Assignment 3 – Grading Systems</option>
+                  <option>Assignment 4 – Final Project</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>IP Address</label>
+                <input type="text" class="form-control" placeholder="e.g. 128.84.0.1" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>From Date <span style="font-size:12px;color:var(--text-secondary);font-weight:400;">(blank = no limit)</span></label>
+                <input type="date" class="form-control" />
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>To Date</label>
+                <input type="date" class="form-control" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Acting NetID</label>
+                <input type="text" class="form-control" placeholder="e.g. zw757" />
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Affected NetID</label>
+                <input type="text" class="form-control" placeholder="e.g. ab123" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Simulated NetID</label>
+                <input type="text" class="form-control" placeholder="" />
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Log Type(s)</label>
+                <select class="form-control" multiple size="5" style="padding:4px 8px;font-size:14px;">
+                  <option>Course</option>
+                  <option>Content</option>
+                  <option>Group</option>
+                  <option>Grade</option>
+                  <option>Assignment</option>
+                  <option>Student</option>
+                </select>
+                <a href="#" onclick="selectAllOptions(this.previousElementSibling);return false;" style="font-size:13px;color:var(--primary);margin-top:4px;display:inline-block;">select all</a>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Log Name(s)</label>
+                <select class="form-control" multiple size="5" style="padding:4px 8px;font-size:14px;">
+                  <option>Course: Added Students</option>
+                  <option>Course: Changed Group Timeslot</option>
+                  <option>Course: Computed Assignment Stats</option>
+                  <option>Course: Computed Total Scores</option>
+                  <option>Assignment: Submitted</option>
+                  <option>Assignment: Viewed</option>
+                  <option>Assignment: Graded</option>
+                  <option>Grade: Released</option>
+                  <option>Student: Dropped</option>
+                </select>
+                <a href="#" onclick="selectAllOptions(this.previousElementSibling);return false;" style="font-size:13px;color:var(--primary);margin-top:4px;display:inline-block;">select all</a>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div style="display:flex;gap:12px;padding-top:4px;border-top:1px solid var(--divider);">
+              <button class="btn btn-primary" onclick="searchLogs()">
+                <span class="material-icons">search</span> Search
+              </button>
+              <button class="btn btn-outlined" onclick="downloadLogs()">
+                <span class="material-icons">download</span> Download Logs
+              </button>
+              <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-left:8px;align-self:center;">
+                Logs are only written for <strong>successfully</strong> completed actions. Failed actions (e.g. timed-out submissions) are not recorded.
+              </p>
+            </div>
+
+            <!-- Results -->
+            <div id="logResults">
+              <div class="log-item">
+                <span class="log-item-desc">Student <strong>zw757</strong> viewed Assignment 3</span>
+                <span class="log-item-meta">Today, 2:14 PM</span>
+              </div>
+              <div class="log-item">
+                <span class="log-item-desc">Student <strong>ab123</strong> submitted Assignment 3</span>
+                <span class="log-item-meta">Today, 1:45 PM</span>
+              </div>
+              <div class="log-item">
+                <span class="log-item-desc">Student <strong>cd456</strong> viewed Final Grades</span>
+                <span class="log-item-meta">Today, 12:30 PM</span>
+              </div>
+              <div class="log-item">
+                <span class="log-item-desc">Instructor viewed Course Settings</span>
+                <span class="log-item-meta">Today, 10:05 AM</span>
+              </div>
+              <div class="log-item">
+                <span class="log-item-desc">Student <strong>ef789</strong> submitted Assignment 2</span>
+                <span class="log-item-meta">Yesterday, 11:58 PM</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Send an Email -->
+        <div class="home-card" style="grid-column:1/-1;" id="email">
+          <div class="home-card-title">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span class="material-icons" style="font-size:20px;color:var(--primary);">send</span>
+              Send an Email
+            </span>
+          </div>
+          <div class="home-card-body">
+            <div class="email-form">
+              <div>
+                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">To</div>
+                <div class="email-recipients">
+                  <span class="chip chip-outlined active">All Students (160)</span>
+                  <span class="chip chip-outlined">Selected Students</span>
+                  <span class="chip chip-outlined">Failing Students</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Subject</label>
+                <input type="text" class="form-control" placeholder="Email subject…" value="Important Update – CS4998" />
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea class="form-control" rows="4" placeholder="Write your message…">Dear Students,
+
+Please note the updated office hours for this week.</textarea>
+              </div>
+              <div style="display:flex;gap:12px;align-items:center;">
+                <button class="btn btn-primary">
+                  <span class="material-icons">send</span>
+                  Send Email
+                </button>
+                <button class="btn btn-outlined">Preview</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+function selectAllOptions(sel) {
+  for (var i = 0; i < sel.options.length; i++) sel.options[i].selected = true;
+}
+function searchLogs() {
+  document.getElementById('logResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function downloadLogs() { alert('Downloading logs as CSV…'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Create Assignment</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .type-selector { display: flex; gap: 12px; flex-wrap: wrap; }
+    .type-card {
+      border: 2px solid var(--divider); border-radius: 8px; padding: 16px 20px;
+      cursor: pointer; display: flex; align-items: center; gap: 12px;
+      transition: border-color 0.15s, background 0.15s; min-width: 160px;
+    }
+    .type-card:hover { border-color: var(--primary); }
+    .type-card.selected { border-color: var(--primary); background: var(--primary-light); }
+    .type-card .material-icons { font-size: 28px; color: var(--text-secondary); }
+    .type-card.selected .material-icons { color: var(--primary); }
+    .type-card-label { font-size: 15px; font-weight: 500; }
+    .type-card-desc { font-size: 12px; color: var(--text-secondary); }
+    .form-card { background: white; border-radius: 8px; padding: 32px; box-shadow: var(--shadow-1); margin-bottom: 24px; }
+    .form-card-title { font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 24px; color: var(--text-primary); }
+    .rubric-row { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--divider); }
+    .rubric-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item ">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item active">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="sidebar-account-icon" title="Profile">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">May Wu</span>
+          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        </div>
+        <a href="#" class="sidebar-logout-btn" title="Log out">
+          <span class="material-icons">exit_to_app</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper" style="max-width:860px;">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">Create Assignment</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="assignments.html">Assignments</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <span class="breadcrumb-link">Create</span>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Assignment Type -->
+      <div class="form-card">
+        <div class="form-card-title">Assignment Type</div>
+        <div class="type-selector">
+          <div class="type-card selected" id="type-assignment" onclick="selectType('assignment')">
+            <span class="material-icons">assignment</span>
+            <div>
+              <div class="type-card-label">Assignment</div>
+              <div class="type-card-desc">Written or coded work</div>
+            </div>
+          </div>
+          <div class="type-card" id="type-quiz" onclick="selectType('quiz')">
+            <span class="material-icons">quiz</span>
+            <div>
+              <div class="type-card-label">Quiz</div>
+              <div class="type-card-desc">Timed assessment</div>
+            </div>
+          </div>
+          <div class="type-card" id="type-survey" onclick="selectType('survey')">
+            <span class="material-icons">poll</span>
+            <div>
+              <div class="type-card-label">Survey</div>
+              <div class="type-card-desc">Anonymous feedback</div>
+            </div>
+          </div>
+          <div class="type-card" id="type-project" onclick="selectType('project')">
+            <span class="material-icons">code</span>
+            <div>
+              <div class="type-card-label">Project</div>
+              <div class="type-card-desc">Long-form group work</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Info -->
+      <div class="form-card">
+        <div class="form-card-title">Basic Information</div>
+        <div class="form-group">
+          <label>Assignment Name *</label>
+          <input type="text" class="form-control" placeholder="e.g. Assignment 4: Announcements" value="" />
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Due Date *</label>
+            <input type="datetime-local" class="form-control" value="2026-03-23T23:59" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Late Submission Deadline</label>
+            <input type="datetime-local" class="form-control" value="2026-03-25T23:59" />
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:20px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Max Points *</label>
+            <input type="number" class="form-control" value="100" min="0" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Late Penalty (%/day)</label>
+            <input type="number" class="form-control" value="5" min="0" max="100" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:20px;">
+          <label>Description / Instructions</label>
+          <textarea class="form-control" rows="5" placeholder="Write assignment description and instructions…"></textarea>
+        </div>
+        <div class="form-row" style="margin-top:4px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Submission Type</label>
+            <select class="form-control">
+              <option>File Upload</option>
+              <option>Text Entry</option>
+              <option>URL / Link</option>
+              <option>No Submission</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Allowed File Types</label>
+            <input type="text" class="form-control" value=".pdf, .zip, .py, .java" placeholder=".pdf, .zip…" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Groups -->
+      <div class="form-card" id="groupSection">
+        <div class="form-card-title">Groups</div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:15px;margin-bottom:16px;">
+          <input type="checkbox" class="cb" id="enableGroups" onchange="toggleGroups(this)" />
+          Enable group submission
+        </label>
+        <div id="groupOptions" style="display:none;">
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Group Size</label>
+              <input type="number" class="form-control" value="4" min="1" max="20" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Max Groups</label>
+              <input type="number" class="form-control" value="40" min="1" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;">
+            <label>Student Group Assignment</label>
+            <select class="form-control">
+              <option>Students self-select groups</option>
+              <option>Instructor assigns groups</option>
+              <option>Auto-assign (random)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rubric -->
+      <div class="form-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div class="form-card-title" style="margin-bottom:0;">Rubric</div>
+          <button class="btn btn-outlined" style="text-transform:none;" onclick="addRubricRow()">
+            <span class="material-icons">add</span> Add Criterion
+          </button>
+        </div>
+        <div id="rubricContainer">
+          <div class="rubric-row">
+            <input type="text" class="form-control" style="flex:2;" value="Correctness" placeholder="Criterion name" />
+            <input type="number" class="form-control" style="width:90px;" value="50" placeholder="Points" />
+            <input type="text" class="form-control" style="flex:3;" value="Output matches expected for all test cases." placeholder="Description" />
+            <button onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);display:flex;"><span class="material-icons">delete</span></button>
+          </div>
+          <div class="rubric-row">
+            <input type="text" class="form-control" style="flex:2;" value="Code Quality" placeholder="Criterion name" />
+            <input type="number" class="form-control" style="width:90px;" value="30" placeholder="Points" />
+            <input type="text" class="form-control" style="flex:3;" value="Clean, readable, well-commented code." placeholder="Description" />
+            <button onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);display:flex;"><span class="material-icons">delete</span></button>
+          </div>
+          <div class="rubric-row">
+            <input type="text" class="form-control" style="flex:2;" value="Write-up" placeholder="Criterion name" />
+            <input type="number" class="form-control" style="width:90px;" value="20" placeholder="Points" />
+            <input type="text" class="form-control" style="flex:3;" value="Clearly explains approach and findings." placeholder="Description" />
+            <button onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);display:flex;"><span class="material-icons">delete</span></button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding-top:12px;font-size:14px;color:var(--text-secondary);">
+          Total: <strong style="color:var(--primary);margin-left:6px;" id="rubricTotal">100</strong> pts
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:12px;padding-bottom:60px;">
+        <button class="btn btn-primary" onclick="saveAssignment()">
+          <span class="material-icons">save</span> Save &amp; Publish
+        </button>
+        <button class="btn btn-outlined" onclick="alert('Saved as draft')">Save Draft</button>
+        <a href="assignments.html" class="btn btn-outlined">Cancel</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+function selectType(type) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('type-' + type).classList.add('selected');
+}
+function toggleGroups(cb) {
+  document.getElementById('groupOptions').style.display = cb.checked ? 'block' : 'none';
+}
+function addRubricRow() {
+  const container = document.getElementById('rubricContainer');
+  const div = document.createElement('div');
+  div.className = 'rubric-row';
+  div.innerHTML = `
+    <input type="text" class="form-control" style="flex:2;" placeholder="Criterion name" />
+    <input type="number" class="form-control" style="width:90px;" placeholder="Points" oninput="calcTotal()" />
+    <input type="text" class="form-control" style="flex:3;" placeholder="Description" />
+    <button onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);display:flex;"><span class="material-icons">delete</span></button>
+  `;
+  container.appendChild(div);
+}
+function removeRow(btn) { btn.closest('.rubric-row').remove(); calcTotal(); }
+function calcTotal() {
+  let t = 0;
+  document.querySelectorAll('#rubricContainer input[type="number"]').forEach(i => { t += parseInt(i.value) || 0; });
+  document.getElementById('rubricTotal').textContent = t;
+}
+function saveAssignment() {
+  if (confirm('Publish this assignment to students?')) {
+    alert('Assignment published!');
+    window.location = 'assignments.html';
+  }
+}
+</script>
+</body>
+</html>

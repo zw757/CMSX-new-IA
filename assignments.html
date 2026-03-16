@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Assignments &amp; Grading</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .assignment-row { cursor: pointer; }
+    .assignment-row:hover { background: rgba(0,102,153,0.04); }
+    .progress-bar-wrap { width: 100px; height: 6px; background: rgba(0,0,0,0.12); border-radius: 100px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 100px; }
+    .stat-mini { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .summary-bar {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      background: white; border-radius: 8px; padding: 20px 28px;
+      box-shadow: var(--shadow-1); margin-bottom: 24px;
+    }
+    .summary-item { display: flex; flex-direction: column; gap: 2px; }
+    .summary-value { font-family: 'DM Sans',sans-serif; font-size: 22px; font-weight: 500; color: var(--primary); }
+    .summary-label { font-size: 14px; color: var(--text-secondary); }
+    .summary-divider { width: 1px; background: var(--divider); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item ">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item active">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="sidebar-account-icon" title="Profile">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">May Wu</span>
+          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        </div>
+        <a href="#" class="sidebar-logout-btn" title="Log out">
+          <span class="material-icons">exit_to_app</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">CS4998 Intro to CMSX</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="course-home.html">Home</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <span class="breadcrumb-link">Assignments &amp; Grading</span>
+          </nav>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="assignment-create.html" class="btn btn-primary">
+            <span class="material-icons">add</span>
+            Create Assignment
+          </a>
+        </div>
+      </div>
+
+      <!-- Summary bar -->
+      <div class="summary-bar">
+        <div class="summary-item">
+          <span class="summary-value">8</span>
+          <span class="summary-label">Total Assignments</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-value">5</span>
+          <span class="summary-label">Graded</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-value">3</span>
+          <span class="summary-label">Upcoming</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-value">82%</span>
+          <span class="summary-label">Avg Score</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-value">12</span>
+          <span class="summary-label">Late Submissions</span>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+        <div class="search-field" style="width:300px;">
+          <span class="material-icons search-icon">search</span>
+          <input type="text" placeholder="Search assignments…" oninput="filterAssignments(this.value)" />
+        </div>
+        <button class="chip chip-outlined active" id="filter-all" onclick="setFilter('all')">All</button>
+        <button class="chip chip-outlined" id="filter-assignment" onclick="setFilter('Assignment')">Assignments</button>
+        <button class="chip chip-outlined" id="filter-quiz" onclick="setFilter('Quiz')">Quizzes</button>
+        <button class="chip chip-outlined" id="filter-survey" onclick="setFilter('Survey')">Surveys</button>
+      </div>
+
+      <!-- Assignment list table -->
+      <div class="table-container">
+        <div class="table-scroll-wrapper">
+          <table class="data-table" id="assignmentsTable">
+            <thead>
+              <tr>
+                <th class="sortable" onclick="sortAssign(0)" style="min-width:220px;"><div class="th-inner">Assignment Name <span class="material-icons">swap_vert</span></div></th>
+                <th style="min-width:110px;">Type</th>
+                <th class="sortable" onclick="sortAssign(2)" style="min-width:140px;"><div class="th-inner">Due Date <span class="material-icons">swap_vert</span></div></th>
+                <th class="sortable" onclick="sortAssign(3)" style="min-width:90px;"><div class="th-inner">Points <span class="material-icons">swap_vert</span></div></th>
+                <th class="sortable" onclick="sortAssign(4)" style="min-width:120px;"><div class="th-inner">Avg Score <span class="material-icons">swap_vert</span></div></th>
+                <th style="min-width:130px;">Submissions</th>
+                <th style="min-width:100px;">Status</th>
+                <th style="min-width:120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="assignBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const assignments = [
+  { name:'Assignment 1: Hello CMSX',          type:'Assignment', due:'Feb 2, 2026',  points:100, avg:91, subs:158, total:160, status:'graded'   },
+  { name:'Assignment 2: Enrollment Workflow',  type:'Assignment', due:'Feb 16, 2026', points:100, avg:85, subs:157, total:160, status:'graded'   },
+  { name:'Quiz 1: Navigation & IA',           type:'Quiz',       due:'Feb 23, 2026', points:50,  avg:88, subs:160, total:160, status:'graded'   },
+  { name:'Assignment 3: Grading Systems',     type:'Assignment', due:'Mar 9, 2026',  points:100, avg:79, subs:155, total:160, status:'graded'   },
+  { name:'Survey: Midterm Feedback',          type:'Survey',     due:'Mar 12, 2026', points:10,  avg:10, subs:142, total:160, status:'graded'   },
+  { name:'Assignment 4: Announcements',       type:'Assignment', due:'Mar 23, 2026', points:100, avg:null, subs:0,  total:160, status:'open'     },
+  { name:'Quiz 2: Settings & Permissions',    type:'Quiz',       due:'Apr 6, 2026',  points:50,  avg:null, subs:0,  total:160, status:'upcoming' },
+  { name:'Final Project: Full CMSX Build',    type:'Assignment', due:'May 4, 2026',  points:200, avg:null, subs:0,  total:160, status:'upcoming' },
+];
+
+let filterType = 'all';
+let filterSearch = '';
+
+function statusBadge(s) {
+  const map = { graded:'badge-success', open:'badge-primary', upcoming:'badge-warning' };
+  const labels = { graded:'Graded', open:'Open', upcoming:'Upcoming' };
+  return `<span class="badge ${map[s]}">${labels[s]}</span>`;
+}
+
+function typeTag(t) {
+  const map = { Assignment:'type-assignment', Quiz:'type-quiz', Survey:'type-survey' };
+  return `<span class="assignment-type-tag ${map[t]}">${t}</span>`;
+}
+
+function progressCol(subs, total) {
+  const pct = Math.round((subs / total) * 100);
+  return `
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      <span class="stat-mini">${subs} / ${total} (${pct}%)</span>
+    </div>`;
+}
+
+function renderAssignments() {
+  const tbody = document.getElementById('assignBody');
+  const filtered = assignments.filter(a => {
+    const matchSearch = !filterSearch || a.name.toLowerCase().includes(filterSearch);
+    const matchType = filterType === 'all' || a.type === filterType;
+    return matchSearch && matchType;
+  });
+  tbody.innerHTML = filtered.map(a => `
+    <tr class="assignment-row" onclick="window.location='assignment-detail.html'">
+      <td>
+        <div style="font-weight:500;color:var(--primary);">${a.name}</div>
+      </td>
+      <td>${typeTag(a.type)}</td>
+      <td>${a.due}</td>
+      <td>${a.points} pts</td>
+      <td>${a.avg !== null ? `<span style="color:var(--primary);font-weight:500;">${a.avg}%</span>` : '<span style="color:var(--text-disabled);">—</span>'}</td>
+      <td>${progressCol(a.subs, a.total)}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:6px;">
+          <a href="assignment-detail.html" class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;">
+            <span class="material-icons" style="font-size:14px;">grade</span> Grade
+          </a>
+          <a href="assignment-create.html" class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;">
+            <span class="material-icons" style="font-size:14px;">edit</span>
+          </a>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setFilter(type) {
+  filterType = type;
+  document.querySelectorAll('[id^="filter-"]').forEach(c => c.classList.remove('active'));
+  document.getElementById('filter-' + type.toLowerCase()).classList.add('active');
+  renderAssignments();
+}
+function filterAssignments(q) { filterSearch = q.toLowerCase(); renderAssignments(); }
+
+function sortAssign(col) {
+  const keys = ['name','type','due','points','avg'];
+  const key = keys[col];
+  assignments.sort((a,b) => {
+    const av = a[key] ?? '', bv = b[key] ?? '';
+    return String(av).localeCompare(String(bv), undefined, { numeric: true });
+  });
+  renderAssignments();
+}
+
+renderAssignments();
+</script>
+</body>
+</html>

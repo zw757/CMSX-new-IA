@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Assignment 3: Grading Systems</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .info-grid { display: grid; grid-template-columns: repeat(4, auto); gap: 12px 32px; margin-bottom: 0; }
+    .info-item { display: flex; flex-direction: column; gap: 3px; }
+    .info-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+    .info-value { font-size: 16px; color: var(--text-primary); font-weight: 500; }
+    .grade-input {
+      width: 80px; border: 1px solid var(--divider); border-radius: var(--border-radius);
+      padding: 6px 10px; font-size: 14px; text-align: center; outline: none;
+      transition: border-color 0.15s;
+    }
+    .grade-input:focus { border-color: var(--primary); }
+    .feedback-input {
+      width: 200px; border: 1px solid var(--divider); border-radius: var(--border-radius);
+      padding: 6px 10px; font-size: 13px; outline: none; transition: border-color 0.15s;
+    }
+    .feedback-input:focus { border-color: var(--primary); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .group-card {
+      background: white; border: 1px solid var(--divider); border-radius: 8px;
+      padding: 20px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .group-header { display: flex; align-items: center; justify-content: space-between; }
+    .group-name { font-weight: 600; font-size: 16px; }
+    .group-members { display: flex; gap: 8px; flex-wrap: wrap; }
+    .member-chip {
+      background: var(--bg); border-radius: 100px; padding: 4px 12px;
+      font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;
+    }
+    .member-chip .material-icons { font-size: 14px; color: var(--text-secondary); cursor: pointer; }
+    .member-chip .material-icons:hover { color: var(--error); }
+    .groups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .assign-info-bar {
+      background: white; border-radius: 8px; padding: 20px 28px;
+      box-shadow: var(--shadow-1); margin-bottom: 24px;
+    }
+    .bulk-action-bar {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      background: var(--primary-light); border-radius: var(--border-radius); margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .bulk-action-bar span { font-size: 16px; color: var(--primary); font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item ">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item active">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="sidebar-account-icon" title="Profile">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">May Wu</span>
+          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        </div>
+        <a href="#" class="sidebar-logout-btn" title="Log out">
+          <span class="material-icons">exit_to_app</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">Assignment 3: Grading Systems</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="course-home.html">Home</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="assignments.html">Assignments</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <span class="breadcrumb-link">Assignment 3</span>
+          </nav>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="assignment-create.html" class="btn btn-outlined">
+            <span class="material-icons">edit</span> Edit Assignment
+          </a>
+          <button class="btn btn-primary" onclick="alert('Grades published!')">
+            <span class="material-icons">publish</span> Publish Grades
+          </button>
+        </div>
+      </div>
+
+      <!-- Assignment Info Bar -->
+      <div class="assign-info-bar">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Type</span>
+            <span class="info-value"><span class="assignment-type-tag type-assignment">Assignment</span></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Due Date</span>
+            <span class="info-value">Mar 9, 2026 · 11:59 PM</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Max Points</span>
+            <span class="info-value">100 pts</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Submissions</span>
+            <span class="info-value">155 / 160</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Average Score</span>
+            <span class="info-value" style="color:var(--primary);">79%</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Late Submissions</span>
+            <span class="info-value" style="color:#e65100;">4</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Missing</span>
+            <span class="info-value" style="color:var(--error);">5</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Status</span>
+            <span class="info-value"><span class="badge badge-success">Graded</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('grade', this)">Grade</button>
+        <button class="tab" onclick="switchTab('groups', this)">Group Students</button>
+        <button class="tab" onclick="switchTab('stats', this)">Statistics</button>
+      </div>
+
+      <!-- ===== GRADE TAB ===== -->
+      <div class="tab-panel active" id="panel-grade">
+
+        <!-- Filter bar -->
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+          <div class="search-field" style="flex:1;min-width:180px;max-width:260px;">
+            <span class="material-icons search-icon">search</span>
+            <input type="text" placeholder="Search by name or NetID…" oninput="filterGrades(this.value)" />
+          </div>
+          <select class="form-control" style="width:170px;padding:10px 12px;" onchange="setSubmissionFilter(this.value)">
+            <option value="">Submission Status</option>
+            <option value="on-time">On Time</option>
+            <option value="early">Early</option>
+            <option value="late">Late</option>
+            <option value="missing">Missing</option>
+          </select>
+          <select class="form-control" style="width:160px;padding:10px 12px;" onchange="setGradingFilter(this.value)">
+            <option value="">Grading Status</option>
+            <option value="graded">Graded</option>
+            <option value="ungraded">Ungraded</option>
+          </select>
+          <select class="form-control" style="width:140px;padding:10px 12px;">
+            <option>All Sections</option>
+            <option>Section 001</option>
+            <option>Section 002</option>
+          </select>
+          <button class="btn btn-outlined" onclick="alert('Grades exported as CSV')">
+            <span class="material-icons">download</span> Export
+          </button>
+        </div>
+
+        <!-- Status chips -->
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+          <button class="chip chip-outlined active" id="gf-all"      onclick="setGradeFilter('all')">All (15)</button>
+          <button class="chip chip-outlined"        id="gf-ungraded" onclick="setGradeFilter('ungraded')">Ungraded (2)</button>
+          <button class="chip chip-outlined"        id="gf-regrade"  onclick="setGradeFilter('regrade')">Regrade Pending (0)</button>
+          <button class="chip chip-outlined"        id="gf-partial"  onclick="setGradeFilter('partial')">Partially Submitted (1)</button>
+          <button class="chip chip-outlined"        id="gf-complete" onclick="setGradeFilter('complete')">Complete (12)</button>
+        </div>
+
+        <!-- Bulk action bar -->
+        <div id="bulkBar" class="bulk-action-bar" style="display:none;">
+          <span id="selCount">0 selected</span>
+          <button class="btn btn-primary" style="font-size:12px;padding:4px 12px;text-transform:none;" onclick="bulkGrade()">
+            <span class="material-icons" style="font-size:15px;">grade</span> Bulk Grade
+          </button>
+          <button class="btn btn-outlined" style="font-size:12px;padding:4px 12px;text-transform:none;" onclick="emailSelected()">
+            <span class="material-icons" style="font-size:15px;">mail</span> Email Selected
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-scroll-wrapper" style="max-height:560px;">
+            <table class="data-table" id="gradeTable">
+              <thead>
+                <tr>
+                  <th class="checkbox-cell" style="padding:0 8px;width:44px;">
+                    <input type="checkbox" class="cb" id="selectAllGrade" onchange="toggleAllGrades(this)" />
+                  </th>
+                  <th class="num-cell">#</th>
+                  <th style="min-width:90px;">NetID</th>
+                  <th style="min-width:140px;">Name</th>
+                  <th style="min-width:160px;">Submitted</th>
+                  <th style="min-width:120px;">Status</th>
+                  <th style="min-width:130px;">Score (/ 100)</th>
+                  <th style="min-width:220px;">Feedback</th>
+                  <th style="min-width:80px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="gradeBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== GROUPS TAB ===== -->
+      <div class="tab-panel" id="panel-groups">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="autoGroup()">
+            <span class="material-icons">auto_awesome</span> Auto-Assign Groups
+          </button>
+          <button class="btn btn-outlined" onclick="addGroup()">
+            <span class="material-icons">add</span> Add Group
+          </button>
+          <button class="btn btn-outlined" onclick="alert('Export groups as CSV')">
+            <span class="material-icons">download</span> Export
+          </button>
+          <span style="font-size:13px;color:var(--text-secondary);">8 groups · avg 20 students/group</span>
+        </div>
+        <div class="groups-grid" id="groupsGrid"></div>
+      </div>
+
+      <!-- ===== STATS TAB ===== -->
+      <div class="tab-panel" id="panel-stats">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div class="card">
+            <h3 style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;margin-bottom:20px;">Grade Distribution</h3>
+            <div id="barChart"></div>
+          </div>
+          <div class="card">
+            <h3 style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;margin-bottom:20px;">Summary Statistics</h3>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+                <span>Mean</span><strong>79.2</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+                <span>Median</span><strong>81</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+                <span>Std. Dev.</span><strong>14.3</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+                <span>Highest</span><strong style="color:var(--primary);">100</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+                <span>Lowest</span><strong style="color:var(--error);">12</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;">
+                <span>Passing (≥ 60%)</span><strong>143 / 155 (92%)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ===== Grade tab data =====
+const gradeData = [
+  { netid:'zw757',  name:'May Wu',        submitted:'Mar 9, 10:42 PM', status:'on-time', score:98, feedback:'Excellent work!' },
+  { netid:'ab123',  name:'Alice Brown',   submitted:'Mar 9, 11:58 PM', status:'on-time', score:85, feedback:'' },
+  { netid:'cd456',  name:'Charlie Davis', submitted:'Mar 10, 1:02 AM', status:'late',    score:72, feedback:'Late penalty applied.' },
+  { netid:'ef789',  name:'Emma Foster',   submitted:'Mar 9, 9:15 PM',  status:'on-time', score:55, feedback:'Please visit office hours.' },
+  { netid:'gh012',  name:'George Harris', submitted:'Mar 9, 8:00 PM',  status:'on-time', score:97, feedback:'' },
+  { netid:'ij345',  name:'Isabella J.',   submitted:'Mar 8, 5:30 PM',  status:'early',   score:80, feedback:'' },
+  { netid:'kl678',  name:'Kevin Lee',     submitted:'Mar 9, 11:30 PM', status:'on-time', score:90, feedback:'Good job!' },
+  { netid:'mn901',  name:'Megan Nelson',  submitted:null,              status:'missing', score:null, feedback:'' },
+  { netid:'op234',  name:'Oliver Parker', submitted:'Mar 10, 2:00 AM', status:'late',    score:70, feedback:'' },
+  { netid:'qr567',  name:'Quinn Roberts', submitted:null,              status:'missing', score:null, feedback:'' },
+  { netid:'st890',  name:'Sophie Turner', submitted:'Mar 9, 7:45 PM',  status:'on-time', score:92, feedback:'Great analysis.' },
+  { netid:'uv123',  name:'Ulysses V.',    submitted:'Mar 9, 11:55 PM', status:'on-time', score:83, feedback:'' },
+  { netid:'wx456',  name:'Willow X.',     submitted:'Mar 9, 10:20 PM', status:'on-time', score:70, feedback:'' },
+  { netid:'yz789',  name:'Yara Zhou',     submitted:'Mar 7, 3:00 PM',  status:'early',   score:97, feedback:'' },
+  { netid:'ff666',  name:'Fiona Flynn',   submitted:'Mar 9, 11:59 PM', status:'on-time', score:96, feedback:'Outstanding!' },
+];
+
+let gradeFilter = 'all';
+let gradeSearch = '';
+let submissionFilter = '';
+let gradingFilter = '';
+let gradeSelectedSet = new Set();
+
+function statusBadgeSmall(s) {
+  const map = { 'on-time':'badge-success', early:'badge-primary', late:'badge-warning', missing:'badge-error' };
+  const label = { 'on-time':'On Time', early:'Early', late:'Late', missing:'Missing' };
+  return `<span class="badge ${map[s]}">${label[s]}</span>`;
+}
+
+function matchesChipFilter(s) {
+  if (gradeFilter === 'all') return true;
+  if (gradeFilter === 'ungraded') return s.score === null && s.status !== 'missing';
+  if (gradeFilter === 'regrade') return false; // none in sample data
+  if (gradeFilter === 'partial') return s.status === 'missing';
+  if (gradeFilter === 'complete') return s.score !== null;
+  return true;
+}
+
+function renderGrades() {
+  const tbody = document.getElementById('gradeBody');
+  const filtered = gradeData.filter(s => {
+    const q = gradeSearch.toLowerCase();
+    const matchSearch = !q || s.netid.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
+    const matchSub = !submissionFilter || s.status === submissionFilter;
+    const matchGrading = !gradingFilter ||
+      (gradingFilter === 'graded' && s.score !== null) ||
+      (gradingFilter === 'ungraded' && s.score === null);
+    return matchSearch && matchSub && matchGrading && matchesChipFilter(s);
+  });
+  tbody.innerHTML = filtered.map((s, i) => {
+    const isSel = gradeSelectedSet.has(s.netid);
+    return `<tr class="${isSel ? 'selected' : ''}" style="height:68px;">
+      <td class="checkbox-cell" style="padding:0 8px;width:44px;">
+        <input type="checkbox" class="cb" ${isSel ? 'checked' : ''} onchange="toggleGradeRow('${s.netid}',this)" />
+      </td>
+      <td class="num-cell">${i+1}</td>
+      <td><span style="color:var(--primary);font-weight:500;">${s.netid}</span></td>
+      <td><span style="font-weight:500;">${s.name}</span></td>
+      <td style="font-size:13px;color:var(--text-secondary);">${s.submitted ? s.submitted : '<span style="color:var(--text-disabled);">—</span>'}</td>
+      <td>${statusBadgeSmall(s.status)}</td>
+      <td>
+        <input type="number" class="grade-input" min="0" max="100" value="${s.score ?? ''}"
+          placeholder="—" onchange="updateScore('${s.netid}', this.value)" />
+      </td>
+      <td>
+        <input type="text" class="feedback-input" value="${s.feedback}"
+          placeholder="Add feedback…" onchange="updateFeedback('${s.netid}',this.value)" />
+      </td>
+      <td>
+        <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;text-transform:none;" onclick="saveGrade('${s.netid}')">
+          Save
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+  updateBulkBar();
+}
+
+function toggleGradeRow(netid, cb) {
+  if (cb.checked) gradeSelectedSet.add(netid); else gradeSelectedSet.delete(netid);
+  cb.closest('tr').classList.toggle('selected', cb.checked);
+  updateBulkBar();
+}
+function toggleAllGrades(cb) {
+  document.querySelectorAll('#gradeBody .cb').forEach(c => {
+    c.checked = cb.checked;
+    const netid = c.closest('tr').querySelector('td:nth-child(3)').textContent.trim();
+    if (cb.checked) gradeSelectedSet.add(netid); else gradeSelectedSet.delete(netid);
+    c.closest('tr').classList.toggle('selected', cb.checked);
+  });
+  updateBulkBar();
+}
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  bar.style.display = gradeSelectedSet.size > 0 ? 'flex' : 'none';
+  document.getElementById('selCount').textContent = `${gradeSelectedSet.size} selected`;
+}
+function setGradeFilter(f) {
+  gradeFilter = f;
+  document.querySelectorAll('[id^="gf-"]').forEach(c => c.classList.remove('active'));
+  document.getElementById('gf-' + f).classList.add('active');
+  renderGrades();
+}
+function setSubmissionFilter(v) { submissionFilter = v; renderGrades(); }
+function setGradingFilter(v) { gradingFilter = v; renderGrades(); }
+function filterGrades(q) { gradeSearch = q; renderGrades(); }
+function updateScore(netid, val) { const s = gradeData.find(x => x.netid === netid); if (s) s.score = parseInt(val) || null; }
+function updateFeedback(netid, val) { const s = gradeData.find(x => x.netid === netid); if (s) s.feedback = val; }
+function saveGrade(netid) { alert(`Grade saved for ${netid}`); }
+function bulkGrade() { const score = prompt(`Set score for ${gradeSelectedSet.size} students (0–100):`); if (score !== null) alert(`Score ${score} applied to ${gradeSelectedSet.size} students.`); }
+function emailSelected() { alert(`Email sent to ${gradeSelectedSet.size} selected students.`); }
+
+// ===== Groups tab =====
+const groups = [
+  { name:'Group A', members:['zw757','ab123','gh012','ij345','kl678'] },
+  { name:'Group B', members:['cd456','ef789','mn901','op234','qr567'] },
+  { name:'Group C', members:['st890','uv123','wx456','yz789','ff666'] },
+  { name:'Group D', members:['aa111','bb222','cc333','dd444','ee555'] },
+];
+
+function renderGroups() {
+  const grid = document.getElementById('groupsGrid');
+  grid.innerHTML = groups.map((g, gi) => `
+    <div class="group-card">
+      <div class="group-header">
+        <span class="group-name">${g.name}</span>
+        <span style="font-size:13px;color:var(--text-secondary);">${g.members.length} members</span>
+      </div>
+      <div class="group-members">
+        ${g.members.map(m => `<span class="member-chip">${m} <span class="material-icons" onclick="removeMember(${gi},'${m}')">close</span></span>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;" onclick="addMemberPrompt(${gi})">
+          <span class="material-icons" style="font-size:14px;">add</span> Add
+        </button>
+        <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;" onclick="alert('Email sent to ${g.name}')">
+          <span class="material-icons" style="font-size:14px;">mail</span> Email
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addMemberPrompt(gi) { const netid = prompt('Enter NetID to add:'); if (netid) { groups[gi].members.push(netid.trim()); renderGroups(); } }
+function removeMember(gi, m) { groups[gi].members = groups[gi].members.filter(x => x !== m); renderGroups(); }
+function autoGroup() { alert('Students have been auto-assigned into groups based on enrollment order.'); renderGroups(); }
+function addGroup() { const name = prompt('Group name:','Group ' + String.fromCharCode(65 + groups.length)); if (name) { groups.push({ name, members:[] }); renderGroups(); } }
+
+// ===== Bar chart (simple CSS) =====
+function renderBarChart() {
+  const buckets = [
+    { label:'90–100', count:42, color:'#2e7d32' },
+    { label:'80–89',  count:51, color:'#1565c0' },
+    { label:'70–79',  count:33, color:'#e65100' },
+    { label:'60–69',  count:17, color:'#f57f17' },
+    { label:'< 60',   count:12, color:'#b71c1c' },
+  ];
+  const max = Math.max(...buckets.map(b => b.count));
+  document.getElementById('barChart').innerHTML = buckets.map(b => `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <span style="width:60px;font-size:13px;color:var(--text-secondary);text-align:right;">${b.label}</span>
+      <div style="height:24px;background:${b.color};border-radius:3px;width:${(b.count/max)*200}px;min-width:4px;"></div>
+      <span style="font-size:13px;font-weight:500;">${b.count}</span>
+    </div>
+  `).join('');
+}
+
+// ===== Tabs =====
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// Init
+renderGrades();
+renderGroups();
+renderBarChart();
+</script>
+</body>
+</html>

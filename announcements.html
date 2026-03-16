@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Announcements</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .announcement-full {
+      background: white; border-radius: 8px; box-shadow: var(--shadow-1);
+      padding: 24px 28px; margin-bottom: 16px;
+      border-left: 4px solid var(--primary);
+    }
+    .announcement-full.pinned { border-left-color: #f57f17; }
+    .announcement-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .announcement-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+    .announcement-meta { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+    .announcement-body-text { font-size: 16px; color: var(--text-primary); line-height: 1.7; }
+    .announcement-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .pinned-tag {
+      background: #fff8e1; color: #e65100; font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 100px; letter-spacing: 0.5px;
+    }
+    .compose-card {
+      background: white; border-radius: 8px; box-shadow: var(--shadow-1);
+      padding: 24px 28px; margin-bottom: 28px;
+    }
+    .compose-card-title {
+      font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 600;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .compose-card-title .material-icons { color: var(--primary); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item active">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item ">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="sidebar-account-icon" title="Profile">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">May Wu</span>
+          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        </div>
+        <a href="#" class="sidebar-logout-btn" title="Log out">
+          <span class="material-icons">exit_to_app</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper" style="max-width:860px;">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">CS4998 Intro to CMSX</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="course-home.html">Home</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <span class="breadcrumb-link">Announcements</span>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Compose new announcement -->
+      <div class="compose-card" id="composeSection" style="display:none;">
+        <div class="compose-card-title">
+          <span class="material-icons">campaign</span> New Announcement
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" class="form-control" id="newTitle" placeholder="Announcement title…" />
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea class="form-control" id="newBody" rows="4" placeholder="Write your announcement…"></textarea>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button class="btn btn-primary" onclick="postAnnouncement()">
+            <span class="material-icons">send</span> Post Announcement
+          </button>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+            <input type="checkbox" class="cb" id="emailStudents" checked />
+            Also email to all students
+          </label>
+          <button class="btn btn-outlined" onclick="cancelCompose()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Action bar -->
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="showCompose()">
+          <span class="material-icons">add</span> New Announcement
+        </button>
+        <div class="search-field" style="width:260px;">
+          <span class="material-icons search-icon">search</span>
+          <input type="text" placeholder="Search announcements…" oninput="filterAnnouncements(this.value)" />
+        </div>
+        <span style="margin-left:auto;font-size:13px;color:var(--text-secondary);">4 announcements</span>
+      </div>
+
+      <!-- Announcements list -->
+      <div id="announcementsList">
+
+        <div class="announcement-full pinned">
+          <div class="announcement-header">
+            <div class="announcement-title">Midterm Exam – Room Change <span class="pinned-tag">PINNED</span></div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;">
+                <span class="material-icons" style="font-size:14px;">edit</span> Edit
+              </button>
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;color:var(--error);border-color:var(--error);">
+                <span class="material-icons" style="font-size:14px;">delete</span>
+              </button>
+            </div>
+          </div>
+          <div class="announcement-meta">
+            <span>Posted by <strong>Prof. Jane Smith</strong></span> &nbsp;·&nbsp;
+            <span>Mar 14, 2026 at 4:32 PM</span> &nbsp;·&nbsp;
+            <span>Sent to 160 students</span>
+          </div>
+          <div class="announcement-body-text">
+            The midterm exam on March 18 has been moved to <strong>Statler Auditorium (Rm 196)</strong> due to a scheduling conflict with another course. Please note the updated location on your calendars. The exam time remains unchanged: 7:30–9:00 PM. Bring your Cornell ID.
+          </div>
+        </div>
+
+        <div class="announcement-full">
+          <div class="announcement-header">
+            <div class="announcement-title">Assignment 3 – Extended Deadline</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;">
+                <span class="material-icons" style="font-size:14px;">edit</span> Edit
+              </button>
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;color:var(--error);border-color:var(--error);">
+                <span class="material-icons" style="font-size:14px;">delete</span>
+              </button>
+            </div>
+          </div>
+          <div class="announcement-meta">
+            <span>Posted by <strong>Prof. Jane Smith</strong></span> &nbsp;·&nbsp;
+            <span>Mar 12, 2026 at 11:15 AM</span> &nbsp;·&nbsp;
+            <span>Sent to 160 students</span>
+          </div>
+          <div class="announcement-body-text">
+            Due to the campus-wide internet outage on Monday, the deadline for Assignment 3 has been extended to <strong>Friday, March 15 at 11:59 PM</strong>. No further extensions will be granted. Please plan accordingly.
+          </div>
+        </div>
+
+        <div class="announcement-full">
+          <div class="announcement-header">
+            <div class="announcement-title">Office Hours Update – Spring Break</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;">
+                <span class="material-icons" style="font-size:14px;">edit</span> Edit
+              </button>
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;color:var(--error);border-color:var(--error);">
+                <span class="material-icons" style="font-size:14px;">delete</span>
+              </button>
+            </div>
+          </div>
+          <div class="announcement-meta">
+            <span>Posted by <strong>TA Alex Johnson</strong></span> &nbsp;·&nbsp;
+            <span>Mar 10, 2026 at 2:00 PM</span> &nbsp;·&nbsp;
+            <span>Sent to 160 students</span>
+          </div>
+          <div class="announcement-body-text">
+            There will be no office hours during spring break (March 16–22). Regular office hours resume on March 23. For urgent questions, please email the teaching team directly. Responses within 24–48 hours.
+          </div>
+        </div>
+
+        <div class="announcement-full" style="border-left-color:#9e9e9e;">
+          <div class="announcement-header">
+            <div class="announcement-title">Welcome to CS4998!</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;">
+                <span class="material-icons" style="font-size:14px;">edit</span> Edit
+              </button>
+              <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;color:var(--error);border-color:var(--error);">
+                <span class="material-icons" style="font-size:14px;">delete</span>
+              </button>
+            </div>
+          </div>
+          <div class="announcement-meta">
+            <span>Posted by <strong>Prof. Jane Smith</strong></span> &nbsp;·&nbsp;
+            <span>Jan 20, 2026 at 9:00 AM</span> &nbsp;·&nbsp;
+            <span>Sent to 160 students</span>
+          </div>
+          <div class="announcement-body-text">
+            Welcome to Intro to CMSX, Spring 2026! Please review the syllabus posted on the course page and complete the introductory survey by this Friday. If you have any questions about course requirements, feel free to come to the first office hours session.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function showCompose() {
+  document.getElementById('composeSection').style.display = 'block';
+  document.getElementById('newTitle').focus();
+  document.getElementById('composeSection').scrollIntoView({ behavior: 'smooth' });
+}
+function cancelCompose() {
+  document.getElementById('composeSection').style.display = 'none';
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newBody').value = '';
+}
+function postAnnouncement() {
+  const title = document.getElementById('newTitle').value.trim();
+  const body = document.getElementById('newBody').value.trim();
+  if (!title || !body) { alert('Please enter both a title and message.'); return; }
+  const emailStudents = document.getElementById('emailStudents').checked;
+  const list = document.getElementById('announcementsList');
+  const div = document.createElement('div');
+  div.className = 'announcement-full';
+  div.style.cssText = 'border-left-color:var(--primary);';
+  div.innerHTML = `
+    <div class="announcement-header">
+      <div class="announcement-title">${title}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;"><span class="material-icons" style="font-size:14px;">edit</span> Edit</button>
+        <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;color:var(--error);border-color:var(--error);" onclick="this.closest('.announcement-full').remove()"><span class="material-icons" style="font-size:14px;">delete</span></button>
+      </div>
+    </div>
+    <div class="announcement-meta">
+      <span>Posted by <strong>Prof. Jane Smith</strong></span> &nbsp;·&nbsp;
+      <span>Just now</span> &nbsp;·&nbsp;
+      <span>${emailStudents ? 'Sent to 160 students' : 'Not emailed'}</span>
+    </div>
+    <div class="announcement-body-text">${body}</div>
+  `;
+  list.insertBefore(div, list.firstChild);
+  cancelCompose();
+  alert(emailStudents ? 'Announcement posted and emailed to all students.' : 'Announcement posted.');
+}
+function filterAnnouncements(q) {
+  document.querySelectorAll('.announcement-full').forEach(el => {
+    const text = el.textContent.toLowerCase();
+    el.style.display = !q || text.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

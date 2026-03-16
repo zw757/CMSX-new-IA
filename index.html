@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CMSX – My Courses</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #004d73 0%, var(--primary) 100%);
+      padding: 40px 32px 32px;
+      color: white;
+    }
+    .page-hero h1 { font-family: 'DM Sans', sans-serif; font-size: 28px; font-weight: 600; margin-bottom: 6px; }
+    .page-hero p { font-size: 16px; opacity: 0.80; }
+    .courses-section-label {
+      padding: 20px 32px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .new-course-btn-wrap { padding: 24px 32px 0; }
+    .semester-tag {
+      font-size: 12px; color: white; opacity: 0.75;
+      padding: 2px 8px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.4);
+      display: inline-block; margin-top: 8px;
+    }
+    .course-card-body { border-top: 1px solid var(--divider); }
+.role-tag {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+      text-transform: uppercase; padding: 2px 8px; border-radius: 100px;
+    }
+    .role-instructor { background: rgba(255,255,255,0.2); color: white; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="sidebar-nav-item active">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item ">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="#" class="sidebar-account-icon" title="Profile">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">May Wu</span>
+          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        </div>
+        <a href="#" class="sidebar-logout-btn" title="Log out">
+          <span class="material-icons">exit_to_app</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+  <!-- Hero Banner -->
+  <div class="page-hero">
+    <h1>Welcome back, May</h1>
+    <p>You have 5 active courses this semester</p>
+  </div>
+
+  <!-- Action bar -->
+  <div class="new-course-btn-wrap">
+    <button class="btn btn-primary" onclick="alert('Course Manager – Create new course')">
+      <span class="material-icons">add</span>
+      Create New Course
+    </button>
+  </div>
+
+  <div class="courses-section-label">Active Courses — Spring 2026</div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid">
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-1">
+        <div class="course-card-code">CS 4998</div>
+        <div class="course-card-name">Intro to CMSX</div>
+        <div class="semester-tag">Spring 2026</div>
+        <span class="role-tag role-instructor" style="display:inline-block;margin-top:8px;">Instructor</span>
+      </div>
+      <div class="course-card-body flex gap-24" style="padding:16px 24px 20px;">
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">160</div>
+          <div class="course-card-stat-label">Students</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">82%</div>
+          <div class="course-card-stat-label">Avg Grade</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">8</div>
+          <div class="course-card-stat-label">Assignments</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-2">
+        <div class="course-card-code">CS 3110</div>
+        <div class="course-card-name">Data Structures &amp; Functional Programming</div>
+        <div class="semester-tag">Spring 2026</div>
+        <span class="role-tag role-instructor" style="display:inline-block;margin-top:8px;">Instructor</span>
+      </div>
+      <div class="course-card-body flex gap-24" style="padding:16px 24px 20px;">
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">248</div>
+          <div class="course-card-stat-label">Students</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">76%</div>
+          <div class="course-card-stat-label">Avg Grade</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">12</div>
+          <div class="course-card-stat-label">Assignments</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-3">
+        <div class="course-card-code">CS 4780</div>
+        <div class="course-card-name">Machine Learning</div>
+        <div class="semester-tag">Spring 2026</div>
+        <span class="role-tag role-instructor" style="display:inline-block;margin-top:8px;">Instructor</span>
+      </div>
+      <div class="course-card-body flex gap-24" style="padding:16px 24px 20px;">
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">195</div>
+          <div class="course-card-stat-label">Students</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">84%</div>
+          <div class="course-card-stat-label">Avg Grade</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">6</div>
+          <div class="course-card-stat-label">Assignments</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-4">
+        <div class="course-card-code">INFO 2850</div>
+        <div class="course-card-name">Introduction to Digital Media</div>
+        <div class="semester-tag">Spring 2026</div>
+        <span class="role-tag role-instructor" style="display:inline-block;margin-top:8px;">TA</span>
+      </div>
+      <div class="course-card-body flex gap-24" style="padding:16px 24px 20px;">
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">112</div>
+          <div class="course-card-stat-label">Students</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">88%</div>
+          <div class="course-card-stat-label">Avg Grade</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">5</div>
+          <div class="course-card-stat-label">Assignments</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-5">
+        <div class="course-card-code">CS 5785</div>
+        <div class="course-card-name">Applied Machine Learning</div>
+        <div class="semester-tag">Spring 2026</div>
+        <span class="role-tag role-instructor" style="display:inline-block;margin-top:8px;">Instructor</span>
+      </div>
+      <div class="course-card-body flex gap-24" style="padding:16px 24px 20px;">
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">73</div>
+          <div class="course-card-stat-label">Students</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">91%</div>
+          <div class="course-card-stat-label">Avg Grade</div>
+        </div>
+        <div class="course-card-stat">
+          <div class="course-card-stat-value">4</div>
+          <div class="course-card-stat-label">Assignments</div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  </main>
+</div>
+</body>
+</html>
