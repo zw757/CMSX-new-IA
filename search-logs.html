@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Search Logs</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .log-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid var(--divider); font-size: 16px;
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-item-desc { color: var(--text-primary); }
+    .log-item-meta { color: var(--text-secondary); font-size: 13px; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item ">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item ">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="search-logs.html" class="sidebar-nav-item active">
+        <span class="material-icons">manage_search</span>
+        <span class="sidebar-label">Search Logs</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Course Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-row">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">May Wu</span>
+            <span class="sidebar-user-email">zw757@cornell.edu</span>
+          </div>
+          <a href="#" class="sidebar-logout-btn" title="Log out">
+            <span class="material-icons">exit_to_app</span>
+          </a>
+        </div>
+        <a href="personal-settings.html" class="sidebar-personal-settings-link">
+          <span class="material-icons">manage_accounts</span>
+          <span>Personal Settings</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">Search Logs</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="search-logs.html">Search Logs</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Search Logs Card -->
+      <div class="home-card">
+        <div class="home-card-body" style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Filter rows: 2-column layout -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Course</label>
+              <div style="padding:10px 14px;font-size:16px;color:var(--text-primary);border:1px solid rgba(0,0,0,0.23);border-radius:4px;background:white;">CS 4998: Intro to CMSX</div>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Assignment</label>
+              <select class="form-control">
+                <option>Any Assignment</option>
+                <option>Assignment 1 – Getting Started</option>
+                <option>Assignment 2 – Data Structures</option>
+                <option>Assignment 3 – Grading Systems</option>
+                <option>Assignment 4 – Final Project</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>IP Address</label>
+              <input type="text" class="form-control" placeholder="e.g. 128.84.0.1" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>From Date <span style="font-size:12px;color:var(--text-secondary);font-weight:400;">(blank = no limit)</span></label>
+              <input type="date" class="form-control" />
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>To Date</label>
+              <input type="date" class="form-control" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Acting NetID</label>
+              <input type="text" class="form-control" placeholder="e.g. zw757" />
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Affected NetID</label>
+              <input type="text" class="form-control" placeholder="e.g. ab123" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Simulated NetID</label>
+              <input type="text" class="form-control" placeholder="" />
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Log Type(s)</label>
+              <select class="form-control" multiple size="5" style="padding:4px 8px;font-size:14px;">
+                <option>Course</option>
+                <option>Content</option>
+                <option>Group</option>
+                <option>Grade</option>
+                <option>Assignment</option>
+                <option>Student</option>
+              </select>
+              <a href="#" onclick="selectAllOptions(this.previousElementSibling);return false;" style="font-size:13px;color:var(--primary);margin-top:4px;display:inline-block;">select all</a>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Log Name(s)</label>
+              <select class="form-control" multiple size="5" style="padding:4px 8px;font-size:14px;">
+                <option>Course: Added Students</option>
+                <option>Course: Changed Group Timeslot</option>
+                <option>Course: Computed Assignment Stats</option>
+                <option>Course: Computed Total Scores</option>
+                <option>Assignment: Submitted</option>
+                <option>Assignment: Viewed</option>
+                <option>Assignment: Graded</option>
+                <option>Grade: Released</option>
+                <option>Student: Dropped</option>
+              </select>
+              <a href="#" onclick="selectAllOptions(this.previousElementSibling);return false;" style="font-size:13px;color:var(--primary);margin-top:4px;display:inline-block;">select all</a>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div style="display:flex;gap:12px;padding-top:4px;border-top:1px solid var(--divider);">
+            <button class="btn btn-primary" onclick="searchLogs()">
+              <span class="material-icons">search</span> Search
+            </button>
+            <button class="btn btn-outlined" onclick="downloadLogs()">
+              <span class="material-icons">download</span> Download Logs
+            </button>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-left:8px;align-self:center;">
+              Logs are only written for <strong>successfully</strong> completed actions. Failed actions (e.g. timed-out submissions) are not recorded.
+            </p>
+          </div>
+
+          <!-- Results -->
+          <div id="logResults">
+            <div class="log-item">
+              <span class="log-item-desc">Student <strong>zw757</strong> viewed Assignment 3</span>
+              <span class="log-item-meta">Today, 2:14 PM</span>
+            </div>
+            <div class="log-item">
+              <span class="log-item-desc">Student <strong>ab123</strong> submitted Assignment 3</span>
+              <span class="log-item-meta">Today, 1:45 PM</span>
+            </div>
+            <div class="log-item">
+              <span class="log-item-desc">Student <strong>cd456</strong> viewed Final Grades</span>
+              <span class="log-item-meta">Today, 12:30 PM</span>
+            </div>
+            <div class="log-item">
+              <span class="log-item-desc">Instructor viewed Course Settings</span>
+              <span class="log-item-meta">Today, 10:05 AM</span>
+            </div>
+            <div class="log-item">
+              <span class="log-item-desc">Student <strong>ef789</strong> submitted Assignment 2</span>
+              <span class="log-item-meta">Yesterday, 11:58 PM</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>
+function selectAllOptions(sel) {
+  for (var i = 0; i < sel.options.length; i++) sel.options[i].selected = true;
+}
+function searchLogs() {
+  document.getElementById('logResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function downloadLogs() { alert('Downloading logs as CSV…'); }
+</script>
+</body>
+</html>

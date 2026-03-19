@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Settings</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .settings-card { background: white; border-radius: 8px; box-shadow: var(--shadow-1); padding: 28px 32px; margin-bottom: 24px; }
+    .settings-card-title {
+      font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 600;
+      color: var(--text-primary); margin-bottom: 20px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--divider);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .settings-card-title .material-icons { color: var(--primary); font-size: 22px; }
+    .settings-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid var(--divider);
+    }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-info { display: flex; flex-direction: column; gap: 3px; }
+    .settings-label { font-size: 16px; font-weight: 500; color: var(--text-primary); }
+    .settings-desc { font-size: 14px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="course-home.html" class="sidebar-nav-item ">
+        <span class="material-icons">home</span>
+        <span class="sidebar-label">Home</span>
+      </a>
+      <a href="students.html" class="sidebar-nav-item ">
+        <span class="nav-icon-wrap">
+          <span class="material-icons">school</span>
+          <span class="sidebar-badge">1</span>
+        </span>
+        <span class="sidebar-label">Students</span>
+      </a>
+      <a href="assignments.html" class="sidebar-nav-item ">
+        <span class="material-icons">article</span>
+        <span class="sidebar-label">Assignments</span>
+      </a>
+      <a href="search-logs.html" class="sidebar-nav-item ">
+        <span class="material-icons">manage_search</span>
+        <span class="sidebar-label">Search Logs</span>
+      </a>
+      <a href="course-settings.html" class="sidebar-nav-item ">
+        <span class="material-icons">settings</span>
+        <span class="sidebar-label">Course Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-row">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">May Wu</span>
+            <span class="sidebar-user-email">zw757@cornell.edu</span>
+          </div>
+          <a href="#" class="sidebar-logout-btn" title="Log out">
+            <span class="material-icons">exit_to_app</span>
+          </a>
+        </div>
+        <a href="personal-settings.html" class="sidebar-personal-settings-link">
+          <span class="material-icons">manage_accounts</span>
+          <span>Personal Settings</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper" style="max-width:600px;">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">Personal Settings</h1>
+          <nav class="breadcrumbs">
+            <a class="breadcrumb-link" href="personal-settings.html">Personal Settings</a>
+          </nav>
+        </div>
+        <div>
+          <button class="btn btn-primary" onclick="saveSettings()">
+            <span class="material-icons">save</span> Save Changes
+          </button>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-card">
+        <div class="settings-card-title">
+          <span class="material-icons">notifications</span> Notifications
+        </div>
+
+        <div class="settings-item">
+          <div class="settings-info">
+            <span class="settings-label">Assignment Submissions</span>
+            <span class="settings-desc">Get notified when a student submits an assignment</span>
+          </div>
+          <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="settings-item">
+          <div class="settings-info">
+            <span class="settings-label">Late Submissions</span>
+            <span class="settings-desc">Alert when assignments are submitted past the deadline</span>
+          </div>
+          <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="settings-item">
+          <div class="settings-info">
+            <span class="settings-label">Enrollment Changes</span>
+            <span class="settings-desc">Notify when students add or drop the course</span>
+          </div>
+          <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="settings-item">
+          <div class="settings-info">
+            <span class="settings-label">Student Questions</span>
+            <span class="settings-desc">Email when a student submits a question via CMSX</span>
+          </div>
+          <label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="settings-item">
+          <div class="settings-info">
+            <span class="settings-label">Grade Disputes</span>
+            <span class="settings-desc">Notify when a student requests a grade review</span>
+          </div>
+          <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="settings-item">
+          <div class="settings-info">
+            <span class="settings-label">Weekly Summary Email</span>
+            <span class="settings-desc">Receive a weekly digest of course activity</span>
+          </div>
+          <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>
+function saveSettings() { alert('Personal settings saved.'); }
+</script>
+</body>
+</html>

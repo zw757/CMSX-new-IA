@@ -49,22 +49,32 @@
         <span class="material-icons">article</span>
         <span class="sidebar-label">Assignments</span>
       </a>
+      <a href="search-logs.html" class="sidebar-nav-item ">
+        <span class="material-icons">manage_search</span>
+        <span class="sidebar-label">Search Logs</span>
+      </a>
       <a href="course-settings.html" class="sidebar-nav-item active">
         <span class="material-icons">settings</span>
-        <span class="sidebar-label">Settings</span>
+        <span class="sidebar-label">Course Settings</span>
       </a>
     </nav>
     <div class="sidebar-bottom">
-      <a href="#" class="sidebar-account-icon" title="Profile">
+      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
         <span class="material-icons">account_circle</span>
       </a>
       <div class="sidebar-user-expanded">
-        <div class="sidebar-user-info">
-          <span class="sidebar-user-name">May Wu</span>
-          <span class="sidebar-user-email">zw757@cornell.edu</span>
+        <div class="sidebar-user-row">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">May Wu</span>
+            <span class="sidebar-user-email">zw757@cornell.edu</span>
+          </div>
+          <a href="#" class="sidebar-logout-btn" title="Log out">
+            <span class="material-icons">exit_to_app</span>
+          </a>
         </div>
-        <a href="#" class="sidebar-logout-btn" title="Log out">
-          <span class="material-icons">exit_to_app</span>
+        <a href="personal-settings.html" class="sidebar-personal-settings-link">
+          <span class="material-icons">manage_accounts</span>
+          <span>Personal Settings</span>
         </a>
       </div>
     </div>
@@ -98,60 +108,38 @@
         <!-- Left column -->
         <div>
 
-          <!-- Notifications -->
+          <!-- Course Info -->
           <div class="settings-card">
             <div class="settings-card-title">
-              <span class="material-icons">notifications</span> Notifications
+              <span class="material-icons">info</span> Course Information
             </div>
 
-            <div class="settings-item">
-              <div class="settings-info">
-                <span class="settings-label">Assignment Submissions</span>
-                <span class="settings-desc">Get notified when a student submits an assignment</span>
+            <div class="form-group">
+              <label>Course Name</label>
+              <input type="text" class="form-control" value="Intro to CMSX" />
+            </div>
+            <div class="form-group">
+              <label>Course Code</label>
+              <input type="text" class="form-control" value="CS 4998" />
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Semester</label>
+                <select class="form-control">
+                  <option selected>Spring 2026</option>
+                  <option>Fall 2026</option>
+                  <option>Summer 2026</option>
+                </select>
               </div>
-              <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
-            </div>
-
-            <div class="settings-item">
-              <div class="settings-info">
-                <span class="settings-label">Late Submissions</span>
-                <span class="settings-desc">Alert when assignments are submitted past the deadline</span>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Credits</label>
+                <input type="number" class="form-control" value="3" min="1" max="6" />
               </div>
-              <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
             </div>
-
-            <div class="settings-item">
-              <div class="settings-info">
-                <span class="settings-label">Enrollment Changes</span>
-                <span class="settings-desc">Notify when students add or drop the course</span>
-              </div>
-              <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            <div class="form-group" style="margin-top:16px;">
+              <label>Course Description</label>
+              <textarea class="form-control" rows="3">An introduction to the Cornell Management System (CMSX), covering assignment creation, grading workflows, and enrollment management.</textarea>
             </div>
-
-            <div class="settings-item">
-              <div class="settings-info">
-                <span class="settings-label">Student Questions</span>
-                <span class="settings-desc">Email when a student submits a question via CMSX</span>
-              </div>
-              <label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label>
-            </div>
-
-            <div class="settings-item">
-              <div class="settings-info">
-                <span class="settings-label">Grade Disputes</span>
-                <span class="settings-desc">Notify when a student requests a grade review</span>
-              </div>
-              <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
-            </div>
-
-            <div class="settings-item">
-              <div class="settings-info">
-                <span class="settings-label">Weekly Summary Email</span>
-                <span class="settings-desc">Receive a weekly digest of course activity</span>
-              </div>
-              <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
-            </div>
-
           </div>
 
           <!-- Grading -->
@@ -203,40 +191,6 @@
 
         <!-- Right column -->
         <div>
-
-          <!-- Course Info -->
-          <div class="settings-card">
-            <div class="settings-card-title">
-              <span class="material-icons">info</span> Course Information
-            </div>
-
-            <div class="form-group">
-              <label>Course Name</label>
-              <input type="text" class="form-control" value="Intro to CMSX" />
-            </div>
-            <div class="form-group">
-              <label>Course Code</label>
-              <input type="text" class="form-control" value="CS 4998" />
-            </div>
-            <div class="form-row">
-              <div class="form-group" style="margin-bottom:0;">
-                <label>Semester</label>
-                <select class="form-control">
-                  <option selected>Spring 2026</option>
-                  <option>Fall 2026</option>
-                  <option>Summer 2026</option>
-                </select>
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label>Credits</label>
-                <input type="number" class="form-control" value="3" min="1" max="6" />
-              </div>
-            </div>
-            <div class="form-group" style="margin-top:16px;">
-              <label>Course Description</label>
-              <textarea class="form-control" rows="3">An introduction to the Cornell Management System (CMSX), covering assignment creation, grading workflows, and enrollment management.</textarea>
-            </div>
-          </div>
 
           <!-- Submission Settings -->
           <div class="settings-card">
