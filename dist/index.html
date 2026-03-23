@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CMSX – My Courses</title>
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #004d73 0%, var(--primary) 100%);
+      padding: 40px 32px 32px;
+      color: white;
+    }
+    .page-hero h1 { font-family: 'DM Sans', sans-serif; font-size: 28px; font-weight: 600; margin-bottom: 6px; }
+    .page-hero p { font-size: 16px; opacity: 0.80; }
+    .courses-section-label {
+      padding: 24px 32px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .new-course-btn-wrap { padding: 24px 32px 0; }
+  </style>
+  <link rel="stylesheet" crossorigin href="/assets/index-Dx1KQqgw.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo" title="All Courses">
+      <img src="/assets/cmsx-logo-ASzVieCe.svg" alt="CMSX" class="sidebar-logo-img" />
+    </a>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="sidebar-nav-item active">
+        <span class="material-icons">grid_view</span>
+        <span class="sidebar-label">My Courses</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
+        <span class="material-icons">account_circle</span>
+      </a>
+      <div class="sidebar-user-expanded">
+        <div class="sidebar-user-row">
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">May Wu</span>
+            <span class="sidebar-user-email">zw757@cornell.edu</span>
+          </div>
+          <a href="#" class="sidebar-logout-btn" title="Log out">
+            <span class="material-icons">exit_to_app</span>
+          </a>
+        </div>
+        <a href="personal-settings.html" class="sidebar-personal-settings-link">
+          <span class="material-icons">manage_accounts</span>
+          <span>Personal Settings</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+  <!-- Hero Banner -->
+  <div class="page-hero">
+    <h1>Welcome back, May</h1>
+    <p>You have 5 active courses this semester</p>
+  </div>
+
+  <!-- Action bar -->
+  <div class="new-course-btn-wrap">
+    <button class="btn btn-primary" onclick="alert('Course Manager – Create new course')">
+      <span class="material-icons">add</span>
+      Create New Course
+    </button>
+  </div>
+
+  <div class="courses-section-label">Active Courses — Spring 2026</div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid">
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-1" data-initials="CS">
+        <span class="course-card-code-badge">CS 4998</span>
+        <span class="course-card-role-badge">Instructor</span>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">Intro to CMSX</div>
+        <div class="course-card-desc">Assignment creation, grading workflows, and enrollment management for Cornell courses.</div>
+        <div class="course-card-stats">
+          <div class="course-stat-item">
+            <span class="material-icons">people</span>
+            <span><span class="course-stat-value">160</span> students</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">bar_chart</span>
+            <span><span class="course-stat-value">82%</span> avg</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">assignment</span>
+            <span><span class="course-stat-value">8</span> assignments</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-footer">
+<span class="course-open-btn">
+          Open Course <span class="material-icons">arrow_forward</span>
+        </span>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-2" data-initials="CS">
+        <span class="course-card-code-badge">CS 3110</span>
+        <span class="course-card-role-badge">Instructor</span>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">Data Structures &amp; Functional Programming</div>
+        <div class="course-card-desc">Functional programming principles, data structure design, and algorithm analysis in OCaml.</div>
+        <div class="course-card-stats">
+          <div class="course-stat-item">
+            <span class="material-icons">people</span>
+            <span><span class="course-stat-value">248</span> students</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">bar_chart</span>
+            <span><span class="course-stat-value">76%</span> avg</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">assignment</span>
+            <span><span class="course-stat-value">12</span> assignments</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-footer">
+<span class="course-open-btn">
+          Open Course <span class="material-icons">arrow_forward</span>
+        </span>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-3" data-initials="CS">
+        <span class="course-card-code-badge">CS 4780</span>
+        <span class="course-card-role-badge">Instructor</span>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">Machine Learning</div>
+        <div class="course-card-desc">Probabilistic models, optimization, supervised and unsupervised learning methods.</div>
+        <div class="course-card-stats">
+          <div class="course-stat-item">
+            <span class="material-icons">people</span>
+            <span><span class="course-stat-value">195</span> students</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">bar_chart</span>
+            <span><span class="course-stat-value">84%</span> avg</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">assignment</span>
+            <span><span class="course-stat-value">6</span> assignments</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-footer">
+<span class="course-open-btn">
+          Open Course <span class="material-icons">arrow_forward</span>
+        </span>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-4" data-initials="INFO">
+        <span class="course-card-code-badge">INFO 2850</span>
+        <span class="course-card-role-badge">TA</span>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">Introduction to Digital Media</div>
+        <div class="course-card-desc">Exploring digital tools, media production, and computational thinking for communication.</div>
+        <div class="course-card-stats">
+          <div class="course-stat-item">
+            <span class="material-icons">people</span>
+            <span><span class="course-stat-value">112</span> students</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">bar_chart</span>
+            <span><span class="course-stat-value">88%</span> avg</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">assignment</span>
+            <span><span class="course-stat-value">5</span> assignments</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-footer">
+<span class="course-open-btn">
+          Open Course <span class="material-icons">arrow_forward</span>
+        </span>
+      </div>
+    </a>
+
+    <a class="course-card" href="course-home.html">
+      <div class="course-card-header color-5" data-initials="CS">
+        <span class="course-card-code-badge">CS 5785</span>
+        <span class="course-card-role-badge">Instructor</span>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">Applied Machine Learning</div>
+        <div class="course-card-desc">Hands-on applications of ML techniques to real-world datasets across multiple domains.</div>
+        <div class="course-card-stats">
+          <div class="course-stat-item">
+            <span class="material-icons">people</span>
+            <span><span class="course-stat-value">73</span> students</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">bar_chart</span>
+            <span><span class="course-stat-value">91%</span> avg</span>
+          </div>
+          <div class="course-stat-item">
+            <span class="material-icons">assignment</span>
+            <span><span class="course-stat-value">4</span> assignments</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-footer">
+<span class="course-open-btn">
+          Open Course <span class="material-icons">arrow_forward</span>
+        </span>
+      </div>
+    </a>
+
+  </div>
+
+  </main>
+</div>
+</body>
+</html>
