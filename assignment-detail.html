@@ -5,20 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CS4998 – Assignment 3: Grading Systems</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="sidebar.js"></script>
   <style>
-    .info-grid { display: grid; grid-template-columns: repeat(4, auto); gap: 12px 32px; margin-bottom: 0; }
-    .info-item { display: flex; flex-direction: column; gap: 3px; }
-    .info-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
-    .info-value { font-size: 16px; color: var(--text-primary); font-weight: 500; }
+    .main-content,
+    .content-wrapper {
+      overflow-x: hidden;
+    }
+    .page-header { margin-bottom: 26px; }
+    .assignment-header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 16px;
+    }
+    .assignment-header-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-top: 0;
+    }
+    .tabs-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 2px solid var(--divider);
+      margin-bottom: 18px;
+      padding-top: 12px;
+      flex-wrap: wrap;
+    }
+    .tabs-header .tabs {
+      border-bottom: none;
+      margin-bottom: 0;
+      flex: 1;
+      min-width: 320px;
+    }
+    .tabs-header .assignment-header-actions {
+      padding-bottom: 14px;
+    }
+    .assignment-stats-card {
+      gap: 20px;
+      padding: 10px 16px;
+    }
+    .assignment-stats-card .stat-icon .material-icons { font-size: 18px; }
+    .assignment-stats-card .stat-value {
+      font-size: var(--font-size-section);
+      line-height: var(--line-height-section);
+    }
+    .assignment-stats-card .stat-label {
+      font-size: var(--font-size-caption);
+      line-height: var(--line-height-caption);
+    }
+    .assignment-stats-card .stat-item-due .stat-value {
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+      color: var(--text-primary);
+    }
+    .assignment-stats-card .stat-item-status .stat-value {
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+      color: var(--text-primary);
+    }
     .grade-input {
       width: 80px; border: 1px solid var(--divider); border-radius: var(--border-radius);
-      padding: 6px 10px; font-size: 14px; text-align: center; outline: none;
+      padding: 6px 10px; font-size: var(--font-size-ui); line-height: var(--line-height-ui); text-align: center; outline: none;
       transition: border-color 0.15s;
     }
     .grade-input:focus { border-color: var(--primary); }
     .feedback-input {
       width: 200px; border: 1px solid var(--divider); border-radius: var(--border-radius);
-      padding: 6px 10px; font-size: 13px; outline: none; transition: border-color 0.15s;
+      padding: 6px 10px; font-size: var(--font-size-ui); line-height: var(--line-height-ui); outline: none; transition: border-color 0.15s;
     }
     .feedback-input:focus { border-color: var(--primary); }
     .tab-panel { display: none; }
@@ -27,82 +82,713 @@
       background: white; border: 1px solid var(--divider); border-radius: 8px;
       padding: 20px; display: flex; flex-direction: column; gap: 12px;
     }
-    .group-header { display: flex; align-items: center; justify-content: space-between; }
-    .group-name { font-weight: 600; font-size: 16px; }
+    .group-card.is-drag-over {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .group-card.group-card-focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: none;
+    }
+    .group-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .group-header-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+    .group-meta { font-size: var(--font-size-ui); line-height: var(--line-height-ui); color: var(--text-secondary); }
+    .group-name { font-weight: 600; font-size: var(--font-size-body); line-height: var(--line-height-body); }
+    .group-name-editable {
+      display: block;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+    }
+    .group-name-editable.is-edit-target {
+      border: none;
+      background: transparent;
+    }
+    .group-name-input {
+      font-weight: 600;
+      font-size: var(--font-size-body); line-height: var(--line-height-body);
+      color: var(--text-primary);
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      background: white;
+      padding: 4px 8px;
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+      outline: none;
+    }
+    .group-name-input:focus {
+      border-color: var(--primary);
+    }
+    .group-name-input.is-edit-target {
+      border-color: rgba(0, 102, 153, 0.55);
+    }
+    .group-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .group-header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .group-icon-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      background: white;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .group-icon-btn .material-icons { font-size: 16px; }
+    .group-icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .group-icon-btn:disabled,
+    .group-icon-btn.is-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: var(--divider);
+      color: var(--text-secondary);
+    }
+    .group-icon-btn.is-dirty {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+    #saveAllGroupsBtn.group-save-all-active {
+      border-color: var(--primary);
+      color: white;
+      background: var(--primary);
+    }
     .group-members { display: flex; gap: 8px; flex-wrap: wrap; }
     .member-chip {
       background: var(--bg); border-radius: 100px; padding: 4px 12px;
-      font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui); color: var(--text-primary); display: flex; align-items: center; gap: 6px;
+      cursor: grab;
+      user-select: none;
+    }
+    .member-chip:active { cursor: grabbing; }
+    .member-chip.is-dragging {
+      opacity: 0.55;
+      transform: scale(0.98);
     }
     .member-chip .material-icons { font-size: 14px; color: var(--text-secondary); cursor: pointer; }
     .member-chip .material-icons:hover { color: var(--error); }
     .groups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-    .assign-info-bar {
-      background: white; border-radius: 8px; padding: 20px 28px;
-      box-shadow: var(--shadow-1); margin-bottom: 24px;
+    .groups-empty {
+      border: 1px dashed var(--divider);
+      border-radius: 8px;
+      background: white;
+      padding: 64px 40px;
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      grid-column: 1 / -1;
     }
+    .groups-empty h3 {
+      margin: 0 0 8px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-primary);
+      font-size: var(--font-size-section); line-height: var(--line-height-section);
+      font-weight: 600;
+    }
+    .groups-empty-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .unassigned-panel {
+      margin-bottom: 18px;
+      background: white;
+      border: 1px solid var(--divider);
+      border-radius: 8px;
+      padding: 16px;
+      display: none;
+    }
+    .unassigned-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .unassigned-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 44px;
+      border: 1px dashed transparent;
+      border-radius: 8px;
+      padding: 4px;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .unassigned-list.is-drag-over {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .unassigned-chip {
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .unassigned-chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .unassigned-assign-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid var(--divider);
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: white;
+    }
+    .unassigned-assign-btn .material-icons { font-size: 14px; }
+    .unassigned-assign-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .group-members {
+      min-height: 44px;
+      border: 1px dashed transparent;
+      border-radius: 8px;
+      padding: 4px;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .group-members.is-drag-over {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      width: min(520px, 100%);
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+      border: 1px solid var(--divider);
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--divider);
+    }
+    .modal-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: var(--font-size-section); line-height: var(--line-height-section);
+      font-weight: 600;
+      margin: 0;
+    }
+    .modal-body {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .assign-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .assign-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid var(--divider);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: white;
+    }
+    .assign-option:hover { border-color: var(--primary); }
+    .assign-option input { margin: 0; }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--divider);
+      background: #fafbfd;
+    }
+    .inline-toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: #1f2937;
+      color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.24);
+      padding: 10px 12px;
+      font-size: var(--font-size-ui);
+      font-weight: 500;
+      line-height: var(--line-height-ui);
+      max-width: 320px;
+      z-index: 1400;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .inline-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .create-group-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .create-group-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+      color: var(--text-secondary);
+    }
+    .student-pick-list {
+      border: 1px solid var(--divider);
+      border-radius: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+      background: white;
+    }
+    .student-pick-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f3f5;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+    }
+    .student-pick-item:last-child { border-bottom: none; }
+    .student-pick-item label { display:flex; align-items:center; gap:8px; cursor:pointer; }
+    .student-pick-assigned { font-size: var(--font-size-caption); line-height: var(--line-height-caption); color: var(--text-secondary); }
     .bulk-action-bar {
       display: flex; align-items: center; gap: 12px; padding: 12px 16px;
       background: var(--primary-light); border-radius: var(--border-radius); margin-bottom: 12px;
       flex-wrap: wrap;
     }
-    .bulk-action-bar span { font-size: 16px; color: var(--primary); font-weight: 500; }
+    .bulk-action-bar span { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--primary); font-weight: 500; }
+    #panel-grade .table-container {
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #panel-grade .table-scroll-wrapper {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    #gradeTable.group-grade-table {
+      min-width: 1220px;
+    }
+    #gradeTable.group-grade-table th,
+    #gradeTable.group-grade-table td {
+      white-space: nowrap;
+    }
+    #gradeTable.group-grade-table .group-members-cell {
+      max-width: 260px;
+      white-space: normal;
+      line-height: 1.35;
+    }
+    #gradeTable.group-grade-table .group-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+    #gradeTable.group-grade-table .group-actions .btn {
+      font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+      padding: 4px 8px;
+      text-transform: none;
+    }
+    #gradeTable.group-grade-table .parts-cell {
+      min-width: 190px;
+    }
+    #gradeTable.group-grade-table .total-expand-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      margin-left: 4px;
+      border: 1px solid var(--divider);
+      border-radius: 5px;
+      background: white;
+      color: var(--text-secondary);
+      vertical-align: middle;
+      cursor: pointer;
+    }
+    #gradeTable.group-grade-table .total-expand-btn .material-icons {
+      font-size: 14px;
+      transform: rotate(0deg);
+      transition: transform 0.18s ease;
+    }
+    #gradeTable.group-grade-table .total-expand-btn.expanded .material-icons {
+      transform: rotate(180deg);
+    }
+    .parts-editor {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+
+    /* Group-formation pilot: compact content treatment with shared navigation. */
+    .grouping-page .content-wrapper {
+      padding: var(--page-shell-padding-top) var(--page-shell-padding-inline) 16px;
+    }
+    .grouping-page .page-header { margin-bottom: 27px; }
+    .grouping-page .page-title-group { gap: 2px; padding-top: 0; }
+    .grouping-page .page-title {
+      font-size: var(--font-size-title);
+      line-height: var(--line-height-title);
+      letter-spacing: 0.1px;
+    }
+    .grouping-page .breadcrumb-link {
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+    }
+    .grouping-page .breadcrumb-sep .material-icons { font-size: 13px; }
+    .grouping-page .assignment-stats-card {
+      min-height: 42px;
+      gap: 14px;
+      padding: 7px 13px;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.14);
+    }
+    .grouping-page .assignment-stats-card .stat-item { gap: 7px; }
+    .grouping-page .assignment-stats-card .stat-icon .material-icons { font-size: 14px; }
+    .grouping-page .assignment-stats-card .stat-value,
+    .grouping-page .assignment-stats-card .stat-item-due .stat-value,
+    .grouping-page .assignment-stats-card .stat-item-status .stat-value {
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+    }
+    .grouping-page .assignment-stats-card .stat-label {
+      font-size: var(--font-size-caption);
+      line-height: var(--line-height-caption);
+    }
+    .grouping-page .assignment-stats-card .stat-divider { background: rgba(0,0,0,0.13); }
+    .grouping-page .tabs-header {
+      gap: 16px;
+      margin-bottom: 13px;
+      padding-top: 0;
+      flex-wrap: nowrap;
+      border-bottom-width: 1px;
+    }
+    .grouping-page .tabs-header .tabs { min-width: 0; }
+    .grouping-page .tab {
+      min-width: 114px;
+      padding: 9px 16px 10px;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+      letter-spacing: 0.35px;
+      border-bottom-width: 1px;
+      margin-bottom: -1px;
+    }
+    .grouping-page .tabs-header .assignment-header-actions {
+      gap: 8px;
+      padding-bottom: 10px;
+    }
+    .grouping-page .tabs-header .btn,
+    .grouping-page .grouping-btn {
+      min-height: 28px;
+      padding: 3px 12px;
+      gap: 6px;
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      border-radius: 3px;
+    }
+    .grouping-page .tabs-header .btn .material-icons,
+    .grouping-page .grouping-btn .material-icons { font-size: 14px; }
+    .grouping-page .unassigned-panel {
+      position: relative;
+      display: none;
+      min-height: 174px;
+      margin-bottom: 20px;
+      padding: 11px;
+      border-color: rgba(0,0,0,0.12);
+      border-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .unassigned-primary-row,
+    .unassigned-title-tools,
+    .unassigned-actions,
+    .unassigned-filters {
+      display: flex;
+      align-items: center;
+    }
+    .unassigned-primary-row {
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .unassigned-title-tools { gap: 10px; min-width: 0; }
+    .unassigned-title {
+      font-size: var(--font-size-section);
+      line-height: var(--line-height-section);
+      white-space: nowrap;
+    }
+    .unassigned-actions { gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .grouping-page .unassigned-actions .grouping-btn {
+      padding-inline: 10px;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+    }
+    .unassigned-view-toggle {
+      display: inline-flex;
+      align-items: stretch;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.14);
+      border-radius: 2px;
+      background: white;
+    }
+    .unassigned-view-toggle button {
+      min-height: 19px;
+      padding: 1px 8px;
+      color: var(--text-secondary);
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      border-right: 1px solid rgba(0,0,0,0.12);
+    }
+    .unassigned-view-toggle button:last-child { border-right: 0; }
+    .unassigned-view-toggle button.active {
+      background: #356b96;
+      color: white;
+    }
+    .unassigned-filters {
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .unassigned-search {
+      width: 220px;
+      min-height: 32px;
+      padding: 5px 9px;
+      border: 1px solid rgba(0,0,0,0.18);
+      border-radius: 4px;
+      outline: none;
+      background: white;
+      color: var(--text-primary);
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+    }
+    .unassigned-search:focus { border-color: var(--primary); }
+    .unassigned-sort {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 7px;
+      border: 1px solid rgba(0,0,0,0.18);
+      border-radius: 4px;
+      background: white;
+      color: var(--text-secondary);
+    }
+    .unassigned-sort .material-icons { font-size: 12px; margin-right: 4px; }
+    .unassigned-sort-label { margin-right: 5px; font-size: var(--font-size-ui); line-height: var(--line-height-ui); white-space: nowrap; }
+    .unassigned-sort select {
+      max-width: 120px;
+      padding: 0 16px 0 0;
+      border: 0;
+      outline: none;
+      appearance: auto;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+    }
+    .unassigned-select-all {
+      min-height: 32px;
+      padding: 4px 9px;
+      border: 1px solid #4d7da5;
+      border-radius: 3px;
+      background: white;
+      color: #356b96;
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+    }
+    .unassigned-select-all:hover { background: rgba(0,102,153,0.04); }
+    .grouping-page .unassigned-list {
+      min-height: 20px;
+      gap: 5px;
+      padding: 0 3px;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+    }
+    .grouping-page .student-chip-wrap { position: relative; }
+    .grouping-page .unassigned-chip {
+      min-height: 20px;
+      padding: 1px 8px;
+      gap: 5px;
+      border: 1px solid transparent;
+      background: #f4f5f6;
+      color: rgba(0,0,0,0.76);
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      cursor: default;
+    }
+    .grouping-page .unassigned-chip.is-selected,
+    .grouping-page .unassigned-chip.is-preview,
+    .grouping-page .unassigned-chip:hover {
+      border-color: #4d7da5;
+      background: white;
+      color: var(--text-primary);
+    }
+    .grouping-page .unassigned-chip input {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      accent-color: var(--primary);
+    }
+    .unassigned-chip-name { white-space: nowrap; }
+    .unassigned-chip-netid {
+      color: rgba(0,0,0,0.48);
+      font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+      white-space: nowrap;
+    }
+    .student-chip-details {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      z-index: 20;
+      display: none;
+      width: 300px;
+      max-width: calc(100vw - 96px);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.09);
+      border-radius: 7px;
+      background: white;
+      box-shadow: 0 9px 20px rgba(0,0,0,0.16);
+      color: var(--text-primary);
+    }
+    .student-chip-wrap:hover .student-chip-details,
+    .student-chip-wrap:focus-within .student-chip-details,
+    .student-chip-details.is-preview { display: block; }
+    .student-detail-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 8px 4px;
+    }
+    .student-detail-name { display: block; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .student-detail-netid { display: block; color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .student-detail-assign {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      min-height: 24px;
+      padding: 2px 7px;
+      border: 1px solid #4d7da5;
+      border-radius: 3px;
+      color: #356b96;
+      font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+    }
+    .student-detail-assign .material-icons { font-size: 11px; }
+    .student-detail-badges { display: flex; gap: 4px; padding: 0 8px 5px; }
+    .student-detail-badge {
+      padding: 1px 6px;
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 100px;
+      color: var(--text-secondary);
+      font-size: var(--font-size-caption);
+      line-height: var(--line-height-caption);
+    }
+    .student-detail-badge strong { color: var(--text-primary); font-weight: 500; }
+    .student-detail-history { width: 100%; border-collapse: collapse; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .student-detail-history td {
+      padding: 3px 9px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+    .student-detail-history td:last-child { text-align: right; font-weight: 600; }
+    .unassigned-table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 4px;
+    }
+    .unassigned-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .unassigned-table th,
+    .unassigned-table td {
+      padding: 6px 9px;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      text-align: left;
+    }
+    .unassigned-table th { background: #fafbfd; color: var(--text-secondary); font-weight: 500; }
+    .unassigned-table tbody tr:last-child td { border-bottom: 0; }
+    .unassigned-empty-filter { padding: 5px 3px; color: var(--text-secondary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .grouping-page .groups-empty {
+      min-height: 169px;
+      margin-bottom: 0;
+      padding: 46px 32px 30px;
+      border-color: rgba(0,0,0,0.10);
+      border-radius: 5px;
+    }
+    .grouping-page .groups-empty h3 {
+      margin-bottom: 7px;
+      font-size: var(--font-size-section);
+      line-height: var(--line-height-section);
+    }
+    .grouping-page .groups-empty p {
+      font-size: var(--font-size-body);
+      line-height: var(--line-height-body);
+    }
+    .grouping-page .groups-empty-actions { gap: 7px; margin-top: 9px; }
+
+    @media (max-width: 900px) {
+      .grouping-page .assignment-header-right { width: 100%; align-items: stretch; }
+      .grouping-page .assignment-stats-card { width: 100%; }
+      .grouping-page .tabs-header { align-items: stretch; flex-direction: column; }
+      .grouping-page .tabs-header .assignment-header-actions { align-self: flex-end; }
+      .unassigned-primary-row { align-items: flex-start; flex-direction: column; }
+      .unassigned-actions { justify-content: flex-start; }
+    }
+    @media (max-width: 640px) {
+      .grouping-page .assignment-stats-card { align-items: stretch; }
+      .grouping-page .assignment-stats-card .stat-divider { width: 100%; height: 1px; }
+      .grouping-page .tabs-header .assignment-header-actions { align-self: stretch; }
+      .grouping-page .tabs-header .assignment-header-actions .btn { flex: 1; }
+      .unassigned-title-tools { align-items: flex-start; flex-direction: column; }
+      .unassigned-search { width: 100%; }
+      .unassigned-sort { flex: 1; }
+      .grouping-page .unassigned-panel { min-height: 0; }
+      .grouping-page .groups-empty { padding: 36px 18px; }
+    }
   </style>
 </head>
 <body>
 <div class="app-layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="index.html" class="sidebar-logo" title="All Courses">
-      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
-    </a>
-    <nav class="sidebar-nav">
-      <a href="course-home.html" class="sidebar-nav-item ">
-        <span class="material-icons">home</span>
-        <span class="sidebar-label">Home</span>
-      </a>
-      <a href="students.html" class="sidebar-nav-item ">
-        <span class="nav-icon-wrap">
-          <span class="material-icons">school</span>
-          <span class="sidebar-badge">1</span>
-        </span>
-        <span class="sidebar-label">Students</span>
-      </a>
-      <a href="assignments.html" class="sidebar-nav-item active">
-        <span class="material-icons">article</span>
-        <span class="sidebar-label">Assignments</span>
-      </a>
-      <a href="search-logs.html" class="sidebar-nav-item ">
-        <span class="material-icons">manage_search</span>
-        <span class="sidebar-label">Search Logs</span>
-      </a>
-      <a href="course-settings.html" class="sidebar-nav-item ">
-        <span class="material-icons">settings</span>
-        <span class="sidebar-label">Course Settings</span>
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
-        <span class="material-icons">account_circle</span>
-      </a>
-      <div class="sidebar-user-expanded">
-        <div class="sidebar-user-row">
-          <div class="sidebar-user-info">
-            <span class="sidebar-user-name">May Wu</span>
-            <span class="sidebar-user-email">zw757@cornell.edu</span>
-          </div>
-          <a href="#" class="sidebar-logout-btn" title="Log out">
-            <span class="material-icons">exit_to_app</span>
-          </a>
-        </div>
-        <a href="personal-settings.html" class="sidebar-personal-settings-link">
-          <span class="material-icons">manage_accounts</span>
-          <span>Personal Settings</span>
-        </a>
-      </div>
-    </div>
-  </aside>
+  <cmsx-sidebar></cmsx-sidebar>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -111,7 +797,7 @@
       <!-- Page Header -->
       <div class="page-header">
         <div class="page-title-group">
-          <h1 class="page-title">Assignment 3: Grading Systems</h1>
+          <h1 class="page-title" id="assignmentTitle">Assignment 3: Grading Systems</h1>
           <nav class="breadcrumbs">
             <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
             <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
@@ -122,7 +808,51 @@
             <span class="breadcrumb-link">Assignment 3</span>
           </nav>
         </div>
-        <div style="display:flex;gap:12px;">
+        <div class="assignment-header-right">
+          <div class="stats-card assignment-stats-card">
+            <div class="stat-item stat-item-status">
+              <div class="stat-icon"><span class="material-icons">task_alt</span></div>
+              <div class="stat-content">
+                <span class="stat-value">Graded</span>
+                <span class="stat-label">Status</span>
+              </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item stat-item-due">
+              <div class="stat-icon"><span class="material-icons">schedule</span></div>
+              <div class="stat-content">
+                <span class="stat-value">Mar 9, 2026 · 11:59 PM</span>
+                <span class="stat-label">Due</span>
+              </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-icon"><span class="material-icons">upload_file</span></div>
+              <div class="stat-content">
+                <span class="stat-value">155 / 160</span>
+                <span class="stat-label">Submissions</span>
+              </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-icon"><span class="material-icons">warning_amber</span></div>
+              <div class="stat-content">
+                <span class="stat-value" style="color:var(--error);">5</span>
+                <span class="stat-label">Missing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs + Actions -->
+      <div class="tabs-header">
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('grade', this)">Grade</button>
+          <button class="tab" onclick="switchTab('groups', this)">Group Students</button>
+          <button class="tab" onclick="switchTab('stats', this)">Statistics</button>
+        </div>
+        <div class="assignment-header-actions">
           <a href="assignment-create.html" class="btn btn-outlined">
             <span class="material-icons">edit</span> Edit Assignment
           </a>
@@ -132,56 +862,11 @@
         </div>
       </div>
 
-      <!-- Assignment Info Bar -->
-      <div class="assign-info-bar">
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-label">Type</span>
-            <span class="info-value"><span class="assignment-type-tag type-assignment">Assignment</span></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Due Date</span>
-            <span class="info-value">Mar 9, 2026 · 11:59 PM</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Max Points</span>
-            <span class="info-value">100 pts</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Submissions</span>
-            <span class="info-value">155 / 160</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Average Score</span>
-            <span class="info-value" style="color:var(--primary);">79%</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Late Submissions</span>
-            <span class="info-value" style="color:#e65100;">4</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Missing</span>
-            <span class="info-value" style="color:var(--error);">5</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Status</span>
-            <span class="info-value"><span class="badge badge-success">Graded</span></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('grade', this)">Grade</button>
-        <button class="tab" onclick="switchTab('groups', this)">Group Students</button>
-        <button class="tab" onclick="switchTab('stats', this)">Statistics</button>
-      </div>
-
       <!-- ===== GRADE TAB ===== -->
       <div class="tab-panel active" id="panel-grade">
 
         <!-- Filter bar -->
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div id="gradeFilterBar" style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
           <div class="search-field" style="flex:1;min-width:180px;max-width:260px;">
             <span class="material-icons search-icon">search</span>
             <input type="text" placeholder="Search by name or NetID…" oninput="filterGrades(this.value)" />
@@ -209,7 +894,7 @@
         </div>
 
         <!-- Status chips -->
-        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <div id="gradeStatusChips" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
           <button class="chip chip-outlined active" id="gf-all"      onclick="setGradeFilter('all')">All (15)</button>
           <button class="chip chip-outlined"        id="gf-ungraded" onclick="setGradeFilter('ungraded')">Ungraded (2)</button>
           <button class="chip chip-outlined"        id="gf-regrade"  onclick="setGradeFilter('regrade')">Regrade Pending (0)</button>
@@ -220,10 +905,10 @@
         <!-- Bulk action bar -->
         <div id="bulkBar" class="bulk-action-bar" style="display:none;">
           <span id="selCount">0 selected</span>
-          <button class="btn btn-primary" style="font-size:12px;padding:4px 12px;text-transform:none;" onclick="bulkGrade()">
+          <button class="btn btn-primary" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:4px 12px;text-transform:none;" onclick="bulkGrade()">
             <span class="material-icons" style="font-size:15px;">grade</span> Bulk Grade
           </button>
-          <button class="btn btn-outlined" style="font-size:12px;padding:4px 12px;text-transform:none;" onclick="emailSelected()">
+          <button class="btn btn-outlined" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:4px 12px;text-transform:none;" onclick="emailSelected()">
             <span class="material-icons" style="font-size:15px;">mail</span> Email Selected
           </button>
         </div>
@@ -231,7 +916,7 @@
         <div class="table-container">
           <div class="table-scroll-wrapper" style="max-height:560px;">
             <table class="data-table" id="gradeTable">
-              <thead>
+              <thead id="gradeHead">
                 <tr>
                   <th class="checkbox-cell" style="padding:0 8px;width:44px;">
                     <input type="checkbox" class="cb" id="selectAllGrade" onchange="toggleAllGrades(this)" />
@@ -254,18 +939,21 @@
 
       <!-- ===== GROUPS TAB ===== -->
       <div class="tab-panel" id="panel-groups">
-        <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="autoGroup()">
-            <span class="material-icons">auto_awesome</span> Auto-Assign Groups
-          </button>
-          <button class="btn btn-outlined" onclick="addGroup()">
+        <div id="groupsToolbar" style="display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="btn btn-outlined" id="addGroupBtn" onclick="addGroup()">
             <span class="material-icons">add</span> Add Group
           </button>
-          <button class="btn btn-outlined" onclick="alert('Export groups as CSV')">
+          <button class="btn btn-outlined" id="exportGroupsBtn" onclick="alert('Export groups as CSV')">
             <span class="material-icons">download</span> Export
           </button>
-          <span style="font-size:13px;color:var(--text-secondary);">8 groups · avg 20 students/group</span>
+          <button class="btn btn-outlined" id="resetGroupsBtn" style="display:none;" onclick="openResetGroupsModal()">
+            <span class="material-icons">restart_alt</span> Reset
+          </button>
+          <button class="btn btn-outlined" id="saveAllGroupsBtn" onclick="saveAllGroupChanges()">
+            <span class="material-icons">save</span> Save All Changes
+          </button>
         </div>
+        <div class="unassigned-panel" id="unassignedPanel"></div>
         <div class="groups-grid" id="groupsGrid"></div>
       </div>
 
@@ -273,28 +961,28 @@
       <div class="tab-panel" id="panel-stats">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
           <div class="card">
-            <h3 style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;margin-bottom:20px;">Grade Distribution</h3>
+            <h3 style="font-family:'DM Sans',sans-serif;font-size: var(--font-size-section); line-height: var(--line-height-section);font-weight:600;margin-bottom:20px;">Grade Distribution</h3>
             <div id="barChart"></div>
           </div>
           <div class="card">
-            <h3 style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;margin-bottom:20px;">Summary Statistics</h3>
+            <h3 style="font-family:'DM Sans',sans-serif;font-size: var(--font-size-section); line-height: var(--line-height-section);font-weight:600;margin-bottom:20px;">Summary Statistics</h3>
             <div style="display:flex;flex-direction:column;gap:12px;">
-              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+              <div style="display:flex;justify-content:space-between;font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:8px 0;border-bottom:1px solid var(--divider);">
                 <span>Mean</span><strong>79.2</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+              <div style="display:flex;justify-content:space-between;font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:8px 0;border-bottom:1px solid var(--divider);">
                 <span>Median</span><strong>81</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+              <div style="display:flex;justify-content:space-between;font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:8px 0;border-bottom:1px solid var(--divider);">
                 <span>Std. Dev.</span><strong>14.3</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+              <div style="display:flex;justify-content:space-between;font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:8px 0;border-bottom:1px solid var(--divider);">
                 <span>Highest</span><strong style="color:var(--primary);">100</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--divider);">
+              <div style="display:flex;justify-content:space-between;font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:8px 0;border-bottom:1px solid var(--divider);">
                 <span>Lowest</span><strong style="color:var(--error);">12</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;">
+              <div style="display:flex;justify-content:space-between;font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:8px 0;">
                 <span>Passing (≥ 60%)</span><strong>143 / 155 (92%)</strong>
               </div>
             </div>
@@ -304,6 +992,158 @@
 
     </div>
   </main>
+</div>
+
+<div id="assignStudentModal" class="modal-backdrop" aria-hidden="true" onclick="closeAssignStudentModal(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="assignStudentTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="assignStudentTitle" class="modal-title">Assign Student To Group</h3>
+      <button class="group-icon-btn" onclick="closeAssignStudentModal()" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="assignStudentTarget" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);"></div>
+      <div id="assignGroupOptions" class="assign-options"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeAssignStudentModal()">Cancel</button>
+      <button class="btn btn-primary" id="assignStudentConfirmBtn" onclick="confirmAssignStudent()">Assign</button>
+    </div>
+  </div>
+</div>
+
+<div id="createGroupModal" class="modal-backdrop" aria-hidden="true" onclick="closeCreateGroupModal(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="createGroupTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="createGroupTitle" class="modal-title">Create Group</h3>
+      <button class="group-icon-btn" onclick="closeCreateGroupModal()" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body create-group-grid">
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Group Name</label>
+        <input id="createGroupNameInput" type="text" class="form-control" placeholder="Group name" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Find Students</label>
+        <input id="createGroupSearchInput" type="text" class="form-control" placeholder="Search by NetID" oninput="renderCreateGroupStudentList()" />
+      </div>
+      <div class="create-group-meta">
+        <span id="createGroupSelectedCount">0 selected</span>
+        <button class="btn btn-outlined" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:4px 10px;text-transform:none;" onclick="clearCreateGroupSelection()">Clear</button>
+      </div>
+      <div id="createGroupStudentList" class="student-pick-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeCreateGroupModal()">Cancel</button>
+      <button class="btn btn-primary" id="createGroupConfirmBtn" onclick="confirmCreateGroup()">Create Group</button>
+    </div>
+  </div>
+</div>
+
+<div id="autoGroupModal" class="modal-backdrop" aria-hidden="true" onclick="closeAutoGroupModal(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="autoGroupTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="autoGroupTitle" class="modal-title">Auto-Assign Groups</h3>
+      <button class="group-icon-btn" onclick="closeAutoGroupModal()" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label for="autoGroupSizeInput" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Target group size</label>
+        <input id="autoGroupSizeInput" type="number" class="form-control" min="2" max="10" step="1" value="4" oninput="updateAutoGroupPreview()" />
+      </div>
+      <div id="autoGroupPreview" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeAutoGroupModal()">Cancel</button>
+      <button class="btn btn-primary" id="autoGroupConfirmBtn" onclick="confirmAutoGroup()">
+        <span class="material-icons">auto_awesome</span> Generate Groups
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="addMemberModal" class="modal-backdrop" aria-hidden="true" onclick="closeAddMemberModal(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="addMemberTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="addMemberTitle" class="modal-title">Add Students To Group</h3>
+      <button class="group-icon-btn" onclick="closeAddMemberModal()" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body create-group-grid">
+      <div id="addMemberTargetText" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);"></div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Find Students</label>
+        <input id="addMemberSearchInput" type="text" class="form-control" placeholder="Search by NetID" oninput="renderAddMemberStudentList()" />
+      </div>
+      <div class="create-group-meta">
+        <span id="addMemberSelectedCount">0 selected</span>
+        <button class="btn btn-outlined" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:4px 10px;text-transform:none;" onclick="clearAddMemberSelection()">Clear</button>
+      </div>
+      <div id="addMemberStudentList" class="student-pick-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeAddMemberModal()">Cancel</button>
+      <button class="btn btn-primary" id="addMemberConfirmBtn" onclick="confirmAddMembersToGroup()">Assign To Group</button>
+    </div>
+  </div>
+</div>
+
+<div id="unsavedChangesModal" class="modal-backdrop" aria-hidden="true" onclick="if(event.target===this)closeUnsavedChangesModal()">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="unsavedChangesTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="unsavedChangesTitle" class="modal-title">Unsaved Changes</h3>
+    </div>
+    <div class="modal-body" style="gap:8px;">
+      <p style="margin:0;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">You have unsaved group changes. If you leave now they will be lost.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="discardAndProceed()">Discard Changes</button>
+      <button class="btn btn-primary" onclick="saveAndProceed()"><span class="material-icons">save</span> Save &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<div id="saveChangesModal" class="modal-backdrop" aria-hidden="true" onclick="closeSaveChangesModal(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="saveChangesTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="saveChangesTitle" class="modal-title">Changes Saved</h3>
+      <button class="group-icon-btn" onclick="closeSaveChangesModal()" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body" style="gap:8px;">
+      <p id="saveChangesMessage" style="margin:0;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeSaveChangesModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="resetGroupsModal" class="modal-backdrop" aria-hidden="true" onclick="closeResetGroupsModal(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resetGroupsTitle" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="resetGroupsTitle" class="modal-title">Reset Groups</h3>
+      <button class="group-icon-btn" onclick="closeResetGroupsModal()" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body" style="gap:8px;">
+      <p id="resetGroupsMessage" style="margin:0;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeResetGroupsModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmResetGroups()">
+        <span class="material-icons">restart_alt</span> Reset Groups
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -331,6 +1171,127 @@ let gradeSearch = '';
 let submissionFilter = '';
 let gradingFilter = '';
 let gradeSelectedSet = new Set();
+let groupGrades = {};
+let showGroupPartsColumn = false;
+const defaultGroupDueAt = '2026-03-09T23:59';
+
+const gradeHeadIndividualTemplate = `
+  <tr>
+    <th class="checkbox-cell" style="padding:0 8px;width:44px;">
+      <input type="checkbox" class="cb" id="selectAllGrade" onchange="toggleAllGrades(this)" />
+    </th>
+    <th class="num-cell">#</th>
+    <th style="min-width:90px;">NetID</th>
+    <th style="min-width:140px;">Name</th>
+    <th style="min-width:160px;">Submitted</th>
+    <th style="min-width:120px;">Status</th>
+    <th style="min-width:130px;">Score (/ 100)</th>
+    <th style="min-width:220px;">Feedback</th>
+    <th style="min-width:80px;">Action</th>
+  </tr>
+`;
+
+function studentByNetId(netid) {
+  return gradeData.find(s => s.netid === netid);
+}
+
+function setGradeModeUI(isGroupMode) {
+  const filterBar = document.getElementById('gradeFilterBar');
+  const statusChips = document.getElementById('gradeStatusChips');
+  const bulkBar = document.getElementById('bulkBar');
+  if (filterBar) filterBar.style.display = isGroupMode ? 'none' : 'flex';
+  if (statusChips) statusChips.style.display = isGroupMode ? 'none' : 'flex';
+  if (bulkBar) bulkBar.style.display = isGroupMode ? 'none' : (gradeSelectedSet.size > 0 ? 'flex' : 'none');
+}
+
+function groupSubmissionStatusBadge(group) {
+  const total = group.members.length;
+  const submitted = group.members.filter(netid => {
+    const s = studentByNetId(netid);
+    return s && s.status !== 'missing';
+  }).length;
+  if (total === 0 || submitted === 0) return '<span class="badge badge-error">Empty</span>';
+  if (submitted === total) return '<span class="badge badge-success">Complete</span>';
+  return '<span class="badge badge-warning">Partial</span>';
+}
+
+function ensureGroupGrade(groupName) {
+  if (!groupGrades[groupName]) {
+    groupGrades[groupName] = { partA: null, partB: null, total: null, dueAt: defaultGroupDueAt };
+  }
+  return groupGrades[groupName];
+}
+
+function updateGroupPartScore(groupName, part, val) {
+  const parsed = parseInt(val, 10);
+  const row = ensureGroupGrade(groupName);
+  row[part] = Number.isNaN(parsed) ? null : parsed;
+  if (row.partA !== null || row.partB !== null) {
+    row.total = (row.partA ?? 0) + (row.partB ?? 0);
+  }
+}
+
+function updateGroupTotalScore(groupName, val) {
+  const parsed = parseInt(val, 10);
+  const row = ensureGroupGrade(groupName);
+  row.total = Number.isNaN(parsed) ? null : parsed;
+}
+
+function toggleGroupPartsColumn() {
+  showGroupPartsColumn = !showGroupPartsColumn;
+  renderGrades();
+}
+
+function updateGroupDueDate(groupName, val) {
+  const row = ensureGroupGrade(groupName);
+  row.dueAt = val || defaultGroupDueAt;
+}
+
+function groupTotal(row) {
+  return row.total;
+}
+
+function formatDueDate(iso) {
+  if (!iso) return '—';
+  const dt = new Date(iso);
+  if (Number.isNaN(dt.getTime())) return iso;
+  return dt.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+function gradeGroup(groupName) {
+  saveGroupGrade(groupName);
+}
+
+function openGroupFromGrade(groupName) {
+  highlightedGroupName = groupName;
+  const groupsTab = document.querySelector('.tab[onclick*="groups"]');
+  if (groupsTab) switchTab('groups', groupsTab);
+  renderGroups();
+  const el = document.querySelector(`[data-group-name="${groupName}"]`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function editGroupNameFromGrade(groupName) {
+  openGroupFromGrade(groupName);
+}
+
+function downloadGroupGrade(groupName) {
+  alert(`Download grade report for ${groupName}`);
+}
+
+function saveGroupGrade(groupName) {
+  const row = ensureGroupGrade(groupName);
+  const total = groupTotal(row);
+  const totalText = total === null ? '—' : `${total}`;
+  alert(`Saved ${groupName}: Part A ${row.partA ?? '—'}, Part B ${row.partB ?? '—'}, Total ${totalText}, Due ${formatDueDate(row.dueAt)}.`);
+  renderGrades();
+}
 
 function statusBadgeSmall(s) {
   const map = { 'on-time':'badge-success', early:'badge-primary', late:'badge-warning', missing:'badge-error' };
@@ -348,7 +1309,89 @@ function matchesChipFilter(s) {
 }
 
 function renderGrades() {
+  const head = document.getElementById('gradeHead');
   const tbody = document.getElementById('gradeBody');
+  const gradeTable = document.getElementById('gradeTable');
+
+  if (isGroupTestScenario) {
+    if (gradeTable) gradeTable.classList.add('group-grade-table');
+    setGradeModeUI(true);
+    if (head) head.innerHTML = `
+      <tr>
+        <th class="num-cell">#</th>
+        <th style="min-width:120px;">Group</th>
+        <th style="min-width:210px;">Members</th>
+        <th style="min-width:190px;">Due Date</th>
+        <th style="min-width:140px;">Submission Status</th>
+        ${showGroupPartsColumn ? '<th style="min-width:190px;">Parts</th>' : ''}
+        <th style="min-width:140px;">Total Score
+          <button class="total-expand-btn ${showGroupPartsColumn ? 'expanded' : ''}" onclick="toggleGroupPartsColumn()" title="Show or hide part columns">
+            <span class="material-icons">chevron_right</span>
+          </button>
+        </th>
+        <th style="min-width:260px;">Actions</th>
+      </tr>
+    `;
+
+    if (!groups.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="${showGroupPartsColumn ? 8 : 7}" style="padding:24px 16px;color:var(--text-secondary);text-align:center;">
+            No groups yet. Use the Group Students tab to form groups before assigning grades.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = groups.map((g, i) => {
+      const membersText = g.members.length ? g.members.join(', ') : '—';
+      const row = ensureGroupGrade(g.name);
+      const total = groupTotal(row);
+      return `
+        <tr style="height:68px;">
+          <td class="num-cell">${i + 1}</td>
+          <td><span style="font-weight:600;color:var(--primary);">${g.name}</span></td>
+          <td class="group-members-cell" style="color:var(--text-secondary);">${membersText}</td>
+          <td>
+            <input type="datetime-local" class="form-control" style="min-width:178px;padding:7px 10px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);" value="${row.dueAt}"
+              onchange="updateGroupDueDate('${g.name}', this.value)" />
+          </td>
+          <td>${groupSubmissionStatusBadge(g)}</td>
+          ${showGroupPartsColumn ? `
+          <td>
+            <div class="parts-cell">
+              <div class="parts-editor">
+                <label style="display:flex;align-items:center;gap:5px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);">A
+                  <input type="number" class="grade-input" min="0" max="100" value="${row.partA ?? ''}" placeholder="—" onchange="updateGroupPartScore('${g.name}','partA', this.value)" />
+                </label>
+                <label style="display:flex;align-items:center;gap:5px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);">B
+                  <input type="number" class="grade-input" min="0" max="100" value="${row.partB ?? ''}" placeholder="—" onchange="updateGroupPartScore('${g.name}','partB', this.value)" />
+                </label>
+              </div>
+            </div>
+          </td>
+          ` : ''}
+          <td>
+            <input type="number" class="grade-input" min="0" max="100" value="${total ?? ''}" placeholder="—" onchange="updateGroupTotalScore('${g.name}', this.value)" />
+          </td>
+          <td>
+            <div class="group-actions">
+              <button class="btn btn-outlined" onclick="editGroupNameFromGrade('${g.name}')">Edit Group</button>
+              <button class="btn btn-outlined" onclick="openGroupFromGrade('${g.name}')">Edit Grade</button>
+              <button class="btn btn-primary" onclick="saveGroupGrade('${g.name}')">Save</button>
+              <button class="btn btn-outlined" onclick="downloadGroupGrade('${g.name}')">Download</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+    return;
+  }
+
+  if (gradeTable) gradeTable.classList.remove('group-grade-table');
+  setGradeModeUI(false);
+  if (head) head.innerHTML = gradeHeadIndividualTemplate;
   const filtered = gradeData.filter(s => {
     const q = gradeSearch.toLowerCase();
     const matchSearch = !q || s.netid.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
@@ -367,7 +1410,7 @@ function renderGrades() {
       <td class="num-cell">${i+1}</td>
       <td><span style="color:var(--primary);font-weight:500;">${s.netid}</span></td>
       <td><span style="font-weight:500;">${s.name}</span></td>
-      <td style="font-size:13px;color:var(--text-secondary);">${s.submitted ? s.submitted : '<span style="color:var(--text-disabled);">—</span>'}</td>
+      <td style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">${s.submitted ? s.submitted : '<span style="color:var(--text-disabled);">—</span>'}</td>
       <td>${statusBadgeSmall(s.status)}</td>
       <td>
         <input type="number" class="grade-input" min="0" max="100" value="${s.score ?? ''}"
@@ -378,9 +1421,9 @@ function renderGrades() {
           placeholder="Add feedback…" onchange="updateFeedback('${s.netid}',this.value)" />
       </td>
       <td>
-        <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;text-transform:none;" onclick="saveGrade('${s.netid}')">
-          Save
-        </button>
+        <a class="btn btn-primary" href="assignment-grading.html?student=${s.netid}" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:5px 12px;text-transform:none;">
+          Grade
+        </a>
       </td>
     </tr>`;
   }).join('');
@@ -422,40 +1465,1224 @@ function bulkGrade() { const score = prompt(`Set score for ${gradeSelectedSet.si
 function emailSelected() { alert(`Email sent to ${gradeSelectedSet.size} selected students.`); }
 
 // ===== Groups tab =====
-const groups = [
+const scenario = new URLSearchParams(window.location.search).get('scenario');
+const isGroupTestScenario = scenario === 'group-test';
+const defaultGroups = [
   { name:'Group A', members:['zw757','ab123','gh012','ij345','kl678'] },
   { name:'Group B', members:['cd456','ef789','mn901','op234','qr567'] },
   { name:'Group C', members:['st890','uv123','wx456','yz789','ff666'] },
   { name:'Group D', members:['aa111','bb222','cc333','dd444','ee555'] },
 ];
 
+let groups = defaultGroups.map(g => ({ name: g.name, members: [...g.members] }));
+let unassignedStudents = [];
+let highlightedGroupName = '';
+let dirtyGroupIndexes = new Set();
+let groupNameDrafts = {};
+let savedGroupsSnapshot = groups.map(g => ({ name: g.name, members: [...g.members] }));
+let pendingAssignNetid = '';
+let pendingAssignNetids = [];
+let pendingAssignGroupIndex = -1;
+let createGroupSelectedNetids = new Set();
+let pendingAutoGroupSize = 4;
+let pendingAutoGroupMode = 'all';
+let addMemberTargetGroupIndex = -1;
+let addMemberSelectedNetids = new Set();
+let unassignedSearchQuery = '';
+let unassignedViewMode = 'chips';
+let unassignedSortMode = 'grade-desc';
+let unassignedSortTouched = false;
+let studentPreviewNetid = 'ab123';
+let selectedUnassignedNetids = new Set();
+let draggedStudentNetid = '';
+let draggedStudentSourceType = '';
+let draggedStudentSourceIndex = -1;
+let toastTimeoutId = null;
+
+function refreshSavedGroupsSnapshot() {
+  savedGroupsSnapshot = groups.map(g => ({ name: g.name, members: [...g.members] }));
+}
+
+function showInlineToast(message) {
+  let toast = document.getElementById('inlineToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'inlineToast';
+    toast.className = 'inline-toast';
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add('show');
+  if (toastTimeoutId) {
+    clearTimeout(toastTimeoutId);
+  }
+  toastTimeoutId = setTimeout(() => {
+    const currentToast = document.getElementById('inlineToast');
+    if (currentToast) currentToast.classList.remove('show');
+    toastTimeoutId = null;
+  }, 1800);
+}
+
+function openSaveChangesModal(message) {
+  const modal = document.getElementById('saveChangesModal');
+  const text = document.getElementById('saveChangesMessage');
+  if (!modal || !text) return;
+  text.textContent = message;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeSaveChangesModal(e) {
+  if (e && e.target && e.target.id !== 'saveChangesModal') return;
+  const modal = document.getElementById('saveChangesModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+function openResetGroupsModal() {
+  const modal = document.getElementById('resetGroupsModal');
+  const text = document.getElementById('resetGroupsMessage');
+  if (!modal || !text) return;
+
+  text.textContent = `Reset all groups? This will move ${uniqueStudentsFromGrades().length} students back to Unassigned.`;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeResetGroupsModal(e) {
+  if (e && e.target && e.target.id !== 'resetGroupsModal') return;
+  const modal = document.getElementById('resetGroupsModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+function confirmResetGroups() {
+  closeResetGroupsModal();
+  resetGroups();
+}
+
+function isStructurallyDirty(index) {
+  const current = groups[index];
+  const saved = savedGroupsSnapshot[index];
+  if (!current) return false;
+  if (!saved) return true;
+  if (current.name !== saved.name) return true;
+  if (current.members.length !== saved.members.length) return true;
+  return current.members.some((m, i) => m !== saved.members[i]);
+}
+
+function getDirtyGroupIndexes() {
+  const dirty = [];
+  for (let idx = 0; idx < groups.length; idx += 1) {
+    if (isGroupDirty(idx)) dirty.push(idx);
+  }
+  return dirty;
+}
+
+function isGroupDirty(index) {
+  if (index < 0 || index >= groups.length) return false;
+  const draft = groupNameDrafts[index];
+  const draftDirty = draft !== undefined && draft !== groups[index].name;
+  return draftDirty || isStructurallyDirty(index);
+}
+
+function syncGroupCardSaveState(index) {
+  const saveBtn = document.getElementById(`groupSaveBtn-${index}`);
+  if (!saveBtn) return;
+  const dirty = isGroupDirty(index);
+  saveBtn.disabled = !dirty;
+  saveBtn.classList.toggle('is-disabled', !dirty);
+  saveBtn.classList.toggle('is-dirty', dirty);
+}
+
+function updateGroupSaveUI() {
+  const btn = document.getElementById('saveAllGroupsBtn');
+  if (!btn) return;
+  if (!groups.length) {
+    btn.style.display = 'none';
+    return;
+  }
+  const count = getDirtyGroupIndexes().length;
+  btn.style.display = 'inline-flex';
+  btn.disabled = count === 0;
+  btn.classList.toggle('group-save-all-active', count > 0);
+  btn.innerHTML = `<span class="material-icons">save</span> Save All Changes (${count})`;
+}
+
+function updateGroupsToolbarVisibility() {
+  const hasGroups = groups.length > 0;
+  const toolbar = document.getElementById('groupsToolbar');
+  const addGroupBtn = document.getElementById('addGroupBtn');
+  const exportBtn = document.getElementById('exportGroupsBtn');
+  const resetBtn = document.getElementById('resetGroupsBtn');
+
+  if (toolbar) toolbar.style.display = hasGroups ? 'flex' : 'none';
+  if (addGroupBtn) addGroupBtn.style.display = hasGroups ? 'inline-flex' : 'none';
+  if (exportBtn) exportBtn.style.display = hasGroups ? 'inline-flex' : 'none';
+  if (resetBtn) resetBtn.style.display = hasGroups && isGroupTestScenario ? 'inline-flex' : 'none';
+}
+
+function markGroupDirty(index) {
+  if (index < 0 || index >= groups.length) return;
+  dirtyGroupIndexes.add(index);
+  syncGroupCardSaveState(index);
+  updateGroupSaveUI();
+}
+
+function pruneEmptyGroups() {
+  if (!groups.length) return false;
+
+  const originalGroups = groups;
+  const keptGroups = originalGroups.filter(g => g.members.length > 0);
+  if (keptGroups.length === originalGroups.length) return false;
+  const removedCount = originalGroups.length - keptGroups.length;
+
+  const previousDraftByName = {};
+  Object.entries(groupNameDrafts).forEach(([idxRaw, draft]) => {
+    const idx = parseInt(idxRaw, 10);
+    const group = originalGroups[idx];
+    if (group) previousDraftByName[group.name] = draft;
+  });
+
+  const previousDirtyByName = new Set();
+  dirtyGroupIndexes.forEach(idx => {
+    const group = originalGroups[idx];
+    if (group) previousDirtyByName.add(group.name);
+  });
+
+  const savedByName = {};
+  savedGroupsSnapshot.forEach(snap => {
+    savedByName[snap.name] = { name: snap.name, members: [...snap.members] };
+  });
+
+  groups = keptGroups;
+
+  const nextDrafts = {};
+  const nextDirty = new Set();
+  groups.forEach((group, idx) => {
+    const draft = previousDraftByName[group.name];
+    if (draft !== undefined && draft !== group.name) {
+      nextDrafts[idx] = draft;
+      nextDirty.add(idx);
+    }
+
+    const saved = savedByName[group.name];
+    if (!saved) {
+      nextDirty.add(idx);
+      return;
+    }
+
+    const structuralDirty = saved.members.length !== group.members.length
+      || saved.members.some((m, i) => group.members[i] !== m);
+    if (previousDirtyByName.has(group.name) || structuralDirty) {
+      nextDirty.add(idx);
+    }
+  });
+
+  groupNameDrafts = nextDrafts;
+  dirtyGroupIndexes = nextDirty;
+  refreshSavedGroupsSnapshot();
+  if (highlightedGroupName && !groups.some(g => g.name === highlightedGroupName)) {
+    highlightedGroupName = '';
+  }
+  showInlineToast(`Deleted ${removedCount} empty group${removedCount === 1 ? '' : 's'}.`);
+  return true;
+}
+
+function applySingleGroupSave(index) {
+  if (index < 0 || index >= groups.length) return true;
+  const group = groups[index];
+  const draftRaw = groupNameDrafts[index];
+  const draft = draftRaw !== undefined ? draftRaw.trim() : group.name;
+  if (!draft) {
+    alert('Group name cannot be empty.');
+    return false;
+  }
+  if (draft !== group.name && groups.some((g, i) => i !== index && g.name === draft)) {
+    alert('A group with that name already exists.');
+    return false;
+  }
+  if (draft !== group.name) {
+    const oldName = group.name;
+    group.name = draft;
+    if (groupGrades[oldName]) {
+      groupGrades[draft] = groupGrades[oldName];
+      delete groupGrades[oldName];
+    }
+    if (highlightedGroupName === oldName) highlightedGroupName = draft;
+  }
+  delete groupNameDrafts[index];
+  dirtyGroupIndexes.delete(index);
+  savedGroupsSnapshot[index] = { name: group.name, members: [...group.members] };
+  return true;
+}
+
+function saveGroupCard(index) {
+  if (!applySingleGroupSave(index)) return;
+  renderGroups();
+  renderGrades();
+}
+
+function saveAllGroupChanges() {
+  const targets = getDirtyGroupIndexes();
+  if (!targets.length) return;
+  for (const idx of targets) {
+    if (!applySingleGroupSave(idx)) return;
+  }
+  refreshSavedGroupsSnapshot();
+  dirtyGroupIndexes = new Set();
+  openSaveChangesModal(`Saved ${targets.length} group change${targets.length === 1 ? '' : 's'}.`);
+  renderGroups();
+  renderGrades();
+}
+
+function updateGroupNameDraft(index, value) {
+  if (index < 0 || index >= groups.length) return;
+  if (value === groups[index].name) {
+    delete groupNameDrafts[index];
+  } else {
+    groupNameDrafts[index] = value;
+  }
+  syncGroupCardSaveState(index);
+  updateGroupSaveUI();
+}
+
+function uniqueStudentsFromGrades() {
+  return [...new Set(gradeData.map(s => s.netid))];
+}
+
+function buildGeneratedGroupName(index) {
+  let n = index;
+  let label = '';
+  do {
+    label = String.fromCharCode(65 + (n % 26)) + label;
+    n = Math.floor(n / 26) - 1;
+  } while (n >= 0);
+  return `Group ${label}`;
+}
+
+function getNextGeneratedGroupName() {
+  let seed = groups.length;
+  let candidate = buildGeneratedGroupName(seed);
+  while (groups.some(g => g.name === candidate)) {
+    seed += 1;
+    candidate = buildGeneratedGroupName(seed);
+  }
+  return candidate;
+}
+
+function findCurrentGroupName(netid) {
+  const g = groups.find(group => group.members.includes(netid));
+  return g ? g.name : '';
+}
+
+function openCreateGroupModal() {
+  const modal = document.getElementById('createGroupModal');
+  const nameInput = document.getElementById('createGroupNameInput');
+  const searchInput = document.getElementById('createGroupSearchInput');
+  const confirmBtn = document.getElementById('createGroupConfirmBtn');
+  if (!modal || !nameInput || !searchInput || !confirmBtn) return;
+
+  createGroupSelectedNetids = new Set();
+  const nextName = 'Group ' + String.fromCharCode(65 + groups.length);
+  nameInput.value = nextName;
+  searchInput.value = '';
+  confirmBtn.disabled = false;
+  renderCreateGroupStudentList();
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  nameInput.focus();
+}
+
+function closeCreateGroupModal(e) {
+  if (e && e.target && e.target.id !== 'createGroupModal') return;
+  const modal = document.getElementById('createGroupModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  createGroupSelectedNetids = new Set();
+}
+
+function toggleCreateGroupStudent(netid, checked) {
+  if (checked) createGroupSelectedNetids.add(netid);
+  else createGroupSelectedNetids.delete(netid);
+  renderCreateGroupStudentList();
+}
+
+function clearCreateGroupSelection() {
+  createGroupSelectedNetids = new Set();
+  renderCreateGroupStudentList();
+}
+
+function renderCreateGroupStudentList() {
+  const list = document.getElementById('createGroupStudentList');
+  const searchInput = document.getElementById('createGroupSearchInput');
+  const selectedCount = document.getElementById('createGroupSelectedCount');
+  if (!list || !searchInput || !selectedCount) return;
+
+  const q = searchInput.value.trim().toLowerCase();
+  const all = uniqueStudentsFromGrades().sort((a, b) => {
+    const aUnassigned = unassignedStudents.includes(a) ? 0 : 1;
+    const bUnassigned = unassignedStudents.includes(b) ? 0 : 1;
+    if (aUnassigned !== bUnassigned) return aUnassigned - bUnassigned;
+    return a.localeCompare(b);
+  });
+  const filtered = all.filter(netid => !q || netid.toLowerCase().includes(q));
+
+  selectedCount.textContent = `${createGroupSelectedNetids.size} selected`;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:12px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">No matching students.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(netid => {
+    const currentGroup = findCurrentGroupName(netid);
+    return `
+      <div class="student-pick-item">
+        <label>
+          <input type="checkbox" ${createGroupSelectedNetids.has(netid) ? 'checked' : ''} onchange="toggleCreateGroupStudent('${netid}', this.checked)" />
+          <span>${netid}</span>
+        </label>
+        <span class="student-pick-assigned">${currentGroup ? `Currently in ${currentGroup}` : 'Unassigned'}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function confirmCreateGroup() {
+  const nameInput = document.getElementById('createGroupNameInput');
+  if (!nameInput) return;
+  const name = nameInput.value.trim();
+  if (!name) {
+    alert('Group name is required.');
+    return;
+  }
+  if (groups.some(g => g.name === name)) {
+    alert('A group with that name already exists.');
+    return;
+  }
+
+  groups.push({ name, members: [] });
+  const newIndex = groups.length - 1;
+
+  [...createGroupSelectedNetids].forEach(netid => moveStudentToGroup(netid, newIndex));
+  if (createGroupSelectedNetids.size === 0) {
+    markGroupDirty(newIndex);
+  }
+
+  closeCreateGroupModal();
+  renderGroups();
+}
+
+function openAddMemberModal(gi) {
+  if (gi < 0 || gi >= groups.length) return;
+  addMemberTargetGroupIndex = gi;
+  addMemberSelectedNetids = new Set();
+
+  const modal = document.getElementById('addMemberModal');
+  const title = document.getElementById('addMemberTitle');
+  const targetText = document.getElementById('addMemberTargetText');
+  const searchInput = document.getElementById('addMemberSearchInput');
+  if (!modal || !title || !targetText || !searchInput) return;
+
+  const targetGroup = groups[gi];
+  title.textContent = `Add Students To ${targetGroup.name}`;
+  targetText.textContent = `Select students to assign or reassign into ${targetGroup.name}.`;
+  searchInput.value = '';
+  renderAddMemberStudentList();
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  searchInput.focus();
+}
+
+function closeAddMemberModal(e) {
+  if (e && e.target && e.target.id !== 'addMemberModal') return;
+  const modal = document.getElementById('addMemberModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  addMemberTargetGroupIndex = -1;
+  addMemberSelectedNetids = new Set();
+}
+
+function updateAddMemberConfirmState() {
+  const confirmBtn = document.getElementById('addMemberConfirmBtn');
+  const selectedCount = document.getElementById('addMemberSelectedCount');
+  if (selectedCount) {
+    selectedCount.textContent = `${addMemberSelectedNetids.size} selected`;
+  }
+  if (confirmBtn) {
+    const selected = [...addMemberSelectedNetids];
+    const hasSelection = selected.length > 0;
+    const assignedCount = selected.filter(netid => !!findCurrentGroupName(netid)).length;
+
+    confirmBtn.disabled = !hasSelection;
+    if (!hasSelection) {
+      confirmBtn.textContent = 'Assign To Group';
+      return;
+    }
+
+    if (assignedCount === 0) {
+      confirmBtn.textContent = 'Assign To Group';
+    } else if (assignedCount === selected.length) {
+      confirmBtn.textContent = 'Swap Into Group';
+    } else {
+      confirmBtn.textContent = 'Assign / Swap Into Group';
+    }
+  }
+}
+
+function toggleAddMemberSelection(netid, checked) {
+  if (checked) addMemberSelectedNetids.add(netid);
+  else addMemberSelectedNetids.delete(netid);
+  updateAddMemberConfirmState();
+}
+
+function clearAddMemberSelection() {
+  addMemberSelectedNetids = new Set();
+  renderAddMemberStudentList();
+}
+
+function renderAddMemberStudentList() {
+  const list = document.getElementById('addMemberStudentList');
+  const searchInput = document.getElementById('addMemberSearchInput');
+  if (!list || !searchInput) return;
+
+  if (addMemberTargetGroupIndex < 0 || addMemberTargetGroupIndex >= groups.length) {
+    list.innerHTML = '<div style="padding:12px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Select a group first.</div>';
+    updateAddMemberConfirmState();
+    return;
+  }
+
+  const targetMembers = new Set(groups[addMemberTargetGroupIndex].members);
+  const q = searchInput.value.trim().toLowerCase();
+
+  const allCandidates = uniqueStudentsFromGrades()
+    .filter(netid => !targetMembers.has(netid))
+    .sort((a, b) => {
+      const groupA = findCurrentGroupName(a);
+      const groupB = findCurrentGroupName(b);
+      const aUnassigned = groupA ? 1 : 0;
+      const bUnassigned = groupB ? 1 : 0;
+      if (aUnassigned !== bUnassigned) return aUnassigned - bUnassigned;
+      return a.localeCompare(b);
+    });
+
+  const filtered = allCandidates.filter(netid => !q || netid.toLowerCase().includes(q));
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:12px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">No matching students.</div>';
+    updateAddMemberConfirmState();
+    return;
+  }
+
+  list.innerHTML = filtered.map(netid => {
+    const currentGroup = findCurrentGroupName(netid);
+    return `
+      <div class="student-pick-item">
+        <label>
+          <input type="checkbox" ${addMemberSelectedNetids.has(netid) ? 'checked' : ''} onchange="toggleAddMemberSelection('${netid}', this.checked)" />
+          <span>${netid}</span>
+        </label>
+        <span class="student-pick-assigned">${currentGroup ? `Currently in ${currentGroup}` : 'Unassigned'}</span>
+      </div>
+    `;
+  }).join('');
+
+  updateAddMemberConfirmState();
+}
+
+function confirmAddMembersToGroup() {
+  if (addMemberTargetGroupIndex < 0 || addMemberTargetGroupIndex >= groups.length) return;
+  if (!addMemberSelectedNetids.size) return;
+
+  [...addMemberSelectedNetids].forEach(netid => moveStudentToGroup(netid, addMemberTargetGroupIndex));
+  closeAddMemberModal();
+  renderGroups();
+}
+
+function configureScenario() {
+  if (!isGroupTestScenario) return;
+  document.body.classList.add('grouping-page');
+  document.title = 'CS4998 – Test Assignment: Group Formation Pilot';
+  document.getElementById('assignmentTitle').textContent = 'Test Assignment: Group Formation Pilot';
+  document.getElementById('resetGroupsBtn').style.display = 'inline-flex';
+  const gradeTab = document.querySelector('.tab[onclick*="grade"]');
+  if (gradeTab) gradeTab.textContent = 'Grade Groups';
+  groups = [];
+  unassignedStudents = uniqueStudentsFromGrades();
+  selectedUnassignedNetids = new Set();
+  unassignedSearchQuery = '';
+  refreshSavedGroupsSnapshot();
+  dirtyGroupIndexes = new Set();
+  groupNameDrafts = {};
+  const groupsTab = document.querySelector('.tab[onclick*="groups"]');
+  if (groupsTab) {
+    groupsTab.textContent = 'Configure Groups';
+    switchTab('groups', groupsTab);
+  }
+}
+
+function resetGroups() {
+  groups = [];
+  unassignedStudents = uniqueStudentsFromGrades();
+  selectedUnassignedNetids = new Set();
+  unassignedSearchQuery = '';
+  dirtyGroupIndexes = new Set();
+  groupNameDrafts = {};
+  refreshSavedGroupsSnapshot();
+  renderGroups();
+}
+
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function studentAverage(student) {
+  if (!student || student.score === null) return null;
+  if (student.netid === 'ab123') return 83;
+  return Math.max(0, Math.min(100, student.score - 2));
+}
+
+function studentHistory(student) {
+  if (student.netid === 'ab123') return [81, 83, 85];
+  const current = student.score === null ? 72 : student.score;
+  return [Math.max(0, current - 4), Math.max(0, current - 2), current];
+}
+
+function filteredUnassignedStudents() {
+  const q = unassignedSearchQuery.trim().toLowerCase();
+  const students = unassignedStudents
+    .map(netid => studentByNetId(netid))
+    .filter(Boolean)
+    .filter(student => !q || student.netid.toLowerCase().includes(q) || student.name.toLowerCase().includes(q));
+
+  return students.sort((a, b) => {
+    if (!unassignedSortTouched) return a.name.localeCompare(b.name);
+    if (unassignedSortMode === 'name-asc') return a.name.localeCompare(b.name);
+    const aGrade = studentAverage(a) ?? -1;
+    const bGrade = studentAverage(b) ?? -1;
+    return unassignedSortMode === 'grade-asc' ? aGrade - bGrade : bGrade - aGrade;
+  });
+}
+
+function renderStudentDetails(student, isPreview) {
+  const average = studentAverage(student);
+  const history = studentHistory(student);
+  const status = student.status === 'on-time' ? 'On Time' : student.status === 'missing' ? 'Missing' : student.status.charAt(0).toUpperCase() + student.status.slice(1);
+  return `
+    <div class="student-chip-details ${isPreview ? 'is-preview' : ''}" role="dialog" aria-label="${escapeHTML(student.name)} details">
+      <div class="student-detail-head">
+        <div>
+          <strong class="student-detail-name">${escapeHTML(student.name)}</strong>
+          <span class="student-detail-netid">${escapeHTML(student.netid)}</span>
+        </div>
+        <button class="student-detail-assign" type="button" onclick="openAssignStudentModal('${student.netid}')">
+          <span class="material-icons">group_add</span> Assign
+        </button>
+      </div>
+      <div class="student-detail-badges">
+        <span class="student-detail-badge">Avg: <strong>${average === null ? '—' : `${average}/100`}</strong></span>
+        <span class="student-detail-badge">Current: <strong>${student.score === null ? '—' : `${student.score}/100`}</strong></span>
+        <span class="student-detail-badge">${status}</span>
+      </div>
+      <table class="student-detail-history" aria-label="Recent grades">
+        ${history.map((score, index) => `<tr><td>Assignment ${index + 1}</td><td>${score}/100</td></tr>`).join('')}
+      </table>
+    </div>
+  `;
+}
+
+function renderStudentChip(student) {
+  const selected = selectedUnassignedNetids.has(student.netid);
+  const isPreview = studentPreviewNetid === student.netid;
+  return `
+    <span class="student-chip-wrap">
+      <label class="member-chip unassigned-chip ${selected ? 'is-selected' : ''} ${isPreview ? 'is-preview' : ''}">
+        <input type="checkbox" aria-label="Select ${escapeHTML(student.name)}" ${selected ? 'checked' : ''} onchange="toggleUnassignedSelection('${student.netid}', this.checked)" />
+        <span class="unassigned-chip-name" tabindex="0" draggable="true" ondragstart="startStudentDrag(event, '${student.netid}', 'unassigned', -1)" ondragend="endStudentDrag()">${escapeHTML(student.name)}</span>
+        <span class="unassigned-chip-netid">· ${escapeHTML(student.netid)}</span>
+      </label>
+      ${renderStudentDetails(student, isPreview)}
+    </span>
+  `;
+}
+
+function renderUnassignedPanel() {
+  const panel = document.getElementById('unassignedPanel');
+  if (!panel) return;
+  if (!isGroupTestScenario) {
+    panel.style.display = 'none';
+    panel.innerHTML = '';
+    return;
+  }
+
+  if (!unassignedStudents.length) {
+    panel.style.display = 'none';
+    panel.innerHTML = '';
+    selectedUnassignedNetids = new Set();
+    unassignedSearchQuery = '';
+    return;
+  }
+
+  selectedUnassignedNetids = new Set([...selectedUnassignedNetids].filter(netid => unassignedStudents.includes(netid)));
+  const filteredStudents = filteredUnassignedStudents();
+  const selectedCount = selectedUnassignedNetids.size;
+  const allSelected = unassignedStudents.length > 0 && unassignedStudents.every(netid => selectedUnassignedNetids.has(netid));
+
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="unassigned-primary-row">
+      <div class="unassigned-title-tools">
+        <strong class="unassigned-title">Unassigned Students (${unassignedStudents.length})</strong>
+        <div class="unassigned-view-toggle" role="group" aria-label="Student display mode">
+          <button type="button" class="${unassignedViewMode === 'chips' ? 'active' : ''}" onclick="setUnassignedView('chips')">Chips</button>
+          <button type="button" class="${unassignedViewMode === 'table' ? 'active' : ''}" onclick="setUnassignedView('table')">Expanded Table</button>
+        </div>
+      </div>
+      <div class="unassigned-actions">
+        <button class="btn btn-outlined grouping-btn" type="button" onclick="generateRandomGroups()">
+          <span class="material-icons">shuffle</span> Generate Random Groups
+        </button>
+        <button class="btn btn-outlined grouping-btn" type="button" onclick="groupSelectedIndividually()">
+          <span class="material-icons">person_add</span> Group Individually
+        </button>
+      </div>
+    </div>
+    <div class="unassigned-filters">
+      <input
+        id="unassignedSearchInput"
+        type="text"
+        class="unassigned-search"
+        aria-label="Search unassigned students"
+        placeholder="Search NetID OR Name"
+        value="${escapeHTML(unassignedSearchQuery)}"
+        oninput="setUnassignedSearch(this.value)"
+      />
+      <label class="unassigned-sort">
+        <span class="material-icons">filter_list</span>
+        <span class="unassigned-sort-label">Avg grade:</span>
+        <select aria-label="Sort students" onchange="setUnassignedSort(this.value)">
+          <option value="grade-desc" ${unassignedSortMode === 'grade-desc' ? 'selected' : ''}>High → Low</option>
+          <option value="grade-asc" ${unassignedSortMode === 'grade-asc' ? 'selected' : ''}>Low → High</option>
+          <option value="name-asc" ${unassignedSortMode === 'name-asc' ? 'selected' : ''}>Name A → Z</option>
+        </select>
+      </label>
+      <button class="unassigned-select-all" type="button" onclick="toggleSelectAllUnassigned()">
+        ${allSelected ? 'Deselect All' : 'Select All'}
+      </button>
+    </div>
+    ${unassignedViewMode === 'chips' ? `
+      <div class="unassigned-list" title="Drop here to unassign" ondragover="handleStudentDragOver(event);setDragOverState(this, true)" ondragleave="setDragOverState(this, false)" ondrop="dropStudentToUnassigned(event)">
+        ${filteredStudents.map(renderStudentChip).join('')}
+        ${filteredStudents.length ? '' : '<span class="unassigned-empty-filter">No matching unassigned students.</span>'}
+      </div>
+    ` : `
+      <div class="unassigned-table-wrap">
+        <table class="unassigned-table">
+          <thead><tr><th></th><th>Student</th><th>NetID</th><th>Avg grade</th><th>Current</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            ${filteredStudents.map(student => `
+              <tr>
+                <td><input type="checkbox" aria-label="Select ${escapeHTML(student.name)}" ${selectedUnassignedNetids.has(student.netid) ? 'checked' : ''} onchange="toggleUnassignedSelection('${student.netid}', this.checked)" /></td>
+                <td>${escapeHTML(student.name)}</td>
+                <td>${escapeHTML(student.netid)}</td>
+                <td>${studentAverage(student) === null ? '—' : `${studentAverage(student)}/100`}</td>
+                <td>${student.score === null ? '—' : `${student.score}/100`}</td>
+                <td>${student.status === 'on-time' ? 'On Time' : student.status.charAt(0).toUpperCase() + student.status.slice(1)}</td>
+                <td><button class="student-detail-assign" type="button" onclick="openAssignStudentModal('${student.netid}')"><span class="material-icons">group_add</span> Assign</button></td>
+              </tr>
+            `).join('')}
+            ${filteredStudents.length ? '' : '<tr><td colspan="7" class="unassigned-empty-filter">No matching unassigned students.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `}
+  `;
+}
+
+function setUnassignedSearch(value) {
+  unassignedSearchQuery = value;
+  studentPreviewNetid = '';
+  renderUnassignedPanel();
+  const searchInput = document.getElementById('unassignedSearchInput');
+  if (searchInput) {
+    searchInput.focus();
+    searchInput.setSelectionRange(value.length, value.length);
+  }
+}
+
+function setUnassignedView(mode) {
+  unassignedViewMode = mode === 'table' ? 'table' : 'chips';
+  studentPreviewNetid = '';
+  renderUnassignedPanel();
+}
+
+function setUnassignedSort(mode) {
+  unassignedSortMode = mode;
+  unassignedSortTouched = true;
+  studentPreviewNetid = '';
+  renderUnassignedPanel();
+}
+
+function toggleSelectAllUnassigned() {
+  const allSelected = unassignedStudents.length > 0 && unassignedStudents.every(netid => selectedUnassignedNetids.has(netid));
+  selectedUnassignedNetids = allSelected ? new Set() : new Set(unassignedStudents);
+  studentPreviewNetid = '';
+  renderUnassignedPanel();
+}
+
+function toggleUnassignedSelection(netid, checked) {
+  if (checked) selectedUnassignedNetids.add(netid);
+  else selectedUnassignedNetids.delete(netid);
+  studentPreviewNetid = '';
+  renderUnassignedPanel();
+}
+
+function clearUnassignedSelection() {
+  selectedUnassignedNetids = new Set();
+  renderUnassignedPanel();
+}
+
+function generateRandomGroups() {
+  openAutoGroupModalFor(groups.length ? 'unassigned' : 'all');
+}
+
+function groupSelectedIndividually() {
+  const selected = [...selectedUnassignedNetids].filter(netid => unassignedStudents.includes(netid));
+  openCreateGroupModal();
+  createGroupSelectedNetids = new Set(selected);
+  renderCreateGroupStudentList();
+}
+
+function importGroupsFromPastAssignment() {
+  const students = unassignedStudents
+    .map(netid => studentByNetId(netid))
+    .filter(Boolean)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(student => student.netid);
+  groups = [];
+  students.forEach((netid, index) => {
+    const groupIndex = Math.floor(index / 4);
+    if (!groups[groupIndex]) groups[groupIndex] = { name: buildGeneratedGroupName(groupIndex), members: [] };
+    groups[groupIndex].members.push(netid);
+  });
+  unassignedStudents = [];
+  selectedUnassignedNetids = new Set();
+  groupNameDrafts = {};
+  dirtyGroupIndexes = new Set(groups.map((_, index) => index));
+  renderGroups();
+  showInlineToast('Imported groups from the previous assignment.');
+}
+
+function openAssignSelectedModal() {
+  const candidates = [...selectedUnassignedNetids].filter(netid => unassignedStudents.includes(netid));
+  if (!candidates.length) return;
+  openAssignStudentModal(candidates);
+}
+
+function openAssignStudentModal(netid) {
+  const targets = Array.isArray(netid) ? netid : [netid];
+  pendingAssignNetids = targets.filter(Boolean);
+  pendingAssignNetid = pendingAssignNetids[0] || '';
+  pendingAssignGroupIndex = -1;
+
+  const modal = document.getElementById('assignStudentModal');
+  const title = document.getElementById('assignStudentTitle');
+  const target = document.getElementById('assignStudentTarget');
+  const options = document.getElementById('assignGroupOptions');
+  const confirmBtn = document.getElementById('assignStudentConfirmBtn');
+  if (!modal || !title || !target || !options || !confirmBtn) return;
+
+  if (pendingAssignNetids.length > 1) {
+    title.textContent = 'Assign Students To Group';
+    target.innerHTML = `Select a destination group for <strong style="color:var(--text-primary)">${pendingAssignNetids.length} selected students</strong>.`;
+  } else {
+    title.textContent = 'Assign Student To Group';
+    target.innerHTML = `Select a destination group for <strong style="color:var(--text-primary)">${pendingAssignNetid}</strong>.`;
+  }
+
+  if (!groups.length) {
+    options.innerHTML = '<div style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">No groups yet. Create a group first.</div>';
+    confirmBtn.disabled = true;
+  } else {
+    options.innerHTML = groups.map((g, idx) => `
+      <label class="assign-option">
+        <span style="display:flex;flex-direction:column;gap:2px;">
+          <strong style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);">${g.name}</strong>
+          <span style="font-size: var(--font-size-caption); line-height: var(--line-height-caption);color:var(--text-secondary);">${g.members.length} members</span>
+        </span>
+        <input type="radio" name="assignGroupOption" value="${idx}" onchange="setAssignGroupIndex(${idx})" />
+      </label>
+    `).join('');
+    confirmBtn.disabled = true;
+  }
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function setAssignGroupIndex(idx) {
+  pendingAssignGroupIndex = idx;
+  const confirmBtn = document.getElementById('assignStudentConfirmBtn');
+  if (confirmBtn) confirmBtn.disabled = pendingAssignGroupIndex < 0;
+}
+
+function confirmAssignStudent() {
+  if (pendingAssignGroupIndex < 0) return;
+  const targets = pendingAssignNetids.length ? pendingAssignNetids : (pendingAssignNetid ? [pendingAssignNetid] : []);
+  if (!targets.length) return;
+  targets.forEach(netid => moveStudentToGroup(netid, pendingAssignGroupIndex));
+  selectedUnassignedNetids = new Set([...selectedUnassignedNetids].filter(netid => !targets.includes(netid)));
+  closeAssignStudentModal();
+  renderGroups();
+}
+
+function closeAssignStudentModal(e) {
+  if (e && e.target && e.target.id !== 'assignStudentModal') return;
+  const modal = document.getElementById('assignStudentModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  pendingAssignNetid = '';
+  pendingAssignNetids = [];
+  pendingAssignGroupIndex = -1;
+}
+
+function openAutoGroupModal() {
+  openAutoGroupModalFor('all');
+}
+
+function openAutoGroupModalFor(mode) {
+  const modal = document.getElementById('autoGroupModal');
+  const sizeInput = document.getElementById('autoGroupSizeInput');
+  const title = document.getElementById('autoGroupTitle');
+  if (!modal || !sizeInput || !title) return;
+
+  pendingAutoGroupMode = mode === 'unassigned' ? 'unassigned' : 'all';
+  title.textContent = pendingAutoGroupMode === 'unassigned'
+    ? 'Randomly Group Unassigned Students'
+    : 'Auto-Assign Groups';
+
+  sizeInput.value = String(pendingAutoGroupSize);
+  updateAutoGroupPreview();
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  sizeInput.focus();
+  sizeInput.select();
+}
+
+function closeAutoGroupModal(e) {
+  if (e && e.target && e.target.id !== 'autoGroupModal') return;
+  const modal = document.getElementById('autoGroupModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+function updateAutoGroupPreview() {
+  const sizeInput = document.getElementById('autoGroupSizeInput');
+  const preview = document.getElementById('autoGroupPreview');
+  const confirmBtn = document.getElementById('autoGroupConfirmBtn');
+  if (!sizeInput || !preview || !confirmBtn) return;
+
+  const parsed = parseInt(sizeInput.value, 10);
+  const targetSize = Number.isNaN(parsed) ? NaN : Math.max(2, Math.min(10, parsed));
+  if (!Number.isNaN(targetSize)) {
+    pendingAutoGroupSize = targetSize;
+    sizeInput.value = String(targetSize);
+  }
+
+  const candidates = pendingAutoGroupMode === 'unassigned' ? [...unassignedStudents] : uniqueStudentsFromGrades();
+  const candidateLabel = pendingAutoGroupMode === 'unassigned' ? 'unassigned students' : 'students';
+  if (!candidates.length) {
+    preview.textContent = `No ${candidateLabel} available to assign.`;
+    confirmBtn.disabled = true;
+    return;
+  }
+
+  if (Number.isNaN(targetSize)) {
+    preview.textContent = 'Enter a valid group size between 2 and 10.';
+    confirmBtn.disabled = true;
+    return;
+  }
+
+  const fullGroups = Math.floor(candidates.length / targetSize);
+  const remainder = candidates.length % targetSize;
+  const totalGroups = fullGroups + (remainder ? 1 : 0);
+  const distribution = remainder
+    ? `${fullGroups} group${fullGroups === 1 ? '' : 's'} of ${targetSize} and 1 group of ${remainder}`
+    : `${fullGroups} group${fullGroups === 1 ? '' : 's'} of ${targetSize}`;
+
+  preview.textContent = `${candidates.length} ${candidateLabel} will be split into ${totalGroups} groups (${distribution}).`;
+  confirmBtn.disabled = false;
+}
+
+function confirmAutoGroup() {
+  const sizeInput = document.getElementById('autoGroupSizeInput');
+  if (!sizeInput) return;
+
+  const targetSize = Math.max(2, Math.min(10, parseInt(sizeInput.value, 10) || pendingAutoGroupSize || 4));
+  const candidates = pendingAutoGroupMode === 'unassigned' ? [...unassignedStudents] : uniqueStudentsFromGrades();
+  if (!candidates.length) return;
+
+  if (pendingAutoGroupMode === 'all') {
+    groups = [];
+    candidates.forEach((netid, index) => {
+      const gi = Math.floor(index / targetSize);
+      if (!groups[gi]) {
+        const name = buildGeneratedGroupName(gi);
+        groups[gi] = { name, members: [] };
+      }
+      groups[gi].members.push(netid);
+    });
+    unassignedStudents = [];
+    dirtyGroupIndexes = new Set();
+    groupNameDrafts = {};
+    refreshSavedGroupsSnapshot();
+  } else {
+    const groupCount = Math.ceil(candidates.length / targetSize);
+    for (let i = 0; i < groupCount; i += 1) {
+      const name = getNextGeneratedGroupName();
+      groups.push({ name, members: [] });
+      markGroupDirty(groups.length - 1);
+    }
+    candidates.forEach((netid, index) => {
+      const gi = groups.length - groupCount + Math.floor(index / targetSize);
+      moveStudentToGroup(netid, gi);
+    });
+  }
+
+  closeAutoGroupModal();
+  renderGroups();
+}
+
 function renderGroups() {
   const grid = document.getElementById('groupsGrid');
-  grid.innerHTML = groups.map((g, gi) => `
-    <div class="group-card">
+  pruneEmptyGroups();
+  updateGroupsToolbarVisibility();
+  if (highlightedGroupName && !groups.some(g => g.name === highlightedGroupName)) {
+    highlightedGroupName = '';
+  }
+
+  if (!groups.length) {
+    grid.innerHTML = `
+      <div class="groups-empty">
+        <h3>No groups formed yet</h3>
+        <p>Import from a previous assignment, auto-assign, or create groups manually.</p>
+        <div class="groups-empty-actions">
+          <button class="btn btn-primary grouping-btn" onclick="importGroupsFromPastAssignment()">
+            <span class="material-icons">content_copy</span> Import from Past Assignment
+          </button>
+          <button class="btn btn-primary grouping-btn" onclick="autoGroup()">
+            <span class="material-icons">auto_awesome</span> Auto-Assign Groups
+          </button>
+          <button class="btn btn-outlined grouping-btn" onclick="addGroup()">
+            <span class="material-icons">add</span> Create First Group
+          </button>
+        </div>
+      </div>
+    `;
+    renderUnassignedPanel();
+    renderGrades();
+    updateGroupSaveUI();
+    return;
+  }
+
+  const orderedGroups = groups
+    .map((g, index) => ({ g, index }))
+    .sort((a, b) => {
+      if (!highlightedGroupName) return 0;
+      if (a.g.name === highlightedGroupName) return -1;
+      if (b.g.name === highlightedGroupName) return 1;
+      return 0;
+    });
+
+  grid.innerHTML = orderedGroups.map(({ g, index: gi }) => `
+    <div class="group-card ${g.name === highlightedGroupName ? 'group-card-focus' : ''}" data-group-name="${g.name}" title="Drop students anywhere on this group card" ondragover="handleStudentDragOver(event);setDragOverState(this, true)" ondrop="dropStudentToGroup(event, ${gi})">
       <div class="group-header">
-        <span class="group-name">${g.name}</span>
-        <span style="font-size:13px;color:var(--text-secondary);">${g.members.length} members</span>
+        <div class="group-header-main">
+          <div class="group-name group-name-editable ${g.name === highlightedGroupName ? 'is-edit-target' : ''}">
+            <input type="text" class="group-name-input ${g.name === highlightedGroupName ? 'is-edit-target' : ''}" value="${(groupNameDrafts[gi] !== undefined ? groupNameDrafts[gi] : g.name).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}" oninput="updateGroupNameDraft(${gi}, this.value)" />
+          </div>
+          <span class="group-meta">${g.members.length} members</span>
+        </div>
+        <div class="group-header-actions">
+          <button class="group-icon-btn" title="Email group" onclick="alert('Email sent to ${g.name}')">
+            <span class="material-icons">mail</span>
+          </button>
+          <button class="group-icon-btn ${isGroupDirty(gi) ? 'is-dirty' : 'is-disabled'}" id="groupSaveBtn-${gi}" ${isGroupDirty(gi) ? '' : 'disabled'} title="Save group changes" onclick="saveGroupCard(${gi})">
+            <span class="material-icons">save</span>
+          </button>
+        </div>
       </div>
-      <div class="group-members">
-        ${g.members.map(m => `<span class="member-chip">${m} <span class="material-icons" onclick="removeMember(${gi},'${m}')">close</span></span>`).join('')}
+      <div class="group-members" title="Drop students here">
+        ${g.members.map(m => `<span class="member-chip" draggable="true" ondragstart="startStudentDrag(event, '${m}', 'group', ${gi})" ondragend="endStudentDrag()">${m} <span class="material-icons" onclick="removeMember(${gi},'${m}')">close</span></span>`).join('')}
       </div>
-      <div style="display:flex;gap:8px;margin-top:4px;">
-        <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;" onclick="addMemberPrompt(${gi})">
+      <div class="group-card-actions">
+        <button class="btn btn-outlined" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:3px 10px;text-transform:none;" onclick="addMemberPrompt(${gi})">
           <span class="material-icons" style="font-size:14px;">add</span> Add
-        </button>
-        <button class="btn btn-outlined" style="font-size:11px;padding:3px 10px;text-transform:none;" onclick="alert('Email sent to ${g.name}')">
-          <span class="material-icons" style="font-size:14px;">mail</span> Email
         </button>
       </div>
     </div>
   `).join('');
+
+  renderUnassignedPanel();
+  renderGrades();
+  updateGroupSaveUI();
 }
 
-function addMemberPrompt(gi) { const netid = prompt('Enter NetID to add:'); if (netid) { groups[gi].members.push(netid.trim()); renderGroups(); } }
-function removeMember(gi, m) { groups[gi].members = groups[gi].members.filter(x => x !== m); renderGroups(); }
-function autoGroup() { alert('Students have been auto-assigned into groups based on enrollment order.'); renderGroups(); }
-function addGroup() { const name = prompt('Group name:','Group ' + String.fromCharCode(65 + groups.length)); if (name) { groups.push({ name, members:[] }); renderGroups(); } }
+function moveStudentToGroup(netid, gi) {
+  if (gi < 0 || gi >= groups.length) return;
+  groups.forEach((group, idx) => {
+    const before = group.members.length;
+    group.members = group.members.filter(member => member !== netid);
+    if (group.members.length !== before) markGroupDirty(idx);
+  });
+  unassignedStudents = unassignedStudents.filter(student => student !== netid);
+  if (!groups[gi].members.includes(netid)) {
+    groups[gi].members.push(netid);
+    markGroupDirty(gi);
+  }
+}
+
+function moveStudentToUnassigned(netid) {
+  let moved = false;
+  groups.forEach((group, idx) => {
+    const before = group.members.length;
+    group.members = group.members.filter(member => member !== netid);
+    if (group.members.length !== before) {
+      moved = true;
+      markGroupDirty(idx);
+    }
+  });
+  if (!unassignedStudents.includes(netid)) {
+    unassignedStudents.push(netid);
+    moved = true;
+  }
+  return moved;
+}
+
+function startStudentDrag(event, netid, sourceType, sourceIndex) {
+  draggedStudentNetid = netid;
+  draggedStudentSourceType = sourceType;
+  draggedStudentSourceIndex = sourceIndex;
+  if (event && event.dataTransfer) {
+    event.dataTransfer.setData('text/plain', netid);
+    event.dataTransfer.effectAllowed = 'move';
+  }
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('is-dragging');
+  }
+}
+
+function endStudentDrag() {
+  draggedStudentNetid = '';
+  draggedStudentSourceType = '';
+  draggedStudentSourceIndex = -1;
+  document.querySelectorAll('.is-drag-over').forEach(el => el.classList.remove('is-drag-over'));
+  document.querySelectorAll('.is-dragging').forEach(el => el.classList.remove('is-dragging'));
+}
+
+function handleStudentDragOver(event) {
+  if (!draggedStudentNetid) return;
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+}
+
+function setDragOverState(el, isOver) {
+  if (!el || !draggedStudentNetid) return;
+  if (isOver) {
+    document.querySelectorAll('.is-drag-over').forEach(target => {
+      if (target !== el) target.classList.remove('is-drag-over');
+    });
+    el.classList.add('is-drag-over');
+    return;
+  }
+  el.classList.remove('is-drag-over');
+}
+
+function resolveDraggedStudent(event) {
+  if (draggedStudentNetid) return draggedStudentNetid;
+  if (event && event.dataTransfer) {
+    return event.dataTransfer.getData('text/plain') || '';
+  }
+  return '';
+}
+
+function dropStudentToGroup(event, gi) {
+  event.preventDefault();
+  setDragOverState(event.currentTarget, false);
+  const netid = resolveDraggedStudent(event);
+  if (!netid) {
+    endStudentDrag();
+    return;
+  }
+  if (draggedStudentSourceType === 'group' && draggedStudentSourceIndex === gi) {
+    endStudentDrag();
+    return;
+  }
+  moveStudentToGroup(netid, gi);
+  renderGroups();
+  endStudentDrag();
+}
+
+function dropStudentToUnassigned(event) {
+  event.preventDefault();
+  setDragOverState(event.currentTarget, false);
+  const netid = resolveDraggedStudent(event);
+  if (!netid) {
+    endStudentDrag();
+    return;
+  }
+  if (draggedStudentSourceType === 'unassigned') {
+    endStudentDrag();
+    return;
+  }
+  if (moveStudentToUnassigned(netid)) {
+    renderGroups();
+  }
+  endStudentDrag();
+}
+
+function assignStudentPrompt(netid) {
+  openAssignStudentModal(netid);
+}
+
+function addMemberPrompt(gi) {
+  openAddMemberModal(gi);
+}
+
+function removeMember(gi, m) {
+  groups[gi].members = groups[gi].members.filter(x => x !== m);
+  markGroupDirty(gi);
+  if (isGroupTestScenario && !unassignedStudents.includes(m)) {
+    unassignedStudents.push(m);
+  }
+  renderGroups();
+}
+
+function autoGroup() {
+  openAutoGroupModal();
+}
+
+function autoGroupUnassigned() {
+  openAutoGroupModalFor('unassigned');
+}
+
+function addGroup() {
+  openCreateGroupModal();
+}
 
 // ===== Bar chart (simple CSS) =====
 function renderBarChart() {
@@ -469,22 +2696,95 @@ function renderBarChart() {
   const max = Math.max(...buckets.map(b => b.count));
   document.getElementById('barChart').innerHTML = buckets.map(b => `
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-      <span style="width:60px;font-size:13px;color:var(--text-secondary);text-align:right;">${b.label}</span>
+      <span style="width:60px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);text-align:right;">${b.label}</span>
       <div style="height:24px;background:${b.color};border-radius:3px;width:${(b.count/max)*200}px;min-width:4px;"></div>
-      <span style="font-size:13px;font-weight:500;">${b.count}</span>
+      <span style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);font-weight:500;">${b.count}</span>
     </div>
   `).join('');
 }
 
 // ===== Tabs =====
+// ===== Unsaved-changes navigation guard =====
+let pendingNavAction = null;
+
+function hasPendingGroupChanges() {
+  return getDirtyGroupIndexes().length > 0;
+}
+
+function openUnsavedChangesModal(proceedFn) {
+  pendingNavAction = proceedFn;
+  const modal = document.getElementById('unsavedChangesModal');
+  if (!modal) { proceedFn(); return; }
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeUnsavedChangesModal() {
+  const modal = document.getElementById('unsavedChangesModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  pendingNavAction = null;
+}
+
+function discardAndProceed() {
+  const action = pendingNavAction;
+  closeUnsavedChangesModal();
+  if (action) action();
+}
+
+function saveAndProceed() {
+  const action = pendingNavAction;
+  saveAllGroupChanges();
+  closeUnsavedChangesModal();
+  if (action) action();
+}
+
+function guardedNav(url) {
+  if (hasPendingGroupChanges()) {
+    openUnsavedChangesModal(() => { window.location.href = url; });
+  } else {
+    window.location.href = url;
+  }
+}
+
 function switchTab(name, btn) {
+  if (hasPendingGroupChanges()) {
+    openUnsavedChangesModal(() => {
+      doSwitchTab(name, btn);
+    });
+    return;
+  }
+  doSwitchTab(name, btn);
+}
+
+function doSwitchTab(name, btn) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('panel-' + name).classList.add('active');
 }
 
+// Intercept all internal link clicks
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href === '#' || href.startsWith('javascript')) return;
+  if (!hasPendingGroupChanges()) return;
+  e.preventDefault();
+  openUnsavedChangesModal(() => { window.location.href = href; });
+});
+
+// Browser-level guard (refresh / close tab)
+window.addEventListener('beforeunload', function(e) {
+  if (!hasPendingGroupChanges()) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
+
 // Init
+configureScenario();
 renderGrades();
 renderGroups();
 renderBarChart();

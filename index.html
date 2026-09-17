@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CMSX – My Courses</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="sidebar.js"></script>
   <style>
     .page-hero {
       background: linear-gradient(135deg, #004d73 0%, var(--primary) 100%);
       padding: 40px 32px 32px;
       color: white;
     }
-    .page-hero h1 { font-family: 'DM Sans', sans-serif; font-size: 28px; font-weight: 600; margin-bottom: 6px; }
-    .page-hero p { font-size: 16px; opacity: 0.80; }
+    .page-hero h1 { font-family: 'DM Sans', sans-serif; font-size: var(--font-size-title); line-height: var(--line-height-title); font-weight: 600; margin-bottom: 6px; }
+    .page-hero p { font-size: var(--font-size-body); line-height: var(--line-height-body); opacity: 0.80; }
     .courses-section-label {
       padding: 24px 32px 0;
       font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      font-size: var(--font-size-caption); line-height: var(--line-height-caption); font-weight: 600; color: var(--text-secondary);
       letter-spacing: 1px; text-transform: uppercase;
     }
     .new-course-btn-wrap { padding: 24px 32px 0; }
@@ -26,37 +27,7 @@
 <div class="app-layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="index.html" class="sidebar-logo" title="All Courses">
-      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
-    </a>
-    <nav class="sidebar-nav">
-      <a href="index.html" class="sidebar-nav-item active">
-        <span class="material-icons">grid_view</span>
-        <span class="sidebar-label">My Courses</span>
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
-        <span class="material-icons">account_circle</span>
-      </a>
-      <div class="sidebar-user-expanded">
-        <div class="sidebar-user-row">
-          <div class="sidebar-user-info">
-            <span class="sidebar-user-name">May Wu</span>
-            <span class="sidebar-user-email">zw757@cornell.edu</span>
-          </div>
-          <a href="#" class="sidebar-logout-btn" title="Log out">
-            <span class="material-icons">exit_to_app</span>
-          </a>
-        </div>
-        <a href="personal-settings.html" class="sidebar-personal-settings-link">
-          <span class="material-icons">manage_accounts</span>
-          <span>Personal Settings</span>
-        </a>
-      </div>
-    </div>
-  </aside>
+  <cmsx-sidebar></cmsx-sidebar>
 
   <main class="main-content">
 

@@ -5,9 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CS4998 – Students</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="sidebar.js"></script>
   <style>
-    /* Panel section spacing */
-    .panel-section + .panel-section { border-top: 1px solid var(--divider); padding-top: 28px; margin-top: 0; }
+    /* Compact filter rail with headers that stay visible inside its scroll area. */
+    .students-page .left-panel { gap: 0; }
+    .students-page .panel-section {
+      --stacked-section-top: 0px;
+      padding-bottom: 14px;
+    }
+    .students-page .panel-section + .panel-section {
+      border-top: 1px solid var(--divider);
+      margin-top: 0;
+      padding-top: 14px;
+    }
+    .students-page .panel-section-header {
+      position: sticky;
+      top: var(--stacked-section-top);
+      z-index: 6;
+      min-height: 44px;
+      margin: -6px -4px 0;
+      padding: 6px 4px;
+      background: var(--bg-page);
+    }
+    .students-page .panel-section.is-collapsed {
+      position: sticky;
+      top: var(--stacked-section-top);
+      z-index: 7;
+      flex: 0 0 auto;
+      padding-bottom: 0;
+      background: var(--bg-page);
+    }
+    .students-page .panel-section + .panel-section.is-collapsed { padding-top: 0; }
+    .students-page .panel-section.is-collapsed .panel-section-header {
+      position: static;
+      margin: 0 -4px;
+      box-shadow: 0 1px 0 var(--divider);
+    }
 
     /* netid-chip row */
     .drop-row { display: flex; gap: 16px; align-items: flex-end; }
@@ -21,7 +54,71 @@
     .dot-red { background: var(--error); }
     .dot-gray { background: #9e9e9e; }
 
-    /* Table wrapper with max height for scroll */
+    /* Keep the desktop workspace pinned to the viewport. The filter rail and
+       table own their scrolling instead of moving the entire page. */
+    @media (min-width: 901px) {
+      .students-page { height: 100vh; overflow: hidden; }
+      .students-page .app-layout {
+        height: 100vh;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .students-page .main-content {
+        height: 100vh;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .students-page .content-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .students-page .page-header { flex: 0 0 auto; }
+      .students-page .course-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        align-items: stretch;
+        overflow: hidden;
+      }
+      .students-page .left-panel {
+        height: 100%;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+        padding-right: 14px;
+        padding-bottom: 16px;
+      }
+      .students-page .right-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .students-page .table-container {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .students-page .table-scroll-wrapper {
+        height: 100%;
+        max-height: none;
+        overflow: auto;
+        overscroll-behavior: contain;
+      }
+    }
+
+    .students-page .left-panel { scrollbar-width: thin; scrollbar-color: #b1b6c2 transparent; }
+    .students-page .left-panel::-webkit-scrollbar { width: 8px; }
+    .students-page .left-panel::-webkit-scrollbar-track { background: transparent; }
+    .students-page .left-panel::-webkit-scrollbar-thumb {
+      background: #b1b6c2;
+      border: 2px solid transparent;
+      border-radius: 999px;
+      background-clip: padding-box;
+    }
+
+    /* Mobile keeps the established stacked layout and a bounded table. */
     .table-scroll-wrapper { max-height: 580px; overflow-y: auto; overflow-x: auto; }
 
     /* Compact column widths — table scrolls horizontally if content exceeds container */
@@ -43,66 +140,17 @@
     }
     .upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
     .upload-area .material-icons { font-size: 36px; color: var(--text-secondary); display: block; margin-bottom: 8px; }
-    .upload-area p { font-size: 16px; color: var(--text-secondary); }
+    .upload-area p { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--text-secondary); }
 
     /* Slider */
     #gradeSlider { margin: 8px 0 0; }
   </style>
 </head>
-<body>
+<body class="students-page">
 <div class="app-layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="index.html" class="sidebar-logo" title="All Courses">
-      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
-    </a>
-    <nav class="sidebar-nav">
-      <a href="course-home.html" class="sidebar-nav-item ">
-        <span class="material-icons">home</span>
-        <span class="sidebar-label">Home</span>
-      </a>
-      <a href="students.html" class="sidebar-nav-item active">
-        <span class="nav-icon-wrap">
-          <span class="material-icons">school</span>
-          <span class="sidebar-badge">1</span>
-        </span>
-        <span class="sidebar-label">Students</span>
-      </a>
-      <a href="assignments.html" class="sidebar-nav-item ">
-        <span class="material-icons">article</span>
-        <span class="sidebar-label">Assignments</span>
-      </a>
-      <a href="search-logs.html" class="sidebar-nav-item ">
-        <span class="material-icons">manage_search</span>
-        <span class="sidebar-label">Search Logs</span>
-      </a>
-      <a href="course-settings.html" class="sidebar-nav-item ">
-        <span class="material-icons">settings</span>
-        <span class="sidebar-label">Course Settings</span>
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
-        <span class="material-icons">account_circle</span>
-      </a>
-      <div class="sidebar-user-expanded">
-        <div class="sidebar-user-row">
-          <div class="sidebar-user-info">
-            <span class="sidebar-user-name">May Wu</span>
-            <span class="sidebar-user-email">zw757@cornell.edu</span>
-          </div>
-          <a href="#" class="sidebar-logout-btn" title="Log out">
-            <span class="material-icons">exit_to_app</span>
-          </a>
-        </div>
-        <a href="personal-settings.html" class="sidebar-personal-settings-link">
-          <span class="material-icons">manage_accounts</span>
-          <span>Personal Settings</span>
-        </a>
-      </div>
-    </div>
-  </aside>
+  <cmsx-sidebar></cmsx-sidebar>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -160,7 +208,7 @@
               <button class="btn btn-primary w-full" onclick="handleDropSelected()">
                 Drop Selected Students
               </button>
-              <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);cursor:pointer;">
+              <label style="display:flex;align-items:center;gap:8px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-primary);cursor:pointer;">
                 <input type="checkbox" class="cb" id="notifyEmail1" checked />
                 Notify student by Email
               </label>
@@ -195,7 +243,7 @@
               <div class="text-field">
                 <label>Missing assignments</label>
                 <div style="position:relative;">
-                  <label style="font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-secondary);display:block;margin-bottom:2px;">Numbers</label>
+                  <label style="font-family:'DM Sans',sans-serif;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);display:block;margin-bottom:2px;">Numbers</label>
                   <input type="number" min="0" value="3" placeholder="0" />
                 </div>
               </div>
@@ -204,8 +252,8 @@
               <div class="text-field">
                 <label>Final grade below</label>
                 <div>
-                  <label style="font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-secondary);display:block;margin-bottom:2px;">Grade</label>
-                  <select style="width:100%;border:none;border-bottom:1px solid rgba(0,0,0,0.42);padding:4px 0;font-size:16px;background:transparent;outline:none;cursor:pointer;">
+                  <label style="font-family:'DM Sans',sans-serif;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);display:block;margin-bottom:2px;">Grade</label>
+                  <select style="width:100%;border:none;border-bottom:1px solid rgba(0,0,0,0.42);padding:4px 0;font-size: var(--font-size-ui); line-height: var(--line-height-ui);background:transparent;outline:none;cursor:pointer;">
                     <option>A+</option><option>A</option><option>A-</option>
                     <option>B+</option><option>B</option><option>B-</option>
                     <option selected>C-</option><option>C</option><option>C+</option>
@@ -238,13 +286,13 @@
               <!-- Drop by NetID -->
               <div class="drop-row">
                 <div class="text-field">
-                  <label style="font-size:16px;color:var(--text-secondary);">Enter NetID</label>
+                  <label style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Enter NetID</label>
                   <input type="text" id="dropNetid" placeholder="e.g. zw757" />
                 </div>
                 <button class="chip chip-filled" onclick="confirmDrop()">Confirm</button>
               </div>
 
-              <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);cursor:pointer;">
+              <label style="display:flex;align-items:center;gap:8px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-primary);cursor:pointer;">
                 <input type="checkbox" class="cb" id="notifyEmail2" checked />
                 Notify student by Email
               </label>
@@ -264,7 +312,7 @@
               </div>
             </div>
             <div class="panel-section-body" id="grades-section">
-              <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
+              <p style="font-size: var(--font-size-ui);color:var(--text-secondary);line-height: var(--line-height-ui);">
                 Final grades are computed from assignment scores. Review and confirm before releasing to students.
               </p>
               <div style="display:flex;flex-direction:column;gap:8px;">
@@ -310,7 +358,7 @@
               <span class="material-icons">person_add</span>
               Add/Drop
             </button>
-            <span style="font-size:13px;color:var(--text-secondary);margin-left:4px;">Last synced: Today at 8:00 AM</span>
+            <span style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);margin-left:4px;">Last synced: Today at 8:00 AM</span>
           </div>
 
           <!-- Students Table -->
@@ -483,11 +531,28 @@ function updateSlider(slider) {
 }
 
 // Panel toggle
+function updateStickySectionOffsets() {
+  let stackedTop = 0;
+  document.querySelectorAll('.students-page .left-panel > .panel-section').forEach(section => {
+    const body = section.querySelector('.panel-section-body');
+    const header = section.querySelector('.panel-section-header');
+    const collapsed = body.classList.contains('collapsed');
+
+    section.classList.toggle('is-collapsed', collapsed);
+    section.style.setProperty('--stacked-section-top', `${stackedTop}px`);
+
+    if (collapsed) {
+      stackedTop += Math.ceil(header.getBoundingClientRect().height) + 1;
+    }
+  });
+}
+
 function toggleSection(bodyId, toggleId) {
   const body = document.getElementById(bodyId);
   const toggle = document.getElementById(toggleId);
   const collapsed = body.classList.toggle('collapsed');
   toggle.classList.toggle('expanded', !collapsed);
+  updateStickySectionOffsets();
 }
 
 function applyFilter() {
@@ -524,6 +589,8 @@ function confirmRelease() { if (confirm('Release final grades to all students? T
 
 // Init
 renderTable(students);
+updateStickySectionOffsets();
+window.addEventListener('resize', updateStickySectionOffsets);
 </script>
 </body>
 </html>

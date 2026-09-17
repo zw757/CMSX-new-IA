@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Edit Announcement</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="announcements.css" />
+  <script type="module" src="sidebar.js"></script>
+</head>
+<body class="announcement-edit-page" data-announcement-view="edit">
+  <div class="app-layout">
+    <cmsx-sidebar></cmsx-sidebar>
+
+    <main class="main-content">
+      <div class="content-wrapper announcement-edit-shell" data-node-id="679:5420">
+        <header class="page-header announcement-page-header">
+          <div class="page-title-group">
+            <h1 class="page-title">CS4998 Intro to CMSX</h1>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+              <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
+              <a class="breadcrumb-link" href="course-home.html">Home</a>
+              <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
+              <a class="breadcrumb-link" href="announcements.html">Announcements</a>
+            </nav>
+          </div>
+        </header>
+
+        <section class="announcement-editor-section" aria-labelledby="editorHeading">
+          <h2 id="editorHeading">Edit Announcement</h2>
+
+          <div class="announcement-edit-grid">
+            <form class="announcement-form" id="announcementForm">
+              <div class="announcement-field-row">
+                <label for="announcementTitle">Title</label>
+                <input id="announcementTitle" name="title" type="text" value="Announcement Title" autocomplete="off" required />
+              </div>
+
+              <div class="announcement-field-row announcement-category-row">
+                <span class="field-label">Category</span>
+                <div class="editor-category-chips" id="editorCategoryChips"></div>
+              </div>
+
+              <div class="rich-editor-frame">
+                <div class="rich-editor-toolbar" role="toolbar" aria-label="Announcement formatting">
+                  <div class="toolbar-group">
+                    <button type="button" class="toolbar-button" data-command="undo" aria-label="Undo"><span class="material-icons">undo</span></button>
+                    <button type="button" class="toolbar-button" data-command="redo" aria-label="Redo"><span class="material-icons">redo</span></button>
+                  </div>
+                  <span class="toolbar-divider" aria-hidden="true"></span>
+                  <label class="toolbar-size-control" aria-label="Text size">
+                    <span class="material-icons">format_size</span>
+                    <select id="editorTextSize">
+                      <option value="2">Small</option>
+                      <option value="3" selected>Medium</option>
+                      <option value="5">Large</option>
+                    </select>
+                  </label>
+                  <span class="toolbar-divider" aria-hidden="true"></span>
+                  <div class="toolbar-group">
+                    <button type="button" class="toolbar-button" data-command="bold" aria-label="Bold"><span class="material-icons">format_bold</span></button>
+                    <button type="button" class="toolbar-button" data-command="italic" aria-label="Italic"><span class="material-icons">format_italic</span></button>
+                    <button type="button" class="toolbar-button" data-command="underline" aria-label="Underline"><span class="material-icons">format_underlined</span></button>
+                  </div>
+                  <span class="toolbar-divider" aria-hidden="true"></span>
+                  <div class="toolbar-group">
+                    <button type="button" class="toolbar-button" id="attachFileButton" aria-label="Attach file"><span class="material-icons">attach_file</span></button>
+                    <button type="button" class="toolbar-button" id="insertLinkButton" aria-label="Insert link"><span class="material-icons">link</span></button>
+                    <button type="button" class="toolbar-button" id="insertImageButton" aria-label="Insert image"><span class="material-icons">image</span></button>
+                  </div>
+                  <span class="toolbar-divider" aria-hidden="true"></span>
+                  <div class="toolbar-group">
+                    <button type="button" class="toolbar-button" id="insertTableButton" aria-label="Insert table"><span class="material-icons">table_chart</span></button>
+                    <button type="button" class="toolbar-button" data-command="insertUnorderedList" aria-label="Bulleted list"><span class="material-icons">format_list_bulleted</span></button>
+                    <button type="button" class="toolbar-button" data-command="formatBlock" data-value="pre" aria-label="Code block"><span class="material-icons">code</span></button>
+                    <button type="button" class="toolbar-button" id="insertFormulaButton" aria-label="Insert formula"><span class="material-icons">functions</span></button>
+                  </div>
+                </div>
+                <div class="rich-editor" id="announcementBody" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Announcement body"></div>
+              </div>
+
+              <div class="announcement-form-footer">
+                <label class="notify-checkbox">
+                  <input class="cb" id="notifyByEmail" type="checkbox" checked />
+                  <span>Notify by Email</span>
+                </label>
+                <div class="announcement-form-actions">
+                  <a class="editor-cancel-button" href="announcements.html">Cancel</a>
+                  <button class="btn btn-primary editor-post-button" type="submit">Post</button>
+                </div>
+              </div>
+              <input id="announcementAttachment" type="file" hidden />
+            </form>
+
+            <aside class="announcement-thread" aria-label="Announcement thread">
+              <div class="thread-actions" role="toolbar" aria-label="Announcement actions">
+                <button type="button" class="thread-action thread-action-primary" id="addThreadButton"><span class="material-icons">add_comment</span> Add Thread</button>
+                <span class="thread-action-divider" aria-hidden="true"></span>
+                <button type="button" class="thread-action" id="versionHistoryButton"><span class="material-icons">history</span> Version History</button>
+                <span class="thread-action-divider" aria-hidden="true"></span>
+                <button type="button" class="thread-action" id="deleteAnnouncementButton"><span class="material-icons">delete_outline</span> Delete</button>
+              </div>
+
+              <div class="version-history-panel" id="versionHistoryPanel" hidden>
+                <strong>Version history</strong>
+                <span>Current version · 2 hrs ago</span>
+                <span>Created · Oct 24, 12:00 AM</span>
+              </div>
+
+              <div class="thread-messages" id="threadMessages"></div>
+
+              <div class="thread-reply-composer">
+                <textarea id="threadReply" rows="4" placeholder="Reply to announcement"></textarea>
+                <div class="thread-reply-toolbar">
+                  <div class="thread-format-buttons" role="toolbar" aria-label="Reply formatting">
+                    <select id="replyTextSize" aria-label="Reply text size">
+                      <option value="2">Small</option>
+                      <option value="3" selected>Medium</option>
+                      <option value="5">Large</option>
+                    </select>
+                    <button type="button" data-reply-command="bold" aria-label="Bold"><span class="material-icons">format_bold</span></button>
+                    <button type="button" data-reply-command="italic" aria-label="Italic"><span class="material-icons">format_italic</span></button>
+                    <button type="button" data-reply-command="underline" aria-label="Underline"><span class="material-icons">format_underlined</span></button>
+                    <button type="button" aria-label="More formatting"><span class="material-icons">more_horiz</span></button>
+                  </div>
+                  <button class="thread-send-button" id="threadSendButton" type="button" aria-label="Send reply"><span class="material-icons">send</span></button>
+                </div>
+                <label class="notify-checkbox thread-notify">
+                  <input class="cb" id="notifyThreadByEmail" type="checkbox" />
+                  <span>Notify by Email</span>
+                </label>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="announcement-toast" id="announcementToast" role="status" aria-live="polite"></div>
+  <script type="module" src="announcements.js"></script>
+</body>
+</html>

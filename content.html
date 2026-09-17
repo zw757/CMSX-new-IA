@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS4998 – Content</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="content.css" />
+  <script type="module" src="sidebar.js"></script>
+  <script type="module" src="content.js"></script>
+</head>
+<body class="content-page">
+  <div class="app-layout">
+    <cmsx-sidebar></cmsx-sidebar>
+
+    <main class="main-content">
+      <div class="content-wrapper content-shell">
+        <header class="page-header content-header">
+          <div class="page-title-group">
+            <h1 class="page-title">CS4998 Intro to CMSX</h1>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+              <span class="breadcrumb-sep"><span class="material-icons" aria-hidden="true">chevron_right</span></span>
+              <a class="breadcrumb-link" href="course-home.html">Home</a>
+              <span class="breadcrumb-sep"><span class="material-icons" aria-hidden="true">chevron_right</span></span>
+              <span class="breadcrumb-link" aria-current="page">Content</span>
+            </nav>
+          </div>
+        </header>
+
+        <div class="content-workspace">
+          <aside class="content-categories" aria-label="Content categories">
+            <section class="category-section">
+              <button class="category-heading" type="button" data-section-toggle aria-expanded="true">
+                <span>Active Content</span>
+                <span class="material-icons" aria-hidden="true">expand_less</span>
+              </button>
+              <div class="category-list">
+                <div class="category-row is-current">
+                  <button class="category-name" type="button" data-category="Lecture Slides">Lecture Slides</button>
+                  <button class="context-trigger" type="button" data-menu-trigger="activeCategoryMenu" aria-label="Lecture Slides actions" aria-haspopup="menu" aria-expanded="true">
+                    <span class="material-icons" aria-hidden="true">more_vert</span>
+                  </button>
+                  <div class="context-menu category-menu is-open" id="activeCategoryMenu" role="menu">
+                    <button type="button" role="menuitem">Rename</button>
+                    <button type="button" role="menuitem">Archive</button>
+                    <button type="button" role="menuitem">Delete</button>
+                  </div>
+                </div>
+                <div class="category-row"><button class="category-name" type="button" data-category="Readings">Readings</button></div>
+                <div class="category-row"><button class="category-name" type="button" data-category="Problem Sets">Problem Sets</button></div>
+                <div class="category-row"><button class="category-name" type="button" data-category="Exam Materials">Exam Materials</button></div>
+                <button class="btn btn-primary add-category-button" type="button">Add Category</button>
+              </div>
+            </section>
+
+            <section class="category-section">
+              <button class="category-heading" type="button" data-section-toggle aria-expanded="true">
+                <span>Archived Content</span>
+                <span class="material-icons" aria-hidden="true">expand_less</span>
+              </button>
+              <div class="category-list">
+                <div class="category-row"><button class="category-name" type="button" data-category="Draft Syllabus">Draft Syllabus</button></div>
+                <div class="category-row">
+                  <button class="category-name" type="button" data-category="2023 Practice Exams">2023 Practice Exams</button>
+                  <button class="context-trigger" type="button" data-menu-trigger="archivedCategoryMenu" aria-label="2023 Practice Exams actions" aria-haspopup="menu" aria-expanded="true">
+                    <span class="material-icons" aria-hidden="true">more_vert</span>
+                  </button>
+                  <div class="context-menu category-menu is-open" id="archivedCategoryMenu" role="menu">
+                    <button type="button" role="menuitem">Rename</button>
+                    <button type="button" role="menuitem">Restore</button>
+                    <button type="button" role="menuitem">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="category-section admin-section">
+              <button class="category-heading" type="button" data-section-toggle aria-expanded="true">
+                <span>Admin Tools</span>
+                <span class="material-icons" aria-hidden="true">expand_less</span>
+              </button>
+              <div class="category-list">
+                <a class="admin-link" href="#templates">Manage Templates</a>
+                <a class="admin-link" href="#import">Import Content</a>
+                <a class="admin-link" href="#export">Export Data</a>
+              </div>
+            </section>
+          </aside>
+
+          <section class="content-listing" aria-labelledby="contentListTitle">
+            <header class="content-listing-header">
+              <h2 id="contentListTitle">Lecture Slides</h2>
+              <div class="content-listing-meta">
+                <span class="content-status">Active</span>
+                <span><strong id="contentCount">9</strong> items</span>
+                <span>Updated: November 10, 2025</span>
+              </div>
+            </header>
+
+            <div class="content-table-card">
+              <table class="content-table">
+                <colgroup>
+                  <col class="check-column" />
+                  <col class="order-column" />
+                  <col />
+                  <col class="actions-column" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col"><span class="sr-only">Select</span></th>
+                    <th scope="col">Order</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="contentRows"></tbody>
+              </table>
+            </div>
+            <p class="sr-only" id="contentActionStatus" aria-live="polite"></p>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
