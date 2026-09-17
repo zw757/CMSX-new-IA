@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CMSX – Grade Example Assignment 1A</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="sidebar.js"></script>
+  <link rel="stylesheet" href="assignment-grading.css" />
+</head>
+<body class="grading-page">
+  <a class="grading-skip-link" href="#gradingWorkspace">Skip to grading workspace</a>
+
+  <cmsx-sidebar></cmsx-sidebar>
+
+  <main class="grading-main">
+    <header class="grading-header">
+      <div class="grading-heading-wrap">
+        <a class="grading-back" href="assignment-detail.html" aria-label="Back to assignment">
+          <span class="material-icons" aria-hidden="true">chevron_left</span>
+        </a>
+        <div>
+          <h1>Grading Example Assignment 1A</h1>
+          <nav class="grading-breadcrumbs" aria-label="Breadcrumb">
+            <a href="assignments.html">CS4998 Intro to CMSX</a>
+            <span class="material-icons" aria-hidden="true">chevron_right</span>
+            <a href="course-home.html">Home</a>
+            <span class="material-icons" aria-hidden="true">chevron_right</span>
+            <a href="students.html">Students</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="grading-summary" aria-label="Assignment summary">
+        <div class="grading-summary-item">
+          <span class="material-icons" aria-hidden="true">bar_chart</span>
+          <span class="grading-summary-copy">
+            <strong>82%</strong>
+            <span>Average Grade</span>
+          </span>
+        </div>
+        <span class="grading-summary-divider" aria-hidden="true"></span>
+        <div class="grading-summary-item">
+          <span class="material-icons" aria-hidden="true">school</span>
+          <span class="grading-summary-copy">
+            <strong>160</strong>
+            <span>Number of Students</span>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grading-workspace" id="gradingWorkspace">
+      <section class="submission-viewer" aria-labelledby="submissionViewerTitle">
+        <h2 class="sr-only" id="submissionViewerTitle">Student submission preview</h2>
+
+        <div class="submission-file-picker">
+          <button class="submission-file-trigger" id="fileTrigger" type="button" aria-haspopup="listbox" aria-expanded="true">
+            <span class="material-icons" aria-hidden="true">article</span>
+            <span id="selectedFileName">Submission_file_1</span>
+            <span class="material-icons submission-file-chevron" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="submission-file-menu open" id="fileMenu" role="listbox" aria-label="Submission files">
+            <button class="submission-file-option active" type="button" role="option" aria-selected="true" data-file="Submission_file_1" data-icon="article">
+              <span class="material-icons" aria-hidden="true">article</span>
+              <span>Submission_file_1</span>
+            </button>
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_2" data-icon="title">
+              <span class="material-icons" aria-hidden="true">title</span>
+              <span>Submission_file_2</span>
+            </button>
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_3" data-icon="code">
+              <span class="material-icons" aria-hidden="true">code</span>
+              <span>Submission_file_3</span>
+            </button>
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_4" data-icon="image">
+              <span class="material-icons" aria-hidden="true">image</span>
+              <span>Submission_file_4</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="submission-scroll" id="submissionScroll">
+          <article class="submission-paper" id="submissionPaper" aria-label="Preview of Submission file 1">
+            <div class="submission-paper-content">
+              <p class="paper-kicker">CS4998 · Example Assignment 1A</p>
+              <h3>Summary</h3>
+              <p>This submission describes a clear approach to the assignment, documents the implementation choices, and evaluates the final result against the stated requirements. The solution is organized into focused sections so each decision can be reviewed independently.</p>
+              <p>The student identifies the main constraints, explains the tradeoffs made during implementation, and connects the final output back to the goals of the assignment.</p>
+
+              <h3>Requirements</h3>
+              <ul>
+                <li>Meet each of the core functional requirements in the assignment specification.</li>
+                <li>Document the workflow and describe the decisions that affected the final result.</li>
+                <li>Present the work clearly with supporting examples and references.</li>
+              </ul>
+
+              <h3>Project</h3>
+              <p>The implementation uses a structured workflow with reusable pieces and explicit states. Each section is designed to be reviewed on its own while remaining connected to the overall project.</p>
+              <p>Testing focused on the primary tasks, edge cases, and the clarity of the resulting experience. The student also describes possible improvements for a future iteration.</p>
+              <p>Supporting files and source excerpts are included in the remaining pages of this submission.</p>
+
+              <h3>Reflection</h3>
+              <p>The final result meets the intended learning goals and demonstrates a thoughtful understanding of the material covered in the assignment.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="submission-zoom" aria-label="Submission zoom controls">
+          <button type="button" id="zoomIn" aria-label="Zoom in">
+            <span class="material-icons" aria-hidden="true">add</span>
+          </button>
+          <button type="button" id="zoomOut" aria-label="Zoom out">
+            <span class="material-icons" aria-hidden="true">remove</span>
+          </button>
+        </div>
+        <div class="submission-pagination" aria-label="Submission page">Page <strong id="currentPage">1</strong> / Page 5</div>
+      </section>
+
+      <section class="rubric-panel" aria-labelledby="studentName">
+        <div class="rubric-panel-head">
+          <div>
+            <h2 id="studentName">May Wu (zw757)</h2>
+            <p id="submissionProgress">Grading student submission (1/12)</p>
+          </div>
+          <div class="rubric-head-actions">
+            <button class="rubric-close" type="button" aria-label="Close grading workspace" onclick="window.location.href='assignment-detail.html'">
+              <span class="material-icons" aria-hidden="true">close</span>
+            </button>
+            <span class="grading-status"><span aria-hidden="true"></span>In Progress</span>
+          </div>
+        </div>
+
+        <div class="rubric-scroll" id="rubricScroll">
+          <h3 class="rubric-title">Rubric Items</h3>
+
+          <div class="rubric-group expanded" data-question="1">
+            <button class="rubric-group-head" type="button" aria-expanded="true">
+              <span><strong>Question 1</strong><span>Question name</span></span>
+              <span class="rubric-points"><span id="questionOneScore">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_less</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="1" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Correct</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="1" data-penalty="3" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 3 pts Error type 1</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="1" data-penalty="4" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 4 pts Error type 2</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="rubric-group" data-question="2">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 1</strong><span>Question name</span></span>
+              <span class="rubric-points">8/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <p class="rubric-note">Full credit awarded. The response satisfies the rubric criteria.</p>
+            </div>
+          </div>
+
+          <div class="rubric-group" data-question="3">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 1</strong><span>Question name</span></span>
+              <span class="rubric-points">6/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <p class="rubric-note">Two points deducted for an incomplete explanation.</p>
+            </div>
+          </div>
+
+          <div class="rubric-group" data-question="4">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 1</strong><span>Question name</span></span>
+              <span class="rubric-points">8/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <p class="rubric-note">Full credit awarded. The response satisfies the rubric criteria.</p>
+            </div>
+          </div>
+
+          <section class="score-section" aria-labelledby="bonusHeading">
+            <div class="score-section-head">
+              <h3 id="bonusHeading">Bonus Points</h3>
+              <span class="material-icons" aria-hidden="true">expand_less</span>
+            </div>
+            <label for="bonusScore" class="sr-only">Bonus points</label>
+            <input class="rubric-number-input" id="bonusScore" type="number" inputmode="decimal" placeholder="Enter score" />
+          </section>
+
+          <section class="score-section" aria-labelledby="adjustmentHeading">
+            <div class="score-section-head">
+              <h3 id="adjustmentHeading">Adjustment Options</h3>
+              <span class="material-icons" aria-hidden="true">expand_less</span>
+            </div>
+            <p>Applies to entire group: Examples: +5, −10%, −15<br />Note: % adjustments are based on the student’s grade, not the max score</p>
+            <label for="adjustmentScore" class="sr-only">Grade adjustment</label>
+            <input class="rubric-number-input" id="adjustmentScore" type="text" inputmode="decimal" placeholder="Enter score" />
+          </section>
+
+          <section class="grading-log" aria-labelledby="logHeading">
+            <div class="grading-log-head">
+              <h3 id="logHeading">Logs</h3>
+              <span id="logCount">2 entries</span>
+              <span class="material-icons" aria-hidden="true">expand_less</span>
+            </div>
+            <div class="grading-log-table" role="table" aria-label="Grading history">
+              <div class="grading-log-row header" role="row">
+                <span role="columnheader">Time</span>
+                <span role="columnheader">Grader</span>
+                <span role="columnheader">Activity</span>
+              </div>
+              <div id="logRows">
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 22, 2026</span>
+                  <span role="cell">acm22</span>
+                  <span role="cell">Staff member acm22 was assigned group ac263</span>
+                </div>
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 20, 2026</span>
+                  <span role="cell">acm22</span>
+                  <span role="cell">Opened submission for grading</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <footer class="grading-footer">
+          <div class="grading-total-row">
+            <strong>Total Score</strong>
+            <span class="grading-total-value"><span class="material-icons" aria-hidden="true">edit</span><span id="totalScore">30</span>/32 pts</span>
+          </div>
+          <div class="grading-footer-actions">
+            <button class="grading-button secondary" id="downloadSubmission" type="button">Download Submission</button>
+            <button class="grading-button primary" id="updateGrade" type="button">Update Grade</button>
+            <button class="grading-button secondary" id="nextSubmission" type="button">Next Submission</button>
+          </div>
+        </footer>
+      </section>
+    </div>
+  </main>
+
+  <div class="grading-toast" id="gradingToast" role="status" aria-live="polite"></div>
+  <script type="module" src="assignment-grading.js"></script>
+</body>
+</html>
