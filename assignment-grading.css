@@ -8,7 +8,8 @@
 }
 
 .grading-page button,
-.grading-page input {
+.grading-page input,
+.grading-page textarea {
   font-family: inherit;
 }
 
@@ -608,6 +609,227 @@
 .grading-log-row.header {
   color: #256385;
   font-size: var(--font-size-ui); line-height: var(--line-height-ui);
+}
+
+/* Student-facing grading comments */
+.grading-comments {
+  margin-top: 14px;
+  padding-top: 8px;
+  border-top: 1px solid var(--divider);
+}
+
+.grading-comments-toggle {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.88);
+  text-align: left;
+}
+
+.grading-comments-toggle:hover .grading-comments-title > span:nth-child(2),
+.grading-comments-toggle:focus-visible .grading-comments-title > span:nth-child(2) {
+  color: var(--primary);
+}
+
+.grading-comments-toggle:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid rgba(0, 102, 153, 0.24);
+  outline-offset: 2px;
+}
+
+.grading-comments-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grading-comments-title > .material-icons {
+  color: #256385;
+  font-size: 19px;
+}
+
+.grading-comments-title > span:nth-child(2) {
+  font-size: var(--font-size-section);
+  font-weight: 600;
+  line-height: var(--line-height-section);
+  transition: color 120ms ease;
+}
+
+.grading-comments-count {
+  color: #256385;
+  font-size: var(--font-size-caption);
+  font-weight: 400;
+  line-height: var(--line-height-caption);
+}
+
+.grading-comments-chevron {
+  flex: 0 0 auto;
+  color: rgba(0, 0, 0, 0.82);
+  font-size: 18px;
+}
+
+.grading-comments-body { padding: 6px 0 4px; }
+.grading-comments-body[hidden] { display: none; }
+
+.grading-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.grading-comment {
+  padding: 11px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.11);
+  border-radius: 4px;
+  background: #f7f9fa;
+}
+
+.grading-comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+}
+
+.grading-comment-author {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.grading-comment-time { margin-right: auto; }
+
+.grading-comment-delete {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: -5px -5px -5px 0;
+  border-radius: 50%;
+  color: var(--text-secondary);
+}
+
+.grading-comment-delete:hover,
+.grading-comment-delete:focus-visible {
+  background: rgba(179, 27, 27, 0.08);
+  color: #9b1717;
+  outline: none;
+}
+
+.grading-comment-delete .material-icons { font-size: 17px; }
+
+.grading-comment p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.78);
+  font-size: var(--font-size-ui);
+  line-height: var(--line-height-ui);
+  white-space: pre-wrap;
+}
+
+.grading-comments-empty {
+  margin: 0;
+  padding: 6px 0 2px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-ui);
+  line-height: var(--line-height-ui);
+}
+
+.grading-comment-composer {
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.grading-comment-composer > label {
+  display: block;
+  margin-bottom: 7px;
+  color: rgba(0, 0, 0, 0.82);
+  font-size: var(--font-size-ui);
+  font-weight: 500;
+  line-height: var(--line-height-ui);
+}
+
+.grading-comment-composer textarea {
+  width: 100%;
+  min-height: 88px;
+  display: block;
+  resize: vertical;
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--text-primary);
+  font-size: var(--font-size-ui);
+  line-height: var(--line-height-ui);
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.grading-comment-composer textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 102, 153, 0.09);
+}
+
+.grading-comment-composer textarea::placeholder { color: rgba(0, 0, 0, 0.45); }
+
+.grading-comment-guidance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+}
+
+.grading-comment-guidance > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.grading-comment-guidance .material-icons { color: #256385; font-size: 15px; }
+
+.grading-comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.grading-comment-submit {
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid var(--primary);
+  border-radius: 3px;
+  background: var(--primary);
+  color: #fff;
+  font-size: var(--font-size-ui);
+  font-weight: 500;
+  line-height: var(--line-height-ui);
+}
+
+.grading-comment-submit:hover,
+.grading-comment-submit:focus-visible {
+  border-color: var(--primary-dark);
+  background: var(--primary-dark);
+  outline: none;
+}
+
+.grading-comment-submit:disabled {
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.38);
+  cursor: not-allowed;
 }
 
 .grading-footer {

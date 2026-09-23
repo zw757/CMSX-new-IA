@@ -1,4 +1,20 @@
 (() => {
+  const cmsxLogoUrl = new URL('./cmsx-logo.svg', import.meta.url).href;
+
+  const installFavicon = () => {
+    let favicon = document.querySelector('link[rel~="icon"]');
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.append(favicon);
+    }
+    favicon.type = 'image/svg+xml';
+    favicon.sizes = 'any';
+    favicon.href = cmsxLogoUrl;
+  };
+
+  installFavicon();
+
   const pageName = () => {
     const filename = window.location.pathname.split('/').pop() || 'index.html';
     const activePages = {
@@ -41,7 +57,6 @@
       const courseLinks = [
         { href: 'course-home.html', icon: 'home', label: 'Home', key: 'home' },
         { href: 'students.html', icon: 'school', label: 'Students', key: 'students' },
-        { href: 'content.html', icon: 'group', label: 'Content', key: 'content' },
         { href: 'assignments.html', icon: 'article', label: 'Assignments', key: 'assignments' },
         { href: 'search-logs.html', icon: 'manage_search', label: 'Search Logs', key: 'search' },
         { href: 'course-settings.html', icon: 'settings', label: 'Course Settings', key: 'settings' },
@@ -53,7 +68,7 @@
       this.innerHTML = `
         <aside class="sidebar" aria-label="Primary navigation">
           <a href="index.html" class="sidebar-logo" title="All Courses" aria-label="All Courses">
-            <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
+            <img src="${cmsxLogoUrl}" alt="CMSX" class="sidebar-logo-img" width="60" height="44" />
           </a>
           <nav class="sidebar-nav" aria-label="Course navigation">
             ${links.map((link) => navLink(link, active)).join('')}

@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script type="module" src="sidebar.js"></script>
+  <script type="module" src="designer-tag.js"></script>
   <style>
     .creation-page {
       background: #fff;
@@ -239,8 +240,10 @@
       flex-direction: column;
       gap: 20px;
       align-items: flex-end;
+      align-self: start;
     }
     .basic-information > .section-heading { align-self: stretch; }
+    .section-heading:focus { outline: none; }
     .field-row {
       align-self: stretch;
       display: grid;
@@ -403,12 +406,291 @@
     }
     .form-message.visible { opacity: 1; transform: translateY(0); }
 
+    .creation-step { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+    .creation-step[hidden] { display: none; }
+    .creation-step > .next-button { align-self: flex-end; }
+    .step-link {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 27px minmax(0, 1fr);
+      gap: 12px;
+      width: 100%;
+      border: 0;
+      background: none;
+      text-align: left;
+      font: inherit;
+      padding: 0;
+    }
+    button.step-link:hover .step-label { color: var(--primary); }
+    .step-link .step-description { white-space: normal; }
+    .creation-page button:focus-visible, .schedule-checkbox:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 4px;
+    }
+    .section-intro, .field-help, .schedule-summary, .save-note {
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      color: #606572;
+    }
+    .section-intro { margin-top: -12px; }
+    .period-settings { border: 0; min-width: 0; padding: 0; }
+    .period-settings legend {
+      padding: 0 0 16px;
+      font-size: var(--font-size-body);
+      line-height: var(--line-height-body);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .period-fields { display: flex; flex-direction: column; gap: 16px; }
+    .submission-divider { border: 0; border-top: 1px solid var(--divider); width: 100%; }
+    .check-setting { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+    .schedule-checkbox { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; accent-color: var(--primary); }
+    .check-copy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .slip-field { max-width: 290px; }
+    .create-input:disabled { background: #f5f5f5; color: #606572; }
+    .period-settings:disabled legend { color: #606572; }
+    .field-error { color: #b3261e; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .field-error:empty { display: none; }
+    .create-input[aria-invalid="true"] { border-color: #b3261e; }
+    .schedule-summary { padding: 16px; background: #f5f8fa; border-radius: 4px; }
+    .schedule-summary h3 { color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 500; margin-bottom: 10px; }
+    .schedule-summary ol { padding-left: 20px; display: grid; gap: 8px; }
+    .schedule-summary strong { color: var(--text-primary); font-weight: 500; }
+    .schedule-summary p { margin-top: 12px; }
+    .submission-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .submission-footer a, .save-note a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+    .save-note { margin-top: 16px; }
+    .save-note:empty { display: none; }
+    .status-description { color: #606572; }
+
+    .step-footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-top: auto;
+    }
+    .grading-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 112px 96px minmax(220px, 1.25fr) minmax(250px, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .create-select {
+      appearance: auto;
+      padding-right: 32px;
+    }
+    .unit-input {
+      position: relative;
+    }
+    .unit-input .create-input { padding-right: 56px; }
+    .input-unit {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      color: var(--text-primary);
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      pointer-events: none;
+    }
+    .disabled-field { opacity: .4; }
+    .settings-card {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, .23);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .switch-setting {
+      min-height: 42px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--text-primary);
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      cursor: pointer;
+    }
+    .switch-setting + .switch-setting { border-top: 1px solid rgba(0, 0, 0, .23); }
+    .switch-control {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 40px;
+      height: 25px;
+      flex: 0 0 40px;
+      border: 0;
+      border-radius: 999px;
+      background: #e5e7eb;
+      position: relative;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .switch-control::after {
+      content: "";
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      left: 2px;
+      top: 2px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+      transition: transform .15s;
+    }
+    .switch-control:checked { background: var(--primary); }
+    .switch-control:checked::after { transform: translateX(15px); }
+    .attachment-action {
+      min-height: 36px;
+      padding: 0 12px 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--primary);
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+    .attachment-action .material-icons { font-size: 18px; text-decoration: none; }
+    .visually-hidden-file {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .attachment-name {
+      color: #606572;
+      text-decoration: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .collaboration-fieldset {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .collaboration-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .collaboration-card {
+      min-height: 56px;
+      padding: 12px 16px;
+      border: 2px solid #b1b6c2;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: rgba(0, 0, 0, .6);
+      cursor: pointer;
+    }
+    .collaboration-card.selected {
+      border-color: var(--primary);
+      background: #e5f6fd;
+      color: var(--primary);
+    }
+    .collaboration-card input { accent-color: var(--primary); }
+    .group-fields {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+    }
+    .group-size-inputs { display: flex; gap: 12px; }
+    .group-size-inputs .create-input { width: 82px; }
+    .content-intro {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .content-subheading {
+      font-size: var(--font-size-ui);
+      line-height: var(--line-height-ui);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .content-file-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .content-file-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(170px, .84fr) 34px;
+      gap: 16px;
+      align-items: end;
+    }
+    .upload-button {
+      width: 100%;
+      height: 56px;
+      padding: 0 16px;
+      border: 1px solid rgba(0, 0, 0, .23);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text-primary);
+      font: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .remove-file-button {
+      width: 34px;
+      height: 56px;
+      border: 0;
+      background: transparent;
+      color: #606572;
+      display: grid;
+      place-items: center;
+    }
+    .remove-file-button .material-icons { font-size: 20px; }
+    .add-file-button {
+      align-self: flex-start;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--primary);
+      font: inherit;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .progress-step.completed .step-number {
+      border-color: var(--primary);
+      background: #e5f6fd;
+      color: var(--primary);
+      font-size: 17px;
+    }
+
     @media (max-width: 1320px) {
       .creation-content { grid-template-columns: 220px minmax(0, 1fr); }
       .type-selector { gap: 12px; }
       .type-card { padding: 12px; }
       .type-card-label { font-size: var(--font-size-body); line-height: var(--line-height-body); }
       .type-card-desc { font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+      .grading-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 980px) {
       .creation-shell { gap: 24px; }
@@ -420,8 +702,9 @@
       .section-rail { gap: 28px; }
       .progress-list { display: grid; grid-template-columns: repeat(2, 1fr); }
       .progress-list::before { display: none; }
-      .rail-actions { flex-direction: row; }
+      .rail-actions { flex-direction: row; flex-wrap: wrap; }
       .rail-button { width: auto; flex: 1; }
+      .save-note { flex-basis: 100%; margin-top: 4px; }
     }
     @media (max-width: 900px) {
       .creation-header { min-height: 0; justify-content: flex-start; }
@@ -438,7 +721,17 @@
       .field-row { grid-template-columns: 1fr; }
       .progress-list { grid-template-columns: 1fr; }
       .status-description { font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
-      .next-button { align-self: stretch; justify-content: center; }
+      .next-button, .creation-step > .next-button { align-self: stretch; justify-content: center; }
+      .submission-footer { flex-direction: column; align-items: stretch; }
+      .step-footer { flex-direction: column; align-items: stretch; }
+      .step-footer .next-button { justify-content: center; }
+      .grading-grid,
+      .collaboration-options,
+      .group-fields,
+      .content-file-row { grid-template-columns: 1fr; }
+      .remove-file-button { height: 36px; width: 100%; }
+      .create-input[type="datetime-local"] { min-width: 0; padding-inline: 8px; }
+      .form-message { left: 72px; right: 16px; bottom: 16px; }
     }
   </style>
 </head>
@@ -495,15 +788,17 @@
             <div class="rail-actions">
               <button class="rail-button" type="button" id="save-draft">Save Draft</button>
               <button class="rail-button primary" type="button" id="publish">Publish</button>
+              <p class="save-note" id="save-note" role="status" aria-live="polite"></p>
             </div>
           </aside>
 
-          <form class="basic-information" id="assignment-form">
-            <h2 class="section-heading">Basic Information</h2>
+          <form class="basic-information" id="assignment-form" novalidate>
+            <section class="creation-step" id="basic-section" aria-labelledby="basic-heading">
+            <h2 class="section-heading" id="basic-heading" tabindex="-1">Basic Information</h2>
 
             <div class="field-row">
               <label class="create-field">
-                <span class="create-label">Assignment name <span class="required" aria-hidden="true">*</span></span>
+                <span class="create-label"><span id="name-label">Assignment name</span> <span class="required" aria-hidden="true">*</span></span>
                 <input class="create-input" id="assignment-name" name="assignmentName" type="text" placeholder="Ex: Assignment 1 - Intro to CMSX" required />
               </label>
               <label class="create-field">
@@ -527,6 +822,13 @@
                   <span class="status-copy">
                     <span class="status-name">Open</span>
                     <span class="status-description">Students can submit until due or late deadline, grades hidden</span>
+                  </span>
+                </label>
+                <label class="status-option">
+                  <input type="radio" name="status" value="graded-open" />
+                  <span class="status-copy">
+                    <span class="status-name">Graded &amp; Open</span>
+                    <span class="status-description">Students can see released grades and submit again</span>
                   </span>
                 </label>
                 <label class="status-option">
@@ -556,6 +858,243 @@
               <span>Next: Submission</span>
               <span class="material-icons" aria-hidden="true">arrow_forward</span>
             </button>
+            </section>
+
+            <section class="creation-step" id="submission-section" aria-labelledby="submission-heading" hidden>
+              <h2 class="section-heading" id="submission-heading" tabindex="-1">Submission</h2>
+              <p class="section-intro">Set deadlines for each submission period. All times are in <span id="schedule-timezone"></span>.</p>
+
+              <fieldset class="period-settings">
+                <legend>Initial submission</legend>
+                <div class="period-fields">
+                  <label class="create-field">
+                    <span class="create-label">Initial submission deadline <span class="required" aria-hidden="true">*</span></span>
+                    <input class="create-input" type="datetime-local" id="initial-due" name="initialDue" required aria-describedby="initial-due-error" />
+                    <span class="field-error" id="initial-due-error"></span>
+                  </label>
+                  <label class="check-setting">
+                    <input class="schedule-checkbox" type="checkbox" id="initial-allow-late" checked />
+                    <span class="create-label">Allow late initial submissions</span>
+                  </label>
+                  <div class="field-row">
+                    <label class="create-field">
+                      <span class="create-label">Initial late period ends <span class="required" aria-hidden="true">*</span></span>
+                      <input class="create-input" type="datetime-local" id="initial-late-until" required aria-describedby="initial-late-until-error" />
+                      <span class="field-error" id="initial-late-until-error"></span>
+                    </label>
+                    <label class="create-field">
+                      <span class="create-label">Initial submission slip days</span>
+                      <input class="create-input" type="number" id="initial-slip-days" value="0" min="0" step="1" required aria-describedby="initial-slip-help initial-slip-days-error" />
+                      <span class="field-help" id="initial-slip-help">Maximum allowed for the initial submission. 0 means none.</span>
+                      <span class="field-error" id="initial-slip-days-error"></span>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+
+              <hr class="submission-divider" />
+              <label class="check-setting">
+                <input class="schedule-checkbox" type="checkbox" id="allow-resubmissions" checked />
+                <span class="check-copy">
+                  <span class="create-label">Allow resubmissions</span>
+                  <span class="field-help">Students can improve their work within the same assignment, quiz, or survey.</span>
+                </span>
+              </label>
+              <fieldset class="period-settings" id="resubmission-settings">
+                <legend>Resubmission</legend>
+                <div class="period-fields">
+                  <label class="create-field">
+                    <span class="create-label">Resubmission deadline <span class="required" aria-hidden="true">*</span></span>
+                    <input class="create-input" type="datetime-local" id="resubmission-due" required aria-describedby="resubmission-due-error" />
+                    <span class="field-error" id="resubmission-due-error"></span>
+                  </label>
+                  <label class="check-setting">
+                    <input class="schedule-checkbox" type="checkbox" id="resubmission-allow-late" checked />
+                    <span class="create-label">Allow late resubmissions</span>
+                  </label>
+                  <div class="field-row">
+                    <label class="create-field">
+                      <span class="create-label">Resubmission late period ends <span class="required" aria-hidden="true">*</span></span>
+                      <input class="create-input" type="datetime-local" id="resubmission-late-until" required aria-describedby="resubmission-late-until-error" />
+                      <span class="field-error" id="resubmission-late-until-error"></span>
+                    </label>
+                    <label class="create-field">
+                      <span class="create-label">Resubmission slip days</span>
+                      <input class="create-input" type="number" id="resubmission-slip-days" value="0" min="0" step="1" required aria-describedby="resubmission-slip-help resubmission-slip-days-error" />
+                      <span class="field-help" id="resubmission-slip-help">A separate limit for the resubmission period.</span>
+                      <span class="field-error" id="resubmission-slip-days-error"></span>
+                    </label>
+                  </div>
+                  <label class="check-setting">
+                    <input class="schedule-checkbox" type="checkbox" id="auto-transition" checked />
+                    <span class="check-copy">
+                      <span class="create-label">Automatically switch Open to Graded &amp; Open</span>
+                      <span class="field-help">At the initial deadline, allow resubmissions and show released grades. Unreleased grades stay hidden. Hidden and Closed statuses stay under your control.</span>
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <hr class="submission-divider" />
+              <label class="check-setting">
+                <input class="schedule-checkbox" type="checkbox" id="show-slip-days" checked />
+                <span class="check-copy">
+                  <span class="create-label">Show slip days to students</span>
+                  <span class="field-help">On by default. Display slip-day allowances for both periods. Slip days do not extend either late cutoff; individual extensions are handled separately.</span>
+                </span>
+              </label>
+              <section class="schedule-summary" aria-labelledby="schedule-summary-heading">
+                <h3 id="schedule-summary-heading">Submission schedule</h3>
+                <div id="schedule-preview"></div>
+                <p id="schedule-current-status"></p>
+              </section>
+              <div class="submission-footer">
+                <button class="next-button" type="button" id="back-section"><span class="material-icons" aria-hidden="true">arrow_back</span> Back: Basic Info</button>
+                <button class="next-button" type="button" id="submission-next"><span>Next: Grading</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
+              </div>
+            </section>
+
+            <section class="creation-step" id="grading-section" aria-labelledby="grading-heading" hidden>
+              <h2 class="section-heading" id="grading-heading" tabindex="-1">Grading</h2>
+
+              <div class="grading-grid">
+                <label class="create-field">
+                  <span class="create-label">Max Score <span class="required" aria-hidden="true">*</span></span>
+                  <span class="unit-input">
+                    <input class="create-input" id="max-score" name="maxScore" type="number" min="0" step="1" value="100" required />
+                    <span class="input-unit">points</span>
+                  </span>
+                </label>
+                <label class="create-field">
+                  <span class="create-label">Weight <span class="required" aria-hidden="true">*</span></span>
+                  <span class="unit-input">
+                    <input class="create-input" id="grade-weight" name="gradeWeight" type="number" min="0" step="0.1" value="1" required />
+                    <span class="input-unit">point</span>
+                  </span>
+                </label>
+                <label class="create-field">
+                  <span class="create-label">Statistics <span class="required" aria-hidden="true">*</span></span>
+                  <select class="create-input create-select" id="statistics" name="statistics" required>
+                    <option value="all">All (overall + per-problem)</option>
+                    <option value="overall">Overall only</option>
+                    <option value="none">Do not show statistics</option>
+                  </select>
+                </label>
+                <label class="create-field">
+                  <span class="create-label">Regrades <span class="required" aria-hidden="true">*</span></span>
+                  <select class="create-input create-select" id="regrades" name="regrades" required>
+                    <option value="none">No online student regrade requests</option>
+                    <option value="online">Allow online student regrade requests</option>
+                    <option value="staff">Staff-managed requests only</option>
+                  </select>
+                </label>
+              </div>
+
+              <label class="create-field disabled-field" id="regrade-deadline-field">
+                <span class="create-label">Regrade Deadline <span class="required" aria-hidden="true">*</span></span>
+                <input class="create-input" id="regrade-deadline" name="regradeDeadline" type="datetime-local" value="2026-03-23T23:59" disabled />
+              </label>
+
+              <div class="settings-card">
+                <label class="switch-setting">
+                  <span>Show solution</span>
+                  <input class="switch-control" id="show-solution" name="showSolution" type="checkbox" checked />
+                </label>
+                <label class="attachment-action" for="solution-file">
+                  <span class="material-icons" aria-hidden="true">add</span>
+                  <span>Attach file</span>
+                  <span class="attachment-name" id="solution-file-name"></span>
+                </label>
+                <input class="visually-hidden-file" id="solution-file" name="solutionFile" type="file" />
+                <label class="switch-setting">
+                  <span>Assigned graders only</span>
+                  <input class="switch-control" id="assigned-graders-only" name="assignedGradersOnly" type="checkbox" />
+                </label>
+              </div>
+
+              <label class="create-field">
+                <span class="create-label">AutoGrader URL</span>
+                <input class="create-input" id="autograder-url" name="autograderUrl" type="url" placeholder="https://" />
+              </label>
+              <label class="create-field">
+                <span class="create-label">AutoGrader auth token</span>
+                <input class="create-input" id="autograder-token" name="autograderToken" type="password" placeholder="················" autocomplete="off" />
+              </label>
+
+              <div class="step-footer">
+                <button class="next-button" type="button" id="grading-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span>Back: Submission</span></button>
+                <button class="next-button" type="button" id="grading-next"><span id="grading-next-label">Next: Group Options</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
+              </div>
+            </section>
+
+            <section class="creation-step" id="group-section" aria-labelledby="group-heading" hidden>
+              <h2 class="section-heading" id="group-heading" tabindex="-1">Group Options</h2>
+
+              <fieldset class="collaboration-fieldset">
+                <legend class="create-label">Collaboration <span class="required" aria-hidden="true">*</span></legend>
+                <div class="collaboration-options">
+                  <label class="collaboration-card selected">
+                    <input type="radio" name="collaboration" value="individual" checked />
+                    <span>Individual</span>
+                  </label>
+                  <label class="collaboration-card">
+                    <input type="radio" name="collaboration" value="group" />
+                    <span>Group</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="group-fields" id="group-fields">
+                <label class="create-field">
+                  <span class="create-label">Group Assignment <span class="required" aria-hidden="true">*</span></span>
+                  <select class="create-input create-select" id="group-assignment" name="groupAssignment" disabled required>
+                    <option value="self-select">Students self-select groups</option>
+                    <option value="instructor">Instructor assigns groups</option>
+                    <option value="random">Randomly assign groups</option>
+                  </select>
+                </label>
+                <div class="create-field">
+                  <span class="create-label">Group size <span class="required" aria-hidden="true">*</span></span>
+                  <div class="group-size-inputs">
+                    <input class="create-input" id="group-min" name="groupMin" type="number" min="2" max="99" value="2" aria-label="Minimum group size" placeholder="Min" disabled required />
+                    <input class="create-input" id="group-max" name="groupMax" type="number" min="2" max="99" value="4" aria-label="Maximum group size" placeholder="Max" disabled required />
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-footer">
+                <button class="next-button" type="button" id="group-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span>Back: Grading</span></button>
+                <button class="next-button" type="button" id="group-next"><span>Next: Content</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
+              </div>
+            </section>
+
+            <section class="creation-step" id="content-section" aria-labelledby="content-heading" hidden>
+              <h2 class="section-heading" id="content-heading" tabindex="-1">Content</h2>
+              <div class="content-intro">
+                <h3 class="content-subheading">Provided Assignment Files</h3>
+                <p class="field-help">Attach files students can download – handouts, starter code, reference materials.</p>
+              </div>
+
+              <div class="content-file-list" id="content-file-list">
+                <div class="content-file-row">
+                  <label class="create-field">
+                    <span class="create-label">Name</span>
+                    <input class="create-input content-file-name" name="contentFileName" type="text" />
+                  </label>
+                  <label class="create-field">
+                    <span class="create-label">File</span>
+                    <span class="upload-button" role="button" tabindex="0">Upload</span>
+                    <input class="visually-hidden-file content-file-input" name="contentFile" type="file" />
+                  </label>
+                  <button class="remove-file-button" type="button" aria-label="Remove file row"><span class="material-icons" aria-hidden="true">close</span></button>
+                </div>
+              </div>
+              <button class="add-file-button" type="button" id="add-content-file">+ Add file</button>
+
+              <div class="step-footer">
+                <button class="next-button" type="button" id="content-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span id="content-back-label">Back: Group Options</span></button>
+              </div>
+            </section>
           </form>
         </div>
       </div>
@@ -563,118 +1102,8 @@
   </div>
 
   <div class="form-message" id="form-message" role="status" aria-live="polite"></div>
+  <cmsx-designer-tag name="abolaji"></cmsx-designer-tag>
 
-  <script>
-    const typeConfig = {
-      assignment: {
-        namePlaceholder: "Ex: Assignment 1 - Intro to CMSX",
-        shortPlaceholder: "Ex: A1",
-        steps: [
-          ["Basic Info", "Name, status, description"],
-          ["Submission", "Files, dates, limits"],
-          ["Grading", "Scoring, rubric, graders"],
-          ["Group Options", "Collaboration settings"],
-          ["Content", "Provided files"]
-        ]
-      },
-      quiz: {
-        namePlaceholder: "Ex: Quiz 1 - Intro to CMSX",
-        shortPlaceholder: "Ex: Q1",
-        steps: [
-          ["Basic Info", "Files, dates, limits"],
-          ["Submission", "Files, dates, limits"],
-          ["Grading", "Scoring, rubric, graders"],
-          ["Content", "Provided Files"]
-        ]
-      },
-      survey: {
-        namePlaceholder: "Ex: Survey 1 - Intro to CMSX",
-        shortPlaceholder: "Ex: S1",
-        steps: [
-          ["Basic Info", "Files, dates, limits"],
-          ["Submission", "Files, dates, limits"],
-          ["Grading", "Scoring, rubric, graders"],
-          ["Content", "Provided Files"]
-        ]
-      }
-    };
-
-    let activeType = "assignment";
-    const nameInput = document.getElementById("assignment-name");
-    const shortNameInput = document.getElementById("short-name");
-    const progressList = document.getElementById("progress-list");
-    const message = document.getElementById("form-message");
-    let messageTimer;
-
-    function showMessage(text) {
-      window.clearTimeout(messageTimer);
-      message.textContent = text;
-      message.classList.add("visible");
-      messageTimer = window.setTimeout(() => message.classList.remove("visible"), 2400);
-    }
-
-    function renderSteps(steps) {
-      progressList.innerHTML = steps.map((step, index) => `
-        <li class="progress-step${index === 0 ? " active" : ""}">
-          <span class="step-number">${index + 1}</span>
-          <span class="step-copy">
-            <span class="step-label">${step[0]}</span>
-            <span class="step-description">${step[1]}</span>
-          </span>
-        </li>
-      `).join("");
-    }
-
-    function selectType(type, updateUrl = true) {
-      if (!typeConfig[type]) type = "assignment";
-      activeType = type;
-      document.querySelectorAll(".type-card").forEach((card) => {
-        const selected = card.dataset.type === type;
-        card.classList.toggle("selected", selected);
-        card.setAttribute("aria-pressed", String(selected));
-      });
-      nameInput.placeholder = typeConfig[type].namePlaceholder;
-      shortNameInput.placeholder = typeConfig[type].shortPlaceholder;
-      renderSteps(typeConfig[type].steps);
-      if (updateUrl) {
-        const url = new URL(window.location.href);
-        url.searchParams.set("type", type);
-        window.history.replaceState({}, "", url);
-      }
-    }
-
-    document.querySelectorAll(".type-card").forEach((card) => {
-      card.addEventListener("click", () => selectType(card.dataset.type));
-    });
-
-    document.querySelectorAll('input[name="status"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        document.querySelectorAll(".status-option").forEach((option) => option.classList.remove("selected"));
-        radio.closest(".status-option").classList.add("selected");
-      });
-    });
-
-    const description = document.getElementById("description");
-    description.addEventListener("input", () => {
-      document.getElementById("character-count").textContent = `${description.value.length}/100`;
-    });
-
-    document.getElementById("save-draft").addEventListener("click", () => showMessage("Draft saved"));
-    document.getElementById("publish").addEventListener("click", () => {
-      if (document.getElementById("assignment-form").reportValidity()) {
-        const label = activeType.charAt(0).toUpperCase() + activeType.slice(1);
-        showMessage(`${label} published`);
-      }
-    });
-    document.getElementById("next-section").addEventListener("click", () => {
-      const steps = document.querySelectorAll(".progress-step");
-      steps.forEach((step, index) => step.classList.toggle("active", index === 1));
-      showMessage("Submission section selected");
-    });
-    document.getElementById("assignment-form").addEventListener("submit", (event) => event.preventDefault());
-
-    const requestedType = new URLSearchParams(window.location.search).get("type");
-    selectType(requestedType || "assignment", false);
-  </script>
+  <script type="module" src="assignment-create.js"></script>
 </body>
 </html>

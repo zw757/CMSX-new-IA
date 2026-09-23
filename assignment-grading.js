@@ -7,6 +7,14 @@ const totalScore = document.getElementById('totalScore');
 const bonusScore = document.getElementById('bonusScore');
 const adjustmentScore = document.getElementById('adjustmentScore');
 const toast = document.getElementById('gradingToast');
+const commentsToggle = document.getElementById('commentsToggle');
+const commentsBody = document.getElementById('commentsBody');
+const commentsList = document.getElementById('commentsList');
+const commentsCount = document.getElementById('commentsCount');
+const commentForm = document.getElementById('commentForm');
+const commentInput = document.getElementById('commentInput');
+const commentCharacterCount = document.getElementById('commentCharacterCount');
+const addCommentButton = document.getElementById('addComment');
 
 const students = [
   { name: 'May Wu', netid: 'zw757' },
@@ -28,6 +36,18 @@ const requestedStudentIndex = students.findIndex((student) => student.netid === 
 let activeStudentIndex = requestedStudentIndex >= 0 ? requestedStudentIndex : 0;
 let documentZoom = 1;
 let toastTimer;
+let nextCommentId = 2;
+
+const commentsByStudent = new Map([
+  ['zw757', [
+    {
+      id: 1,
+      author: 'acm22',
+      time: 'Today at 10:42 AM',
+      body: 'Strong approach overall. Please clarify the tradeoff described in the project section.'
+    }
+  ]]
+]);
 
 function showToast(message) {
   window.clearTimeout(toastTimer);
@@ -148,13 +168,13 @@ function applyDocumentZoom(nextZoom) {
 document.getElementById('zoomIn').addEventListener('click', () => applyDocumentZoom(documentZoom + 0.1));
 document.getElementById('zoomOut').addEventListener('click', () => applyDocumentZoom(documentZoom - 0.1));
 
-function addLog(activity) {
+function addLog(activity, actor = 'acm22') {
   const row = document.createElement('div');
   row.className = 'grading-log-row';
   row.setAttribute('role', 'row');
   row.innerHTML = `
     <span role="cell">Just now</span>
-    <span role="cell">zw757</span>
+    <span role="cell">${actor}</span>
     <span role="cell">${activity}</span>
   `;
   document.getElementById('logRows').prepend(row);
@@ -168,6 +188,101 @@ document.getElementById('updateGrade').addEventListener('click', () => {
   showToast(`Grade updated for ${student.name}`);
 });
 
+function activeComments() {
+  const netid = students[activeStudentIndex].netid;
+  if (!commentsByStudent.has(netid)) commentsByStudent.set(netid, []);
+  return commentsByStudent.get(netid);
+}
+
+function updateCommentCount(count) {
+  commentsCount.textContent = `${count} ${count === 1 ? 'comment' : 'comments'}`;
+}
+
+function renderComments() {
+  const comments = activeComments();
+  commentsList.replaceChildren();
+  updateCommentCount(comments.length);
+
+  if (!comments.length) {
+    const empty = document.createElement('p');
+    empty.className = 'grading-comments-empty';
+    empty.textContent = 'No comments yet. Add feedback for this student.';
+    commentsList.append(empty);
+    return;
+  }
+
+  comments.forEach((comment) => {
+    const article = document.createElement('article');
+    article.className = 'grading-comment';
+
+    const meta = document.createElement('div');
+    meta.className = 'grading-comment-meta';
+
+    const author = document.createElement('span');
+    author.className = 'grading-comment-author';
+    author.textContent = comment.author;
+
+    const time = document.createElement('span');
+    time.className = 'grading-comment-time';
+    time.textContent = comment.time;
+
+    const remove = document.createElement('button');
+    remove.className = 'grading-comment-delete';
+    remove.type = 'button';
+    remove.setAttribute('aria-label', `Delete comment from ${comment.author}`);
+    remove.innerHTML = '<span class="material-icons" aria-hidden="true">delete_outline</span>';
+    remove.addEventListener('click', () => {
+      const nextComments = activeComments().filter((item) => item.id !== comment.id);
+      commentsByStudent.set(students[activeStudentIndex].netid, nextComments);
+      renderComments();
+      showToast('Comment removed');
+    });
+
+    const body = document.createElement('p');
+    body.textContent = comment.body;
+
+    meta.append(author, time, remove);
+    article.append(meta, body);
+    commentsList.append(article);
+  });
+}
+
+function resetCommentComposer() {
+  commentInput.value = '';
+  commentCharacterCount.textContent = '0/500';
+  addCommentButton.disabled = true;
+}
+
+commentsToggle.addEventListener('click', () => {
+  const expanded = commentsToggle.getAttribute('aria-expanded') === 'true';
+  commentsToggle.setAttribute('aria-expanded', String(!expanded));
+  commentsBody.hidden = expanded;
+  commentsToggle.querySelector('.grading-comments-chevron').textContent = expanded ? 'expand_more' : 'expand_less';
+});
+
+commentInput.addEventListener('input', () => {
+  commentCharacterCount.textContent = `${commentInput.value.length}/500`;
+  addCommentButton.disabled = !commentInput.value.trim();
+});
+
+commentForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const body = commentInput.value.trim();
+  if (!body) return;
+
+  const student = students[activeStudentIndex];
+  activeComments().push({
+    id: nextCommentId++,
+    author: 'You',
+    time: 'Just now',
+    body
+  });
+  renderComments();
+  resetCommentComposer();
+  addLog(`Added a comment for ${student.name}`);
+  showToast(`Comment added for ${student.name}`);
+});
+
 function renderStudent() {
   const student = students[activeStudentIndex];
   document.getElementById('studentName').textContent = `${student.name} (${student.netid})`;
@@ -177,6 +292,8 @@ function renderStudent() {
   adjustmentScore.value = '';
   submissionScroll.scrollTop = 0;
   document.getElementById('rubricScroll').scrollTop = 0;
+  resetCommentComposer();
+  renderComments();
   updateTotal();
 }
 

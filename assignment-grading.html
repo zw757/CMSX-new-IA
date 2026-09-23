@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CMSX – Grade Example Assignment 1A</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script type="module" src="sidebar.js"></script>
-  <link rel="stylesheet" href="assignment-grading.css" />
+    <title>CMSX – Grade Example Assignment 1A</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="sidebar.js"></script>
+    <script type="module" src="designer-tag.js"></script>
+    <link rel="stylesheet" href="assignment-grading.css" />
 </head>
 <body class="grading-page">
   <a class="grading-skip-link" href="#gradingWorkspace">Skip to grading workspace</a>
@@ -210,13 +211,13 @@
           <section class="grading-log" aria-labelledby="logHeading">
             <div class="grading-log-head">
               <h3 id="logHeading">Logs</h3>
-              <span id="logCount">2 entries</span>
+              <span id="logCount">3 entries</span>
               <span class="material-icons" aria-hidden="true">expand_less</span>
             </div>
             <div class="grading-log-table" role="table" aria-label="Grading history">
               <div class="grading-log-row header" role="row">
                 <span role="columnheader">Time</span>
-                <span role="columnheader">Grader</span>
+                <span role="columnheader">Actor</span>
                 <span role="columnheader">Activity</span>
               </div>
               <div id="logRows">
@@ -226,11 +227,43 @@
                   <span role="cell">Staff member acm22 was assigned group ac263</span>
                 </div>
                 <div class="grading-log-row" role="row">
+                  <span role="cell">March 21, 2026</span>
+                  <span role="cell">zw757</span>
+                  <span role="cell">Student resubmitted Submission_file_1</span>
+                </div>
+                <div class="grading-log-row" role="row">
                   <span role="cell">March 20, 2026</span>
                   <span role="cell">acm22</span>
                   <span role="cell">Opened submission for grading</span>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section class="grading-comments" aria-labelledby="commentsHeading">
+            <button class="grading-comments-toggle" id="commentsToggle" type="button" aria-expanded="true" aria-controls="commentsBody">
+              <span class="grading-comments-title">
+                <span class="material-icons" aria-hidden="true">chat_bubble_outline</span>
+                <span id="commentsHeading">Comments</span>
+                <span class="grading-comments-count" id="commentsCount">1 comment</span>
+              </span>
+              <span class="material-icons grading-comments-chevron" aria-hidden="true">expand_less</span>
+            </button>
+
+            <div class="grading-comments-body" id="commentsBody">
+              <div class="grading-comments-list" id="commentsList" aria-live="polite"></div>
+
+              <form class="grading-comment-composer" id="commentForm">
+                <label for="commentInput">Student-facing feedback</label>
+                <textarea id="commentInput" maxlength="500" rows="4" placeholder="Add feedback for this student"></textarea>
+                <div class="grading-comment-guidance">
+                  <span><span class="material-icons" aria-hidden="true">visibility</span>Visible when grades are released</span>
+                  <span id="commentCharacterCount">0/500</span>
+                </div>
+                <div class="grading-comment-actions">
+                  <button class="grading-comment-submit" id="addComment" type="submit" disabled>Add Comment</button>
+                </div>
+              </form>
             </div>
           </section>
         </div>
@@ -251,6 +284,7 @@
   </main>
 
   <div class="grading-toast" id="gradingToast" role="status" aria-live="polite"></div>
+  <cmsx-designer-tag name="may"></cmsx-designer-tag>
   <script type="module" src="assignment-grading.js"></script>
-</body>
+  </body>
 </html>
