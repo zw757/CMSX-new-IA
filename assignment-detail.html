@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="assignment-detail.css" />
   <script type="module" src="sidebar.js"></script>
   <script type="module" src="designer-tag.js"></script>
+  <script type="module" src="rail-toggle.js"></script>
 </head>
 <body class="assignment-detail-page">
   <div class="app-layout">
@@ -54,8 +55,8 @@
           </div>
         </header>
 
-        <div class="assignment-workspace">
-          <aside class="assignment-tools" aria-label="Assignment controls">
+        <div class="assignment-workspace rail-layout">
+          <aside class="assignment-tools rail-panel" id="assignmentControls" aria-label="Assignment controls">
             <section class="assignment-tool-section is-collapsed" data-collapsible>
               <button class="assignment-tool-heading" type="button" aria-expanded="false">
                 <span>Assignment Information</span>
@@ -133,7 +134,12 @@
 
           <section class="assignment-submissions" aria-labelledby="filterHeading">
             <div class="assignment-filters">
-              <h2 id="filterHeading">Filter by</h2>
+              <div class="assignment-filter-heading">
+                <h2 id="filterHeading">Filter by</h2>
+                <button class="rail-toggle" type="button" data-rail-toggle data-name="controls" aria-controls="assignmentControls" aria-expanded="true">
+                  <span class="material-icons" aria-hidden="true">tune</span><span class="rail-toggle-text">Hide controls</span>
+                </button>
+              </div>
               <div class="assignment-filter-grid">
                 <label class="assignment-filter standard-filter">
                   <span class="filter-name">Student</span>

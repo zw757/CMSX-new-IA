@@ -5,7 +5,7 @@
 .content-header {
   align-items: flex-end;
   min-height: var(--page-header-min-height);
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .content-workspace {
@@ -153,7 +153,8 @@
 
 .content-listing { min-width: 0; }
 
-.content-listing-header { margin-bottom: 24px; }
+.content-listing-header { margin-bottom: 16px; }
+.content-listing-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 
 .content-listing-header h2 {
   color: var(--text-primary);

@@ -4,6 +4,7 @@ class CmsxDesignerTag extends HTMLElement {
     this.dataset.rendered = 'true';
 
     const designer = this.getAttribute('name')?.trim() || 'CMSX team';
+    const status = this.getAttribute('status')?.trim();
     const label = document.createElement('span');
     const name = document.createElement('strong');
 
@@ -12,8 +13,19 @@ class CmsxDesignerTag extends HTMLElement {
 
     this.classList.add('designer-tag');
     this.setAttribute('role', 'note');
-    this.setAttribute('aria-label', `Designed by ${designer}`);
     this.append(label, name);
+
+    if (status === 'in-progress') {
+      const statusLabel = document.createElement('span');
+      statusLabel.className = 'designer-tag-status';
+      statusLabel.textContent = 'In progress';
+      this.classList.add('designer-tag--in-progress');
+      this.append(statusLabel);
+      this.setAttribute('aria-label', `Designed by ${designer}, in progress`);
+      return;
+    }
+
+    this.setAttribute('aria-label', `Designed by ${designer}`);
   }
 }
 

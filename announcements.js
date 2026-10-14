@@ -1,30 +1,24 @@
-const STORAGE_KEY = 'cmsx-announcements-v2';
-const DELETED_KEY = 'cmsx-announcements-deleted-v2';
-
-const loremParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+const STORAGE_KEY = 'cmsx-announcements-v3';
+const DELETED_KEY = 'cmsx-announcements-deleted-v3';
 
 const defaultAnnouncements = [
   {
-    id: 'midterm-room-change',
-    title: 'Midterm Exam – Room Change',
-    category: 'Exams',
-    author: 'Professor',
+    id: 'prelim-1-grades',
+    title: 'Prelim 1 Grades',
+    category: 'Prelim',
+    author: 'Walker White',
     initials: 'OP',
     period: 'This Week',
     posted: 'Oct 24, 00:00 AM',
-    body: `<p>${loremParagraph}</p><p>${loremParagraph}</p><p>${loremParagraph}</p><p>${loremParagraph}</p>`,
+    summary: 'Room assignments for Prelim 1 are now available. Please verify your assigned room before the exam.',
+    body: `<p>Performance on this exam was much better! It was also in the range that I was hoping: a mean of 74 and median of 78. However, you got them in a way that I did not expect.</p><p>In terms of difficulty, the while-loop was difficult on purpose. Since you did not have much to study from on this, I decided to go ahead and make this the A-level question anyway. A-level questions are ones that overstudying will not help you on. I did also throw a curve ball in call frames, but if you ignored that and got everything else, there was a lot of partial credit. With that said, this class did really poorly on that again. This class seems to struggle with call frames.</p><p>But the good news is that everyone did really well on the class question. This is the best performance on a class question in five years. So you should be proud.</p><p>As a reminder, my grade boundaries for an exam are as follows:<br>A grades (including A+/A/A-) 80 and up<br>B grades (including B+/B/B-) are 55 to 79<br>C grades (including C+/C/C-) are 30 to 54<br>D/F is anything below 30</p><p>If you are a student that made below 50, I highly recommend that you take advantage of the Support Sessions mentioned in class and on Ed Discussions.</p><p>A more detailed breakdown of grades is as follows:</p><p class="announcement-score-breakdown">90-100 (121) xxxxxxxxxxxxxxxxxxxxxxxx<br>80-89&nbsp;&nbsp; (141) xxxxxxxxxxxxxxxxxxxxxxxxxxxx<br>70-79&nbsp;&nbsp; (119) xxxxxxxxxxxxxxxxxxxxxxxx<br>60-69&nbsp;&nbsp; (87) xxxxxxxxxxxxxxxxxx<br>50-59&nbsp;&nbsp; (51) xxxxxxxxxx<br>40-49&nbsp;&nbsp; (36) xxxxxxx<br>30-39&nbsp;&nbsp; (11) xx<br>20-29&nbsp;&nbsp; (9) xxx<br>00-19&nbsp;&nbsp; (8) xx</p>`,
     notifyByEmail: true,
-    thread: [{ author: 'Professor', initials: 'OP', time: '2 hrs ago', body: `${loremParagraph}\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.` }],
+    thread: [],
   },
-  { id: 'assignment-extension', title: 'Assignment 3 – Extended Deadline', category: 'Assignments', author: 'Professor', initials: 'OP', period: 'This Week', posted: 'Oct 24, 00:00 AM', body: `<p>Due to the campus-wide internet outage, the deadline for Assignment 3 has been extended to Friday at 11:59 PM. Please plan accordingly.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'review-session', title: 'Midterm Review Session', category: 'Events', author: 'Professor', initials: 'OP', period: 'This Week', posted: 'Oct 24, 00:00 AM', body: `<p>A review session will be held Thursday evening. Bring questions and examples you would like the teaching team to cover.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'office-hours', title: 'Office Hours Update – Spring Break', category: 'Office Hours', author: 'Professor', initials: 'OP', period: 'Last Week', posted: 'Oct 24, 00:00 AM', body: `<p>There will be no office hours during spring break. Regular office hours resume the following Monday.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'project-partners', title: 'Project Partner Matching', category: 'Assignments', author: 'Professor', initials: 'OP', period: 'Last Week', posted: 'Oct 24, 00:00 AM', body: `<p>Students still seeking a project partner should complete the matching form before Friday afternoon.</p>`, notifyByEmail: false, thread: [] },
-  { id: 'guest-lecture', title: 'Guest Lecture Next Tuesday', category: 'Events', author: 'Professor', initials: 'OP', period: 'Last Week', posted: 'Oct 24, 00:00 AM', body: `<p>Our guest lecturer will discuss production course-management systems and responsible data practices.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'welcome', title: 'Welcome to CS4998!', category: 'General', author: 'Professor', initials: 'OP', period: 'This Month', posted: 'Oct 15, 09:00 AM', body: `<p>Welcome to Intro to CMSX. Please review the syllabus and complete the introductory survey.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'enrollment', title: 'Enrollment and Waitlist Update', category: 'General', author: 'Professor', initials: 'OP', period: 'This Month', posted: 'Oct 12, 11:30 AM', body: `<p>The waitlist has been processed. Please verify your enrollment status before attending section.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'syllabus', title: 'Syllabus Clarification', category: 'General', author: 'Professor', initials: 'OP', period: 'This Month', posted: 'Oct 08, 04:15 PM', body: `<p>The collaboration policy has been clarified in the syllabus. The grading policy is unchanged.</p>`, notifyByEmail: true, thread: [] },
-  { id: 'teaching-team', title: 'Meet the Teaching Team', category: 'General', author: 'Professor', initials: 'OP', period: 'This Month', posted: 'Oct 02, 10:00 AM', body: `<p>Meet the instructors and teaching assistants supporting CS4998 this semester.</p>`, notifyByEmail: false, thread: [] },
+  { id: 'prelim-2-rooms', title: 'Prelim 2 Room Assignments', category: 'Prelim', author: 'Walker White', initials: 'OP', period: 'This Week', posted: 'Oct 24, 00:00 AM', summary: 'Room assignments for Prelim 2 are now available. Please verify your assigned room before the exam.', body: '<p>Room assignments for Prelim 2 are now available. Please verify your assigned room before the exam. Contact the course staff if your name is not listed.</p>', notifyByEmail: true, thread: [] },
+  { id: 'assignment-3-deadline', title: 'Assignment 3 Deadline Extended', category: 'Assignments', author: 'Walker White', initials: 'OP', period: 'This Week', posted: 'Oct 24, 00:00 AM', summary: 'The Assignment 3 deadline has been extended to Friday at 11:59 PM. The submission portal will remain open.', body: '<p>The Assignment 3 deadline has been extended to Friday at 11:59 PM. The submission portal will remain open until the new deadline.</p>', notifyByEmail: true, thread: [] },
+  { id: 'office-hours-hollister', title: 'Office Hours Switch to HollisterB12', category: 'Office Hours', author: 'Walker White', initials: 'OP', period: 'Last Week', posted: 'Oct 24, 00:00 AM', summary: 'Office hours have been moved. See announcement title. They will still happen at 4pm.', body: '<p>Office hours have been moved to Hollister B12. They will still happen at 4pm at the regularly scheduled time.</p>', notifyByEmail: true, thread: [] },
+  { id: 'assignment-2-regrades', title: 'Assignment 2 Regrades', category: 'Regrades', author: 'Walker White', initials: 'OP', period: 'Last Week', posted: 'Oct 24, 00:00 AM', summary: 'We will only be accepting resubmissions until this Friday 11:59pm. If you believe your grade did not reflect your performance, please resubmit on CMSX.', body: '<p>We will only be accepting resubmissions until this Friday 11:59pm. If you believe your grade did not reflect your performance, please resubmit on CMSX.</p>', notifyByEmail: true, thread: [] },
 ];
 
 function cloneDefaults() {
@@ -71,6 +65,22 @@ function plainText(html) {
   return wrapper.textContent.trim();
 }
 
+function safeAnnouncementHTML(html) {
+  const template = document.createElement('template');
+  template.innerHTML = html || '';
+  template.content.querySelectorAll('script, style, iframe, object, embed').forEach(node => node.remove());
+  template.content.querySelectorAll('*').forEach(node => {
+    [...node.attributes].forEach(attribute => {
+      const name = attribute.name.toLowerCase();
+      const value = attribute.value.trim().toLowerCase();
+      if (name.startsWith('on') || ((name === 'href' || name === 'src') && value.startsWith('javascript:'))) {
+        node.removeAttribute(attribute.name);
+      }
+    });
+  });
+  return template.innerHTML;
+}
+
 let toastTimer;
 function showToast(message) {
   const toast = document.getElementById('announcementToast');
@@ -84,58 +94,149 @@ function showToast(message) {
 function initAnnouncementList() {
   const filterContainer = document.getElementById('categoryFilters');
   const sectionsContainer = document.getElementById('announcementSections');
-  const count = document.getElementById('announcementCount');
+  const detailContainer = document.getElementById('announcementDetail');
   const deletedButton = document.getElementById('deletedItemsButton');
-  if (!filterContainer || !sectionsContainer || !count || !deletedButton) return;
+  if (!filterContainer || !sectionsContainer || !detailContainer || !deletedButton) return;
 
-  let activeCategory = 'All';
+  let activeCategory = '';
   let showingDeleted = false;
-  const categories = ['All', 'Assignments', 'Exams', 'Events', 'General'];
+  let selectedId = '';
+  let openMenuId = '';
+  const categoryOrder = ['Prelim', 'Assignments', 'Office Hours', 'Regrades'];
+
+  function sourceAnnouncements() {
+    return showingDeleted ? getDeletedAnnouncements() : getAnnouncements();
+  }
+
+  function visibleAnnouncements() {
+    const source = sourceAnnouncements();
+    return activeCategory ? source.filter(item => item.category === activeCategory) : source;
+  }
 
   function renderFilters() {
+    const sourceCategories = [...new Set(sourceAnnouncements().map(item => item.category).filter(Boolean))];
+    const categories = [...categoryOrder.filter(category => sourceCategories.includes(category)), ...sourceCategories.filter(category => !categoryOrder.includes(category))];
     filterContainer.innerHTML = categories.map(category => `
       <button class="announcement-category-filter ${activeCategory === category ? 'active' : ''}" type="button" data-category="${escapeHTML(category)}" aria-pressed="${activeCategory === category}">
         <span>${escapeHTML(category)}</span>
-        ${activeCategory === category ? '<span class="material-icons" aria-hidden="true">cancel</span>' : ''}
       </button>
     `).join('');
 
     filterContainer.querySelectorAll('[data-category]').forEach(button => {
       button.addEventListener('click', () => {
-        activeCategory = button.dataset.category === activeCategory ? 'All' : button.dataset.category;
+        activeCategory = button.dataset.category === activeCategory ? '' : button.dataset.category;
+        selectedId = '';
+        openMenuId = '';
         renderFilters();
-        renderSections();
+        renderWorkspace();
       });
     });
   }
 
-  function renderSections() {
-    const source = showingDeleted ? getDeletedAnnouncements() : getAnnouncements();
-    const visible = source.filter(item => activeCategory === 'All' || item.category === activeCategory);
+  function renderDetail(items) {
+    const selected = items.find(item => item.id === selectedId) || items[0];
+    if (!selected) {
+      detailContainer.innerHTML = `
+        <div class="announcement-detail-empty">
+          <span class="material-icons" aria-hidden="true">campaign</span>
+          <p>${showingDeleted ? 'No deleted announcements.' : 'No announcements match this category.'}</p>
+        </div>`;
+      return;
+    }
+
+    selectedId = selected.id;
+    detailContainer.innerHTML = `
+      <span class="announcement-avatar announcement-detail-avatar" aria-hidden="true">${escapeHTML(selected.initials || 'OP')}</span>
+      <div class="announcement-detail-content">
+        <header class="announcement-detail-header">
+          <div>
+            <div class="announcement-detail-heading">
+              <h3>${escapeHTML(selected.title)}</h3>
+              <span class="announcement-row-category">${escapeHTML(selected.category || 'General')}</span>
+            </div>
+            <div class="announcement-meta-line">
+              <span>${escapeHTML(selected.author || 'Professor')}</span>
+              <span class="announcement-meta-divider" aria-hidden="true"></span>
+              <span>Posted on ${escapeHTML(selected.posted)}</span>
+            </div>
+          </div>
+          <button class="announcement-detail-menu-button" type="button" data-detail-menu="${escapeHTML(selected.id)}" aria-label="More actions for ${escapeHTML(selected.title)}">
+            <span class="material-icons" aria-hidden="true">more_vert</span>
+          </button>
+        </header>
+        <div class="announcement-detail-body">${safeAnnouncementHTML(selected.body)}</div>
+      </div>`;
+  }
+
+  function rowMenu(item) {
+    return `
+      <div class="announcement-actions-menu" role="menu" aria-label="Actions for ${escapeHTML(item.title)}">
+        <button type="button" role="menuitem" data-edit-announcement="${escapeHTML(item.id)}">
+          <span class="material-icons" aria-hidden="true">edit</span><span>Edit</span>
+        </button>
+        <button type="button" role="menuitem" data-delete-announcement="${escapeHTML(item.id)}">
+          <span class="material-icons" aria-hidden="true">delete</span><span>Delete</span>
+        </button>
+      </div>`;
+  }
+
+  function closeActionMenu() {
+    document.querySelectorAll('.announcement-actions-menu').forEach(menu => menu.remove());
+    document.querySelectorAll('[data-menu-announcement], [data-detail-menu]').forEach(button => button.setAttribute('aria-expanded', 'false'));
+    openMenuId = '';
+  }
+
+  function wireActionMenu(host) {
+    host.querySelector('[data-edit-announcement]')?.addEventListener('click', event => {
+      event.stopPropagation();
+      openEditor(event.currentTarget.dataset.editAnnouncement);
+    });
+    host.querySelector('[data-delete-announcement]')?.addEventListener('click', event => {
+      event.stopPropagation();
+      deleteAnnouncement(event.currentTarget.dataset.deleteAnnouncement);
+    });
+  }
+
+  function toggleActionMenu(id, trigger, host) {
+    const shouldClose = openMenuId === id && host.querySelector('.announcement-actions-menu');
+    closeActionMenu();
+    if (shouldClose) return;
+    const item = sourceAnnouncements().find(announcement => announcement.id === id);
+    if (!item) return;
+    openMenuId = id;
+    trigger.setAttribute('aria-expanded', 'true');
+    host.insertAdjacentHTML('beforeend', rowMenu(item));
+    wireActionMenu(host);
+    host.querySelector('[role="menuitem"]')?.focus();
+  }
+
+  function renderSections(items) {
     const periods = showingDeleted ? ['Deleted'] : ['This Week', 'Last Week', 'This Month'];
-    count.textContent = `${source.length} TOTAL`;
 
     const markup = periods.map(period => {
-      const items = showingDeleted ? visible : visible.filter(item => item.period === period);
-      if (!items.length) return '';
+      const periodItems = showingDeleted ? items : items.filter(item => item.period === period);
+      if (!periodItems.length) return '';
       return `
         <section class="announcement-period" aria-labelledby="period-${period.toLowerCase().replace(/\s+/g, '-')}">
           <h3 class="announcement-period-title" id="period-${period.toLowerCase().replace(/\s+/g, '-')}">${period}</h3>
           <div class="announcement-period-list">
-            ${items.map(item => `
-              <article class="announcement-row" tabindex="0" role="link" data-announcement-id="${escapeHTML(item.id)}" aria-label="Edit ${escapeHTML(item.title)}">
-                <div class="announcement-row-author">
-                  <span class="announcement-avatar" aria-hidden="true">${escapeHTML(item.initials || 'OP')}</span>
-                  <span>${escapeHTML(item.author || 'Professor')}</span>
-                </div>
+            ${periodItems.map(item => `
+              <article class="announcement-row ${selectedId === item.id ? 'selected' : ''}" tabindex="0" role="button" data-announcement-id="${escapeHTML(item.id)}" aria-pressed="${selectedId === item.id}" aria-label="Read ${escapeHTML(item.title)}">
                 <div class="announcement-row-content">
                   <div class="announcement-row-heading">
                     <span class="announcement-row-title">${escapeHTML(item.title)}</span>
                     <span class="announcement-row-category">${escapeHTML(item.category || 'General')}</span>
                   </div>
-                  <p class="announcement-row-summary">${escapeHTML(plainText(item.body))}</p>
+                  <div class="announcement-meta-line">
+                    <span>${escapeHTML(item.author || 'Professor')}</span>
+                    <span class="announcement-meta-divider" aria-hidden="true"></span>
+                    <span>Posted on ${escapeHTML(item.posted)}</span>
+                  </div>
+                  <p class="announcement-row-summary">${escapeHTML(item.summary || plainText(item.body))}</p>
                 </div>
-                <div class="announcement-row-date"><strong>Posted on</strong><span>${escapeHTML(item.posted)}</span></div>
+                <button class="announcement-row-menu-button" type="button" data-menu-announcement="${escapeHTML(item.id)}" aria-label="More actions for ${escapeHTML(item.title)}" aria-expanded="${openMenuId === item.id}">
+                  <span class="material-icons" aria-hidden="true">more_vert</span>
+                </button>
               </article>
             `).join('')}
           </div>
@@ -150,18 +251,72 @@ function initAnnouncementList() {
     `;
 
     sectionsContainer.querySelectorAll('[data-announcement-id]').forEach(row => {
-      const open = () => {
-        const params = new URLSearchParams({ id: row.dataset.announcementId });
-        if (showingDeleted) params.set('deleted', 'true');
-        window.location.href = `announcement-edit.html?${params.toString()}`;
+      const select = () => {
+        selectedId = row.dataset.announcementId;
+        closeActionMenu();
+        sectionsContainer.querySelectorAll('[data-announcement-id]').forEach(candidate => {
+          const isSelected = candidate.dataset.announcementId === selectedId;
+          candidate.classList.toggle('selected', isSelected);
+          candidate.setAttribute('aria-pressed', String(isSelected));
+        });
+        renderDetail(items);
+        wireDetailMenu();
       };
-      row.addEventListener('click', open);
+      row.addEventListener('click', event => {
+        if (event.target.closest('button')) return;
+        select();
+      });
       row.addEventListener('keydown', event => {
+        if (event.target !== row) return;
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          open();
+          select();
         }
       });
+    });
+
+    sectionsContainer.querySelectorAll('[data-menu-announcement]').forEach(button => {
+      button.addEventListener('click', event => {
+        event.stopPropagation();
+        toggleActionMenu(button.dataset.menuAnnouncement, button, button.closest('.announcement-row'));
+      });
+    });
+  }
+
+  function openEditor(id) {
+    const params = new URLSearchParams({ id });
+    if (showingDeleted) params.set('deleted', 'true');
+    window.location.href = `announcement-edit.html?${params.toString()}`;
+  }
+
+  function deleteAnnouncement(id) {
+    const item = getAnnouncements().find(announcement => announcement.id === id);
+    if (!item || !window.confirm(`Move “${item.title}” to Deleted Items?`)) return;
+    const announcements = getAnnouncements().filter(announcement => announcement.id !== id);
+    const deleted = getDeletedAnnouncements();
+    deleted.unshift(item);
+    writeStored(STORAGE_KEY, announcements);
+    writeStored(DELETED_KEY, deleted);
+    selectedId = '';
+    openMenuId = '';
+    renderFilters();
+    renderWorkspace();
+    showToast('Announcement moved to Deleted Items.');
+  }
+
+  function renderWorkspace() {
+    const items = visibleAnnouncements();
+    if (!items.some(item => item.id === selectedId)) selectedId = items[0]?.id || '';
+    renderSections(items);
+    renderDetail(items);
+    wireDetailMenu();
+  }
+
+  function wireDetailMenu() {
+    detailContainer.querySelector('[data-detail-menu]')?.setAttribute('aria-expanded', 'false');
+    detailContainer.querySelector('[data-detail-menu]')?.addEventListener('click', event => {
+      event.stopPropagation();
+      toggleActionMenu(event.currentTarget.dataset.detailMenu, event.currentTarget, detailContainer);
     });
   }
 
@@ -169,13 +324,25 @@ function initAnnouncementList() {
     showingDeleted = !showingDeleted;
     deletedButton.setAttribute('aria-pressed', String(showingDeleted));
     deletedButton.querySelector('span:last-child').textContent = showingDeleted ? 'Back to Announcements' : 'Deleted Items';
-    activeCategory = 'All';
+    activeCategory = '';
+    selectedId = '';
+    openMenuId = '';
     renderFilters();
-    renderSections();
+    renderWorkspace();
+  });
+
+  document.addEventListener('click', event => {
+    if (!openMenuId || event.target.closest('.announcement-actions-menu, [data-menu-announcement], [data-detail-menu]')) return;
+    closeActionMenu();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !openMenuId) return;
+    closeActionMenu();
   });
 
   renderFilters();
-  renderSections();
+  renderWorkspace();
 }
 
 function initAnnouncementEditor() {

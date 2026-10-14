@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="content.css" />
   <script type="module" src="sidebar.js"></script>
   <script type="module" src="content.js"></script>
+  <script type="module" src="rail-toggle.js"></script>
 </head>
 <body class="content-page">
   <div class="app-layout">
@@ -28,8 +29,8 @@
           </div>
         </header>
 
-        <div class="content-workspace">
-          <aside class="content-categories" aria-label="Content categories">
+        <div class="content-workspace rail-layout">
+          <aside class="content-categories rail-panel" id="contentCategories" aria-label="Content categories">
             <section class="category-section">
               <button class="category-heading" type="button" data-section-toggle aria-expanded="true">
                 <span>Active Content</span>
@@ -90,7 +91,12 @@
 
           <section class="content-listing" aria-labelledby="contentListTitle">
             <header class="content-listing-header">
-              <h2 id="contentListTitle">Lecture Slides</h2>
+              <div class="content-listing-title-row">
+                <h2 id="contentListTitle">Lecture Slides</h2>
+                <button class="rail-toggle" type="button" data-rail-toggle data-name="categories" aria-controls="contentCategories" aria-expanded="true">
+                  <span class="material-icons" aria-hidden="true">tune</span><span class="rail-toggle-text">Hide categories</span>
+                </button>
+              </div>
               <div class="content-listing-meta">
                 <span class="content-status">Active</span>
                 <span><strong id="contentCount">9</strong> items</span>

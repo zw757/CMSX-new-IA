@@ -27,9 +27,10 @@
     .creation-shell {
       width: 1171px;
       max-width: 100%;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto;
       gap: 32px;
+      align-items: end;
     }
     .creation-header {
       min-height: var(--page-header-min-height);
@@ -49,8 +50,7 @@
       display: flex;
       align-items: center;
       min-height: 20px;
-      color: var(--text-primary);
-      opacity: .56;
+      color: #606572;
       font-size: var(--font-size-ui);
       line-height: var(--line-height-ui);
       letter-spacing: .15px;
@@ -64,11 +64,14 @@
     }
 
     .type-panel {
-      padding: 20px 24px;
-      background: #fff;
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: end;
+      padding: 0;
+      background: transparent;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 12px;
     }
     .section-heading {
       font-size: var(--font-size-section);
@@ -79,17 +82,17 @@
     }
     .type-selector {
       display: flex;
-      gap: 20px;
+      gap: 12px;
       flex-wrap: wrap;
     }
     .type-card {
-      min-height: 80px;
-      padding: 16px;
+      min-height: 60px;
+      padding: 10px 12px;
       border: 2px solid #b1b6c2;
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       background: #fff;
       color: var(--text-primary);
       font-family: "Roboto", Arial, sans-serif;
@@ -103,14 +106,14 @@
     }
     .type-card.selected { border-color: var(--primary); }
     .type-card-icon {
-      width: 36px;
-      height: 36px;
+      width: 28px;
+      height: 28px;
       display: grid;
       place-items: center;
-      flex: 0 0 36px;
-      color: #b1b6c2;
+      flex: 0 0 28px;
+      color: #606572;
     }
-    .type-card-icon .material-icons { font-size: 30px; }
+    .type-card-icon .material-icons { font-size: 24px; }
     .type-card.selected .type-card-icon { color: var(--primary); }
     .type-card-copy { display: flex; flex-direction: column; align-items: flex-start; }
     .type-card-label {
@@ -129,6 +132,7 @@
     }
 
     .creation-content {
+      grid-column: 1 / -1;
       display: grid;
       grid-template-columns: 230px minmax(0, 925px);
       gap: 16px;
@@ -143,6 +147,11 @@
       flex-direction: column;
       justify-content: space-between;
       min-width: 0;
+      height: min(790px, calc(100vh - 48px));
+      align-self: start;
+      position: sticky;
+      top: 24px;
+      overflow-y: auto;
     }
     .section-rail-top {
       padding: 12px;
@@ -177,12 +186,12 @@
     .step-number {
       width: 27px;
       height: 27px;
-      border: 2px solid #b1b6c2;
+      border: 2px solid #7c8290;
       border-radius: 50%;
       display: grid;
       place-items: center;
       background: #f5f5f5;
-      color: #b1b6c2;
+      color: #606572;
       font-size: var(--font-size-ui);
       line-height: var(--line-height-ui);
       letter-spacing: .15px;
@@ -281,7 +290,7 @@
     }
     .create-input { height: 56px; padding: 16px 12px; }
     .create-input::placeholder,
-    .description-input::placeholder { color: rgba(0, 0, 0, .38); opacity: 1; }
+    .description-input::placeholder { color: #6f7480; opacity: 1; }
     .create-input:focus,
     .description-input:focus {
       border-color: var(--primary);
@@ -352,7 +361,7 @@
       font-size: var(--font-size-ui);
       line-height: var(--line-height-ui);
       letter-spacing: .15px;
-      color: rgba(0, 0, 0, .38);
+      color: #606572;
     }
 
     .description-field { align-self: stretch; }
@@ -406,9 +415,10 @@
     }
     .form-message.visible { opacity: 1; transform: translateY(0); }
 
-    .creation-step { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+    .creation-step { width: 100%; display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 24px; }
+    .creation-step + .creation-step { padding-top: 32px; border-top: 1px solid var(--divider); }
     .creation-step[hidden] { display: none; }
-    .creation-step > .next-button { align-self: flex-end; }
+    .creation-step > .next-button { display: none; }
     .step-link {
       grid-column: 1 / -1;
       display: grid;
@@ -457,7 +467,7 @@
     .schedule-summary ol { padding-left: 20px; display: grid; gap: 8px; }
     .schedule-summary strong { color: var(--text-primary); font-weight: 500; }
     .schedule-summary p { margin-top: 12px; }
-    .submission-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .submission-footer { display: none; }
     .submission-footer a, .save-note a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
     .save-note { margin-top: 16px; }
     .save-note:empty { display: none; }
@@ -465,7 +475,7 @@
 
     .step-footer {
       width: 100%;
-      display: flex;
+      display: none;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
@@ -681,25 +691,29 @@
       border-color: var(--primary);
       background: #e5f6fd;
       color: var(--primary);
-      font-size: 17px;
     }
 
     @media (max-width: 1320px) {
       .creation-content { grid-template-columns: 220px minmax(0, 1fr); }
-      .type-selector { gap: 12px; }
-      .type-card { padding: 12px; }
       .type-card-label { font-size: var(--font-size-body); line-height: var(--line-height-body); }
       .type-card-desc { font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
       .grading-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
+    @media (max-width: 1180px) {
+      .creation-shell { display: flex; flex-direction: column; gap: 24px; }
+    }
     @media (max-width: 980px) {
-      .creation-shell { gap: 24px; }
       .creation-content {
         grid-template-columns: 1fr;
         min-height: auto;
         margin-top: -8px;
       }
-      .section-rail { gap: 28px; }
+      .section-rail {
+        height: auto;
+        position: static;
+        overflow: visible;
+        gap: 28px;
+      }
       .progress-list { display: grid; grid-template-columns: repeat(2, 1fr); }
       .progress-list::before { display: none; }
       .rail-actions { flex-direction: row; flex-wrap: wrap; }
@@ -716,6 +730,7 @@
       .type-panel,
       .section-rail,
       .basic-information { padding: 18px; }
+      .type-panel { padding: 0; }
       .type-selector { display: grid; grid-template-columns: 1fr; }
       .type-card { width: 100%; }
       .field-row { grid-template-columns: 1fr; }
@@ -752,8 +767,7 @@
           </nav>
         </header>
 
-        <section class="type-panel" aria-labelledby="type-heading">
-          <h2 class="section-heading" id="type-heading">Assignment Type</h2>
+        <section class="type-panel" aria-label="Assignment type">
           <div class="type-selector" role="group" aria-label="Assignment type">
             <button class="type-card selected" id="type-assignment" type="button" data-type="assignment" aria-pressed="true">
               <span class="type-card-icon"><span class="material-icons" aria-hidden="true">article</span></span>
@@ -860,7 +874,7 @@
             </button>
             </section>
 
-            <section class="creation-step" id="submission-section" aria-labelledby="submission-heading" hidden>
+            <section class="creation-step" id="submission-section" aria-labelledby="submission-heading">
               <h2 class="section-heading" id="submission-heading" tabindex="-1">Submission</h2>
               <p class="section-intro">Set deadlines for each submission period. All times are in <span id="schedule-timezone"></span>.</p>
 
@@ -954,7 +968,7 @@
               </div>
             </section>
 
-            <section class="creation-step" id="grading-section" aria-labelledby="grading-heading" hidden>
+            <section class="creation-step" id="grading-section" aria-labelledby="grading-heading">
               <h2 class="section-heading" id="grading-heading" tabindex="-1">Grading</h2>
 
               <div class="grading-grid">
@@ -1027,7 +1041,7 @@
               </div>
             </section>
 
-            <section class="creation-step" id="group-section" aria-labelledby="group-heading" hidden>
+            <section class="creation-step" id="group-section" aria-labelledby="group-heading">
               <h2 class="section-heading" id="group-heading" tabindex="-1">Group Options</h2>
 
               <fieldset class="collaboration-fieldset">
@@ -1068,7 +1082,7 @@
               </div>
             </section>
 
-            <section class="creation-step" id="content-section" aria-labelledby="content-heading" hidden>
+            <section class="creation-step" id="content-section" aria-labelledby="content-heading">
               <h2 class="section-heading" id="content-heading" tabindex="-1">Content</h2>
               <div class="content-intro">
                 <h3 class="content-subheading">Provided Assignment Files</h3>

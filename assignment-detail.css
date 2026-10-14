@@ -1,6 +1,6 @@
 .assignment-detail-page { background: var(--bg-page); }
 .assignment-detail-page .content-wrapper { min-width: 0; }
-.assignment-page-header { margin-bottom: 32px; }
+.assignment-page-header { margin-bottom: 24px; }
 
 .assignment-progress-card {
   position: relative;
@@ -157,6 +157,7 @@
 
 .assignment-submissions { min-width: 0; }
 .assignment-filters { display: flex; flex-direction: column; gap: 16px; }
+.assignment-filter-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .assignment-filters h2 { color: var(--text-primary); font-size: 20px; font-weight: 500; line-height: 32px; letter-spacing: 0.15px; }
 .assignment-filter-grid {
   display: grid;

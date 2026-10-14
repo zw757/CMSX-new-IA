@@ -43,6 +43,7 @@ let activeSection = 0;
 let savedRecord;
 let messageTimer;
 let showErrors = false;
+let scrollSyncFrame = 0;
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 $('schedule-timezone').textContent = timeZone.replaceAll('_', ' ');
 
@@ -55,7 +56,7 @@ function showMessage(text) {
 
 function renderSteps() {
   $('progress-list').innerHTML = typeConfig[activeType].steps.map((step, index) => {
-    const number = index < activeSection ? '<span class="material-icons" aria-hidden="true">check</span>' : index + 1;
+    const number = index + 1;
     const content = `<span class="step-number">${number}</span><span class="step-copy"><span class="step-label">${step.label}</span><span class="step-description">${step.description}</span></span>`;
     return `<li class="progress-step${index === activeSection ? ' active' : ''}${index < activeSection ? ' completed' : ''}"><button class="step-link" type="button" data-section="${index}"${index === activeSection ? ' aria-current="step"' : ''}>${content}</button></li>`;
   }).join('');
@@ -68,11 +69,35 @@ function selectSection(index, focus = true) {
   const steps = typeConfig[activeType].steps;
   activeSection = Math.max(0, Math.min(index, steps.length - 1));
   const activeKey = steps[activeSection].key;
+  const visibleKeys = new Set(steps.map((step) => step.key));
   document.querySelectorAll('.creation-step').forEach((section) => {
-    section.hidden = section.id !== `${activeKey}-section`;
+    section.hidden = !visibleKeys.has(section.id.replace('-section', ''));
   });
   renderSteps();
   if (focus) $(`${activeKey}-heading`).focus();
+}
+
+function syncActiveSectionToScroll() {
+  scrollSyncFrame = 0;
+  const steps = typeConfig[activeType].steps;
+  const activationLine = Math.min(window.innerHeight * .28, 240);
+  let nextSection = 0;
+
+  steps.forEach((step, index) => {
+    const section = $(`${step.key}-section`);
+    if (!section.hidden && section.getBoundingClientRect().top <= activationLine) nextSection = index;
+  });
+
+  const atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+  if (atPageEnd) nextSection = steps.length - 1;
+  if (nextSection === activeSection) return;
+  activeSection = nextSection;
+  renderSteps();
+}
+
+function queueScrollSync() {
+  if (scrollSyncFrame) return;
+  scrollSyncFrame = requestAnimationFrame(syncActiveSectionToScroll);
 }
 
 function selectType(type, updateUrl = true) {
@@ -334,6 +359,8 @@ function save(publish) {
 }
 
 document.querySelectorAll('.type-card').forEach((card) => card.addEventListener('click', () => selectType(card.dataset.type)));
+window.addEventListener('scroll', queueScrollSync, { passive: true });
+window.addEventListener('resize', queueScrollSync);
 form.addEventListener('input', syncSettings);
 form.addEventListener('change', syncSettings);
 form.addEventListener('submit', (event) => { event.preventDefault(); save(true); });
