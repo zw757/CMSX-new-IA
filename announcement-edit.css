@@ -1,4 +1,21 @@
 /* Compose the existing CMSX shell and typography roles. */
+/* Create Announcement: the supplied full-page composition shares the editor. */
+.announcement-history[hidden], .announcement-attachments[hidden], .attachment-list[hidden], #attachmentEmpty[hidden] { display: none; }
+.announcement-attachments { display: flex; flex-direction: column; gap: 16px; height: 625px; min-width: 0; }
+.announcement-attachments h3 { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-body); line-height: var(--line-height-body); font-weight: 400; }
+.announcement-attachments h3 img, .attachment-add-button img { display: block; flex-shrink: 0; }
+.attachment-dropzone { display: flex; flex: 1; min-height: 0; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px 20px; border: 1px dashed #b1b6c2; border-radius: var(--border-radius); background: var(--surface); }
+.attachment-dropzone.is-dragging { border-color: var(--primary); background: var(--primary-light); }
+.attachment-dropzone > p { color: #606572; font-size: var(--font-size-ui); line-height: var(--line-height-body); }
+.attachment-add-button { min-height: 38px; box-shadow: var(--shadow-2); text-transform: uppercase; }
+.attachment-list { width: 100%; overflow: auto; list-style: none; }
+.announcement-attachment { display: flex; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--divider); font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+.announcement-attachment a { flex: 1; min-width: 0; color: var(--primary); text-decoration: underline; overflow-wrap: anywhere; }
+.announcement-attachment button { font-size: var(--font-size-section); line-height: var(--line-height-section); color: var(--text-secondary); width: 24px; height: 24px; }
+.announcement-create-page .announcement-form-footer { justify-content: flex-end; }
+@media (max-width: 1050px) {
+  .announcement-attachments { height: 320px; }
+}
 .announcement-edit-page .main-content { background: rgba(247,247,247,0.97); }
 .announcement-edit-shell { --editor-copy: #606572; --history-border: #b1b6c2; }
 .announcement-edit-page .announcement-page-header { min-height: 57px; margin-bottom: 32px; align-items: center; }

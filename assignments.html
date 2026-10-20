@@ -3,209 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CS4998 – Assignments &amp; Grading</title>
+  <title>CS4998 – Assignments</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="assignments-list.css" />
   <script type="module" src="sidebar.js"></script>
-  <style>
-    .assignment-row { cursor: pointer; }
-    .assignment-row:hover { background: rgba(0,102,153,0.04); }
-    .progress-bar-wrap { width: 100px; height: 6px; background: rgba(0,0,0,0.12); border-radius: 100px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 100px; }
-    .stat-mini { font-size: var(--font-size-caption); line-height: var(--line-height-caption); color: var(--text-secondary); margin-top: 2px; }
-    .summary-bar {
-      display: flex; gap: 24px; flex-wrap: wrap;
-      background: white; border-radius: 8px; padding: 20px 28px;
-      box-shadow: var(--shadow-1); margin-bottom: 24px;
-    }
-    .summary-item { display: flex; flex-direction: column; gap: 2px; }
-    .summary-value { font-family: 'DM Sans',sans-serif; font-size: var(--font-size-metric); line-height: var(--line-height-metric); font-weight: 500; color: var(--primary); }
-    .summary-label { font-size: var(--font-size-ui); line-height: var(--line-height-ui); color: var(--text-secondary); }
-    .summary-divider { width: 1px; background: var(--divider); }
-  </style>
 </head>
-<body>
-<div class="app-layout">
+<body class="assignments-list-page">
+  <div class="app-layout">
+    <cmsx-sidebar></cmsx-sidebar>
+    <main class="main-content">
+      <div class="content-wrapper assignments-shell" data-node-id="1978:22463">
+        <header class="page-header assignments-header" data-node-id="1978:22465">
+          <div class="page-title-group">
+            <h1 class="page-title">CS4998 Intro to CMSX</h1>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+              <span class="breadcrumb-sep" aria-hidden="true"><img src="assets/assignments/breadcrumb.svg" alt="" /></span>
+              <span class="breadcrumb-link" aria-current="page">Assignments</span>
+            </nav>
+          </div>
+          <a class="btn btn-primary assignment-create-link" href="assignment-create.html">+ Create Assignment</a>
+        </header>
 
-  <!-- Sidebar -->
-  <cmsx-sidebar></cmsx-sidebar>
+        <section class="assignments-summary" aria-label="Assignment summary" data-node-id="1978:22470">
+          <div class="assignments-summary-totals">
+            <div class="assignments-total"><span>Total Assignments</span><strong id="assignmentTotal">7</strong></div>
+            <dl class="assignments-status-counts" id="assignmentStatusCounts"></dl>
+          </div>
+          <div class="assignments-recent">
+            <a class="assignment-recent-card" href="assignment-detail.html?assignment=assignment-1">
+              <span class="assignment-recent-caption">Recent Submission Status</span>
+              <span class="assignment-recent-title"><span>Assignment 1: Hello CMSX</span><img src="assets/assignments/recent-arrow.svg" alt="" aria-hidden="true" /></span>
+              <span class="assignment-recent-progress">
+                <span class="assignments-progress" role="progressbar" aria-label="Recent submissions" aria-valuemin="0" aria-valuemax="160" aria-valuenow="125"><span style="width:75.62%"></span></span>
+                <span class="assignment-recent-count"><span>125/160</span> (78%)</span>
+              </span>
+            </a>
+            <a class="assignment-recent-card" href="assignment-grading.html?assignment=quiz-1">
+              <span class="assignment-recent-caption is-grading">Recent Grading Status</span>
+              <span class="assignment-recent-title"><span>Quiz 1: Navigation &amp; IA</span><img src="assets/assignments/recent-arrow.svg" alt="" aria-hidden="true" /></span>
+              <span class="assignment-recent-progress">
+                <span class="assignments-progress" role="progressbar" aria-label="Recent grading" aria-valuemin="0" aria-valuemax="160" aria-valuenow="158"><span style="width:97.93%"></span></span>
+                <span class="assignment-recent-count"><span>158/160</span> (99%)</span>
+              </span>
+            </a>
+          </div>
+        </section>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <div class="content-wrapper">
-
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-title-group">
-          <h1 class="page-title">CS4998 Intro to CMSX</h1>
-          <nav class="breadcrumbs">
-            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
-            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
-            <a class="breadcrumb-link" href="course-home.html">Home</a>
-            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
-            <span class="breadcrumb-link">Assignments &amp; Grading</span>
-          </nav>
+        <div class="assignments-filters" data-node-id="1978:22508">
+          <div class="assignments-search">
+            <label for="assignmentSearch">Enter Assignment Name</label>
+            <div class="assignments-search-input">
+              <input id="assignmentSearch" type="search" placeholder="Search Assignments..." autocomplete="off" />
+              <button type="button" id="clearAssignmentSearch" aria-label="Clear assignment search"><img src="assets/assignments/clear.svg" alt="" /></button>
+            </div>
+            <div class="assignments-search-underline" aria-hidden="true"><img src="assets/assignments/search-underline.svg" alt="" /></div>
+          </div>
+          <div class="assignments-type-filters" id="assignmentTypeFilters" role="group" aria-label="Filter assignments by type"></div>
         </div>
-        <div style="display:flex;gap:12px;">
-          <a href="assignment-create.html" class="btn btn-primary">
-            <span class="material-icons">add</span>
-            Create Assignment
-          </a>
+
+        <div class="assignments-view-bar" data-node-id="1978:22536">
+          <div class="assignments-view-toggle" role="group" aria-label="Assignment view">
+            <button type="button" id="assignmentTableToggle" aria-pressed="true" aria-controls="assignmentTablePanel"><img src="assets/assignments/table.svg" alt="" aria-hidden="true" />Table</button>
+            <button type="button" id="assignmentCalendarToggle" aria-pressed="false" aria-controls="assignmentCalendarPanel"><img src="assets/assignments/calendar.svg" alt="" aria-hidden="true" />Calendar</button>
+          </div>
+          <button type="button" class="assignments-deleted-button" id="deletedAssignmentsButton"><img src="assets/assignments/deleted.svg" alt="" aria-hidden="true" />Deleted Items</button>
         </div>
+
+        <section class="assignments-table-panel" id="assignmentTablePanel" aria-label="Assignments table" data-node-id="1978:22550">
+          <div class="assignments-table-scroll" tabindex="0" role="region" aria-label="Scrollable assignments table">
+            <table class="assignments-table">
+              <caption class="assignment-sr-only">Course assignments and grading progress</caption>
+              <thead><tr class="assignment-table-head">
+                <th scope="col"><span class="assignment-sr-only">Expand</span></th>
+                <th scope="col" aria-sort="none" data-sort-column="name"><button type="button" data-sort-key="name">Assignment<img src="assets/assignments/sort.svg" alt="" aria-hidden="true" /></button></th>
+                <th scope="col">Type</th>
+                <th scope="col" aria-sort="none" data-sort-column="due"><button type="button" data-sort-key="due">Due Date<img src="assets/assignments/sort.svg" alt="" aria-hidden="true" /></button></th>
+                <th scope="col">Points</th>
+                <th scope="col">Average</th>
+                <th scope="col">Submission</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr></thead>
+              <tbody id="assignmentTableBody"></tbody>
+            </table>
+          </div>
+          <p class="assignments-empty" id="assignmentTableEmpty" role="status" hidden>No assignments match your search.</p>
+        </section>
+
+        <section class="assignments-calendar-panel" id="assignmentCalendarPanel" aria-labelledby="assignmentCalendarHeading" data-node-id="1978:22136" hidden>
+          <header class="assignment-calendar-header">
+            <h2 id="assignmentCalendarHeading"><span>April</span> <span>2026</span></h2>
+            <div class="assignment-month-navigation">
+              <button type="button" id="assignmentPreviousMonth" aria-label="Previous month"><img src="assets/assignments/previous-month.svg" alt="" /></button>
+              <button type="button" id="assignmentNextMonth" aria-label="Next month"><img src="assets/assignments/next-month.svg" alt="" /></button>
+            </div>
+          </header>
+          <div class="assignment-calendar-scroll" tabindex="0" role="region" aria-label="Scrollable assignment calendar">
+            <div class="assignment-calendar" id="assignmentCalendar"></div>
+          </div>
+        </section>
       </div>
+    </main>
+  </div>
 
-      <!-- Summary bar -->
-      <div class="summary-bar">
-        <div class="summary-item">
-          <span class="summary-value">9</span>
-          <span class="summary-label">Total Assignments</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item">
-          <span class="summary-value">5</span>
-          <span class="summary-label">Graded</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item">
-          <span class="summary-value">4</span>
-          <span class="summary-label">Upcoming</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item">
-          <span class="summary-value">82%</span>
-          <span class="summary-label">Avg Score</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-item">
-          <span class="summary-value">12</span>
-          <span class="summary-label">Late Submissions</span>
-        </div>
-      </div>
-
-      <!-- Filter bar -->
-      <div style="display:flex;gap:8px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
-        <div class="search-field" style="width:300px;">
-          <span class="material-icons search-icon">search</span>
-          <input type="text" placeholder="Search assignments…" oninput="filterAssignments(this.value)" />
-        </div>
-        <button class="chip chip-outlined active" id="filter-all" onclick="setFilter('all')">All</button>
-        <button class="chip chip-outlined" id="filter-assignment" onclick="setFilter('Assignment')">Assignments</button>
-        <button class="chip chip-outlined" id="filter-quiz" onclick="setFilter('Quiz')">Quizzes</button>
-        <button class="chip chip-outlined" id="filter-survey" onclick="setFilter('Survey')">Surveys</button>
-      </div>
-
-      <!-- Assignment list table -->
-      <div class="table-container">
-        <div class="table-scroll-wrapper">
-          <table class="data-table" id="assignmentsTable">
-            <thead>
-              <tr>
-                <th class="sortable" onclick="sortAssign(0)" style="min-width:220px;"><div class="th-inner">Assignment Name <span class="material-icons">swap_vert</span></div></th>
-                <th style="min-width:110px;">Type</th>
-                <th class="sortable" onclick="sortAssign(2)" style="min-width:140px;"><div class="th-inner">Due Date <span class="material-icons">swap_vert</span></div></th>
-                <th class="sortable" onclick="sortAssign(3)" style="min-width:90px;"><div class="th-inner">Points <span class="material-icons">swap_vert</span></div></th>
-                <th class="sortable" onclick="sortAssign(4)" style="min-width:120px;"><div class="th-inner">Avg Score <span class="material-icons">swap_vert</span></div></th>
-                <th style="min-width:130px;">Submissions</th>
-                <th style="min-width:100px;">Status</th>
-                <th style="min-width:120px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="assignBody">
-            </tbody>
-          </table>
-        </div>
-      </div>
-
+  <dialog class="deleted-assignments-dialog" id="deletedAssignmentsDialog" aria-labelledby="deletedAssignmentsHeading" data-node-id="1978:23361">
+    <h2 id="deletedAssignmentsHeading">Deleted Assignments</h2>
+    <button type="button" class="deleted-assignments-close" id="closeDeletedAssignments" aria-label="Close deleted assignments"><img src="assets/assignments/close.svg" alt="" /></button>
+    <div class="deleted-assignments-body">
+      <div class="deleted-assignments-scroll" id="deletedAssignmentsList" tabindex="0"></div>
+      <div class="deleted-assignments-scrollbar" id="deletedAssignmentsScrollbar" role="scrollbar" tabindex="0" aria-label="Scroll deleted assignments" aria-controls="deletedAssignmentsList" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
     </div>
-  </main>
-</div>
-
-<script>
-const assignments = [
-  { name:'Assignment 1: Hello CMSX',          type:'Assignment', due:'Feb 2, 2026',  points:100, avg:91, subs:158, total:160, status:'graded',   detailHref:'assignment-detail.html' },
-  { name:'Assignment 2: Enrollment Workflow',  type:'Assignment', due:'Feb 16, 2026', points:100, avg:85, subs:157, total:160, status:'graded',   detailHref:'assignment-detail.html' },
-  { name:'Quiz 1: Navigation & IA',           type:'Quiz',       due:'Feb 23, 2026', points:50,  avg:88, subs:160, total:160, status:'graded',   detailHref:'assignment-detail.html' },
-  { name:'Assignment 3: Grading Systems',     type:'Assignment', due:'Mar 9, 2026',  points:100, avg:79, subs:155, total:160, status:'graded',   detailHref:'assignment-detail.html' },
-  { name:'Survey: Midterm Feedback',          type:'Survey',     due:'Mar 12, 2026', points:10,  avg:10, subs:142, total:160, status:'graded',   detailHref:'assignment-detail.html' },
-  { name:'Assignment 4: Announcements',       type:'Assignment', due:'Mar 23, 2026', points:100, avg:null, subs:0,  total:160, status:'open',     detailHref:'assignment-detail.html' },
-  { name:'Quiz 2: Settings & Permissions',    type:'Quiz',       due:'Apr 6, 2026',  points:50,  avg:null, subs:0,  total:160, status:'upcoming', detailHref:'assignment-detail.html' },
-  { name:'Final Project: Full CMSX Build',    type:'Assignment', due:'May 4, 2026',  points:200, avg:null, subs:0,  total:160, status:'upcoming', detailHref:'assignment-detail.html' },
-  { name:'Test Assignment: Group Formation Pilot', type:'Assignment', due:'May 20, 2026', points:100, avg:null, subs:0, total:160, status:'open', detailHref:'assignment-detail.html?scenario=group-test' },
-];
-
-let filterType = 'all';
-let filterSearch = '';
-
-function statusBadge(s) {
-  const map = { graded:'badge-success', open:'badge-primary', upcoming:'badge-warning' };
-  const labels = { graded:'Graded', open:'Open', upcoming:'Upcoming' };
-  return `<span class="badge ${map[s]}">${labels[s]}</span>`;
-}
-
-function typeTag(t) {
-  const map = { Assignment:'type-assignment', Quiz:'type-quiz', Survey:'type-survey' };
-  return `<span class="assignment-type-tag ${map[t]}">${t}</span>`;
-}
-
-function progressCol(subs, total) {
-  const pct = Math.round((subs / total) * 100);
-  return `
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-      <span class="stat-mini">${subs} / ${total} (${pct}%)</span>
-    </div>`;
-}
-
-function renderAssignments() {
-  const tbody = document.getElementById('assignBody');
-  const filtered = assignments.filter(a => {
-    const matchSearch = !filterSearch || a.name.toLowerCase().includes(filterSearch);
-    const matchType = filterType === 'all' || a.type === filterType;
-    return matchSearch && matchType;
-  });
-  tbody.innerHTML = filtered.map(a => `
-    <tr class="assignment-row" onclick="window.location='${a.detailHref}'">
-      <td>
-        <div style="font-weight:500;color:var(--primary);">${a.name}</div>
-      </td>
-      <td>${typeTag(a.type)}</td>
-      <td>${a.due}</td>
-      <td>${a.points} pts</td>
-      <td>${a.avg !== null ? `<span style="color:var(--primary);font-weight:500;">${a.avg}%</span>` : '<span style="color:var(--text-disabled);">—</span>'}</td>
-      <td>${progressCol(a.subs, a.total)}</td>
-      <td>${statusBadge(a.status)}</td>
-      <td onclick="event.stopPropagation()">
-        <div style="display:flex;gap:6px;">
-          <a href="assignment-grading.html" class="btn btn-outlined" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:3px 10px;text-transform:none;">
-            <span class="material-icons" style="font-size:14px;">grade</span> Grade
-          </a>
-          <a href="assignment-create.html" class="btn btn-outlined" style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);padding:3px 10px;text-transform:none;">
-            <span class="material-icons" style="font-size:14px;">edit</span>
-          </a>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function setFilter(type) {
-  filterType = type;
-  document.querySelectorAll('[id^="filter-"]').forEach(c => c.classList.remove('active'));
-  document.getElementById('filter-' + type.toLowerCase()).classList.add('active');
-  renderAssignments();
-}
-function filterAssignments(q) { filterSearch = q.toLowerCase(); renderAssignments(); }
-
-function sortAssign(col) {
-  const keys = ['name','type','due','points','avg'];
-  const key = keys[col];
-  assignments.sort((a,b) => {
-    const av = a[key] ?? '', bv = b[key] ?? '';
-    return String(av).localeCompare(String(bv), undefined, { numeric: true });
-  });
-  renderAssignments();
-}
-
-renderAssignments();
-</script>
+  </dialog>
+  <div class="assignments-toast" id="assignmentsToast" role="status" aria-live="polite"></div>
+  <script type="module" src="assignments-list.js"></script>
 </body>
 </html>
