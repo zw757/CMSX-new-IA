@@ -1,6 +1,5 @@
 const params = new URLSearchParams(window.location.search);
 const assignmentName = params.get('assignment')?.trim() || 'Assignment 3: Grading Systems';
-const pageSize = 10;
 
 const submissions = [
   { netid: 'zw757', group: 'May', due: '2026-03-09', status: 'complete', grader: 'May', section: '001', partA: 78.5, partB: 92, total: 81.5 },
@@ -20,8 +19,30 @@ const submissions = [
   { netid: 'ff666', group: 'Group Gamma', due: '2026-03-09', status: 'complete', grader: 'May', section: '002', partA: 96, partB: 98, total: 97 },
 ];
 
+// Keep the named examples first, then fill out a realistic large-class roster.
+const mockGroups = ['Group Alpha', 'Group Beta', 'Group Gamma', 'Group Delta', 'Group Epsilon', 'Ungrouped'];
+const mockGraders = ['May', 'Sylvia', 'Erica'];
+submissions.push(...Array.from({ length: 800 - submissions.length }, (_, index) => {
+  const sequence = index + 1;
+  const status = sequence % 10 === 0 ? 'ungraded'
+    : sequence % 10 === 1 ? 'regrade'
+      : sequence % 10 === 2 ? 'partial' : 'complete';
+  const partA = status === 'ungraded' ? null : 60 + (sequence * 17) % 41;
+  const partB = status === 'ungraded' || status === 'partial' ? null : 60 + (sequence * 23) % 41;
+  return {
+    netid: `cs${String(sequence).padStart(4, '0')}`,
+    group: mockGroups[index % mockGroups.length],
+    due: `2026-03-${String(7 + index % 4).padStart(2, '0')}`,
+    status,
+    grader: status === 'ungraded' ? '' : mockGraders[index % mockGraders.length],
+    section: index % 2 === 0 ? '001' : '002',
+    partA,
+    partB,
+    total: partB === null ? partA : (partA + partB) / 2,
+  };
+}));
+
 const state = {
-  chip: 'all',
   search: '',
   grader: '',
   section: '',
@@ -31,13 +52,12 @@ const state = {
   scoreHigh: 100,
   sortKey: null,
   sortDirection: 1,
-  page: 1,
   selected: new Set(),
 };
 
 const title = document.getElementById('assignmentTitle');
 const body = document.getElementById('submissionsBody');
-const statusChips = document.getElementById('statusChips');
+const tableShell = document.querySelector('.assignment-table-shell');
 const selectAll = document.getElementById('selectAllRows');
 const toast = document.getElementById('assignmentToast');
 let toastTimer;
@@ -70,10 +90,6 @@ function scoreValue(value) {
   return value === null ? '—' : Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
-function matchesChip(submission) {
-  return state.chip === 'all' || submission.status === state.chip;
-}
-
 function filteredSubmissions() {
   const search = state.search.toLowerCase();
   const filtered = submissions.filter((submission) => {
@@ -88,7 +104,7 @@ function filteredSubmissions() {
     const matchesScore = score === null
       ? state.scoreLow === 0 && state.scoreHigh === 100
       : score >= state.scoreLow && score <= state.scoreHigh;
-    return matchesSearch && matchesGrader && matchesSection && matchesStatus && matchesDue && matchesScore && matchesChip(submission);
+    return matchesSearch && matchesGrader && matchesSection && matchesStatus && matchesDue && matchesScore;
   });
 
   if (!state.sortKey) return filtered;
@@ -105,46 +121,24 @@ function filteredSubmissions() {
   });
 }
 
-function renderChips() {
-  const definitions = [
-    ['all', 'All'],
-    ['ungraded', 'Ungraded'],
-    ['regrade', 'Regrade Pending'],
-    ['partial', 'Partially Submitted'],
-    ['complete', 'Complete'],
-  ];
-
-  statusChips.innerHTML = definitions.map(([key, label]) => {
-    const count = key === 'all' ? submissions.length : submissions.filter((submission) => submission.status === key).length;
-    return `<button class="submission-chip${state.chip === key ? ' active' : ''}" type="button" data-chip="${key}" aria-pressed="${state.chip === key}">
-      <span>${label}</span><span class="submission-chip-count">${count}</span>
-    </button>`;
-  }).join('');
-}
-
 function renderRows() {
   const filtered = filteredSubmissions();
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-  state.page = Math.min(state.page, pageCount);
-  const start = (state.page - 1) * pageSize;
-  const visible = filtered.slice(start, start + pageSize);
+  const previousScrollTop = tableShell.scrollTop;
 
-  if (!visible.length) {
-    body.innerHTML = '<tr><td class="assignment-table-empty" colspan="10">No submissions match these filters.</td></tr>';
+  if (!filtered.length) {
+    body.innerHTML = '<tr><td class="assignment-table-empty" colspan="8">No submissions match these filters.</td></tr>';
   } else {
-    body.innerHTML = visible.map((submission, index) => {
+    body.innerHTML = filtered.map((submission, index) => {
       const checked = state.selected.has(submission.netid);
       const gradeQuery = new URLSearchParams({ student: submission.netid, assignment: assignmentName });
       return `<tr class="${checked ? 'is-selected' : ''}" data-netid="${escapeHtml(submission.netid)}">
         <td class="selection-column"><input type="checkbox" aria-label="Select ${escapeHtml(submission.netid)}" data-row-select ${checked ? 'checked' : ''} /></td>
-        <td class="number-column">${start + index + 1}</td>
+        <td class="number-column">${index + 1}</td>
         <td>${escapeHtml(submission.netid)}</td>
         <td>${escapeHtml(submission.group)}</td>
         <td>${displayDate(submission.due)}</td>
         <td><span class="submission-status ${submission.status}">${statusLabel(submission.status)}</span></td>
-        <td class="grade-column">${scoreValue(submission.partA)}</td>
-        <td>${scoreValue(submission.partB)}</td>
-        <td>${scoreValue(submission.total)}</td>
+        <td class="grade-column">${scoreValue(submission.total)}</td>
         <td class="actions-column">
           <div class="assignment-actions">
             <a class="assignment-row-button" href="assignment-grading.html?${gradeQuery.toString()}">Grade</a>
@@ -154,25 +148,34 @@ function renderRows() {
       </tr>`;
     }).join('');
   }
+  tableShell.scrollTop = previousScrollTop;
 
-  const visibleIds = visible.map((submission) => submission.netid);
-  const visibleSelected = visibleIds.filter((netid) => state.selected.has(netid)).length;
-  selectAll.checked = visibleIds.length > 0 && visibleSelected === visibleIds.length;
-  selectAll.indeterminate = visibleSelected > 0 && visibleSelected < visibleIds.length;
+  updateVisibleSelection();
   document.getElementById('resultCount').textContent = `${filtered.length} submission${filtered.length === 1 ? '' : 's'}`;
-  document.getElementById('pageLabel').textContent = `Page ${state.page} of ${pageCount}`;
-  document.getElementById('previousPageButton').disabled = state.page === 1;
-  document.getElementById('nextPageButton').disabled = state.page === pageCount;
-  updateGroupOperations();
+  document.getElementById('filterResults').textContent = `${filtered.length} submission${filtered.length === 1 ? '' : 's'}`;
+  document.getElementById('clearFiltersButton').hidden = !(
+    state.search || state.grader || state.section || state.status || state.due
+    || state.scoreLow !== 0 || state.scoreHigh !== 100
+  );
 }
 
-function resetToFirstPageAndRender() {
-  state.page = 1;
+function renderFilteredRows() {
+  tableShell.scrollTop = 0;
   renderRows();
+}
+
+function updateVisibleSelection() {
+  const visible = filteredSubmissions();
+  const selectedCount = visible.filter((submission) => state.selected.has(submission.netid)).length;
+  selectAll.checked = visible.length > 0 && selectedCount === visible.length;
+  selectAll.indeterminate = selectedCount > 0 && selectedCount < visible.length;
+  updateGroupOperations();
 }
 
 function updateGroupOperations() {
   const count = state.selected.size;
+  document.getElementById('assignmentSelectionToolbar').hidden = count === 0;
+  document.getElementById('assignmentSelectionCount').textContent = `${count} submission${count === 1 ? '' : 's'} selected`;
   document.getElementById('selectionHelp').textContent = count
     ? `${count} submission${count === 1 ? '' : 's'} selected`
     : 'Please select rows to begin group operations';
@@ -226,17 +229,37 @@ document.getElementById('progressDetailsButton').addEventListener('click', (even
   popover.hidden = expanded;
 });
 
-statusChips.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-chip]');
-  if (!button) return;
-  state.chip = button.dataset.chip;
-  renderChips();
-  resetToFirstPageAndRender();
-});
-
 document.getElementById('studentFilter').addEventListener('input', (event) => {
   state.search = event.target.value.trim();
-  resetToFirstPageAndRender();
+  renderFilteredRows();
+});
+
+document.getElementById('clearStudentSearch').addEventListener('click', () => {
+  const input = document.getElementById('studentFilter');
+  input.value = '';
+  state.search = '';
+  renderFilteredRows();
+  input.focus();
+});
+
+document.getElementById('clearFiltersButton').addEventListener('click', () => {
+  Object.assign(state, { search: '', grader: '', section: '', status: '', due: '', scoreLow: 0, scoreHigh: 100 });
+  ['studentFilter', 'graderFilter', 'sectionFilter', 'statusFilter', 'dueDateFilter'].forEach((id) => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('scoreLowFilter').value = '0';
+  document.getElementById('scoreHighFilter').value = '100';
+  renderFilteredRows();
+});
+
+document.getElementById('jumpToGroupOperations').addEventListener('click', () => {
+  const panel = document.getElementById('assignmentControls');
+  if (panel.hidden) document.querySelector('[data-rail-toggle][aria-controls="assignmentControls"]').click();
+  const section = document.getElementById('gradeAllButton').closest('.assignment-tool-section');
+  const heading = section.querySelector('.assignment-tool-heading');
+  if (heading.getAttribute('aria-expanded') === 'false') heading.click();
+  heading.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  heading.focus({ preventScroll: true });
 });
 
 [
@@ -247,7 +270,7 @@ document.getElementById('studentFilter').addEventListener('input', (event) => {
 ].forEach(([id, stateKey]) => {
   document.getElementById(id).addEventListener('change', (event) => {
     state[stateKey] = event.target.value;
-    resetToFirstPageAndRender();
+    renderFilteredRows();
   });
 });
 
@@ -258,7 +281,7 @@ document.getElementById('studentFilter').addEventListener('input', (event) => {
   document.getElementById(id).addEventListener('input', (event) => {
     const fallback = stateKey === 'scoreLow' ? 0 : 100;
     state[stateKey] = event.target.value === '' ? fallback : Number(event.target.value);
-    resetToFirstPageAndRender();
+    renderFilteredRows();
   });
 });
 
@@ -269,7 +292,7 @@ document.querySelectorAll('[data-sort]').forEach((button) => {
       state.sortKey = button.dataset.sort;
       state.sortDirection = 1;
     }
-    renderRows();
+    renderFilteredRows();
   });
 });
 
@@ -278,7 +301,8 @@ body.addEventListener('change', (event) => {
   const row = event.target.closest('[data-netid]');
   if (event.target.checked) state.selected.add(row.dataset.netid);
   else state.selected.delete(row.dataset.netid);
-  renderRows();
+  row.classList.toggle('is-selected', event.target.checked);
+  updateVisibleSelection();
 });
 
 body.addEventListener('click', (event) => {
@@ -287,22 +311,16 @@ body.addEventListener('click', (event) => {
 });
 
 selectAll.addEventListener('change', () => {
-  const visible = filteredSubmissions().slice((state.page - 1) * pageSize, state.page * pageSize);
+  const visible = filteredSubmissions();
   visible.forEach((submission) => {
     if (selectAll.checked) state.selected.add(submission.netid);
     else state.selected.delete(submission.netid);
   });
-  renderRows();
-});
-
-document.getElementById('previousPageButton').addEventListener('click', () => {
-  state.page = Math.max(1, state.page - 1);
-  renderRows();
-});
-
-document.getElementById('nextPageButton').addEventListener('click', () => {
-  state.page += 1;
-  renderRows();
+  body.querySelectorAll('[data-row-select]').forEach((checkbox) => {
+    checkbox.checked = selectAll.checked;
+    checkbox.closest('tr').classList.toggle('is-selected', selectAll.checked);
+  });
+  updateVisibleSelection();
 });
 
 document.getElementById('gradeAllButton').addEventListener('click', () => {
@@ -349,5 +367,4 @@ document.getElementById('emailSelectedButton').addEventListener('click', () => {
   showToast(`Email draft created for ${state.selected.size} students`);
 });
 
-renderChips();
 renderRows();

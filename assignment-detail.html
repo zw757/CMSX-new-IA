@@ -49,14 +49,66 @@
             </button>
             <div class="progress-popover" id="progressPopover" hidden>
               <strong>Assignment progress</strong>
-              <span>131 of 160 submissions received</span>
-              <span>42 of 131 submissions graded</span>
+              <span>656 of 800 submissions received</span>
+              <span>210 of 656 submissions graded</span>
             </div>
           </div>
         </header>
 
         <div class="assignment-workspace rail-layout">
-          <aside class="assignment-tools rail-panel" id="assignmentControls" aria-label="Assignment controls">
+          <aside class="assignment-tools rail-panel" id="assignmentControls" aria-label="Submission filters and assignment controls">
+            <section class="assignment-filter-panel" aria-labelledby="filterHeading">
+              <header class="assignment-filter-panel-heading">
+                <h2 id="filterHeading">Filter submissions</h2>
+                <p>Find the submissions you need to review.</p>
+              </header>
+              <div class="assignment-filter-grid">
+                <label class="assignment-filter">
+                  <span class="filter-name">Grader</span>
+                  <select id="graderFilter">
+                    <option value="">Any grader</option>
+                    <option>May</option>
+                    <option>Sylvia</option>
+                    <option>Erica</option>
+                  </select>
+                </label>
+                <label class="assignment-filter">
+                  <span class="filter-name">Section</span>
+                  <select id="sectionFilter">
+                    <option value="">All sections</option>
+                    <option value="001">Section 001</option>
+                    <option value="002">Section 002</option>
+                  </select>
+                </label>
+                <label class="assignment-filter">
+                  <span class="filter-name">Submission status</span>
+                  <select id="statusFilter">
+                    <option value="">Any status</option>
+                    <option value="complete">Complete</option>
+                    <option value="partial">Partially submitted</option>
+                    <option value="ungraded">Ungraded</option>
+                    <option value="regrade">Regrade pending</option>
+                  </select>
+                </label>
+                <label class="assignment-filter">
+                  <span class="filter-name">Due date</span>
+                  <input id="dueDateFilter" type="date" />
+                </label>
+                <fieldset class="assignment-filter score-filter">
+                  <legend class="filter-name">Total score</legend>
+                  <div class="score-range">
+                    <label><span class="sr-only">Lowest score</span><input id="scoreLowFilter" type="number" min="0" max="100" value="0" aria-label="Lowest score" /></label>
+                    <span>to</span>
+                    <label><span class="sr-only">Highest score</span><input id="scoreHighFilter" type="number" min="0" max="100" value="100" aria-label="Highest score" /></label>
+                  </div>
+                </fieldset>
+              </div>
+              <footer class="assignment-filter-footer">
+                <span id="filterResults" role="status" aria-live="polite">800 submissions</span>
+                <button id="clearFiltersButton" type="button" hidden>Clear all</button>
+              </footer>
+            </section>
+
             <section class="assignment-tool-section is-collapsed" data-collapsible>
               <button class="assignment-tool-heading" type="button" aria-expanded="false">
                 <span>Assignment Information</span>
@@ -132,94 +184,37 @@
             </section>
           </aside>
 
-          <section class="assignment-submissions" aria-labelledby="filterHeading">
-            <div class="assignment-filters">
-              <div class="assignment-filter-heading">
-                <h2 id="filterHeading">Filter by</h2>
-                <button class="rail-toggle" type="button" data-rail-toggle data-name="controls" aria-controls="assignmentControls" aria-expanded="true">
-                  <span class="material-icons" aria-hidden="true">tune</span><span class="rail-toggle-text">Hide controls</span>
-                </button>
+          <section class="assignment-submissions" aria-label="Submissions">
+            <div class="assignment-table-top-row">
+              <div class="cmsx-underline-search">
+                <label for="studentFilter">Search submissions</label>
+                <div class="cmsx-underline-search-input">
+                  <input id="studentFilter" type="search" placeholder="Search by NetID or group…" autocomplete="off" />
+                  <button id="clearStudentSearch" type="button" aria-label="Clear submission search"><span class="material-icons" aria-hidden="true">close</span></button>
+                </div>
+                <div class="cmsx-underline-search-rule" aria-hidden="true"></div>
               </div>
-              <div class="assignment-filter-grid">
-                <label class="assignment-filter standard-filter">
-                  <span class="filter-name">Student</span>
-                  <span class="standard-field-label">Net ID</span>
-                  <input id="studentFilter" type="search" placeholder="NetID" autocomplete="off" />
-                </label>
-
-                <label class="assignment-filter">
-                  <span class="filter-name">Grader</span>
-                  <span class="outlined-field">
-                    <span>Grader</span>
-                    <select id="graderFilter">
-                      <option value="">Assigned To</option>
-                      <option>May</option>
-                      <option>Sylvia</option>
-                      <option>Erica</option>
-                    </select>
-                  </span>
-                </label>
-
-                <label class="assignment-filter">
-                  <span class="filter-name">Section</span>
-                  <span class="outlined-field">
-                    <span>Section</span>
-                    <select id="sectionFilter">
-                      <option value="">All Sections</option>
-                      <option value="001">Section 001</option>
-                      <option value="002">Section 002</option>
-                    </select>
-                  </span>
-                </label>
-
-                <label class="assignment-filter">
-                  <span class="filter-name">Status</span>
-                  <span class="outlined-field">
-                    <span>Status</span>
-                    <select id="statusFilter">
-                      <option value="">Submission Status</option>
-                      <option value="complete">Complete</option>
-                      <option value="partial">Partially Submitted</option>
-                      <option value="ungraded">Ungraded</option>
-                      <option value="regrade">Regrade Pending</option>
-                    </select>
-                  </span>
-                </label>
-
-                <label class="assignment-filter">
-                  <span class="filter-name">Due Date</span>
-                  <span class="outlined-field">
-                    <span>Due Date</span>
-                    <input id="dueDateFilter" type="date" />
-                  </span>
-                </label>
-
-                <fieldset class="assignment-filter score-filter">
-                  <legend class="filter-name">Score</legend>
-                  <div class="score-range">
-                    <label class="outlined-field compact-score"><span>Low</span><input id="scoreLowFilter" type="number" min="0" max="100" value="0" /></label>
-                    <span>To</span>
-                    <label class="outlined-field compact-score"><span>High</span><input id="scoreHighFilter" type="number" min="0" max="100" value="100" /></label>
-                  </div>
-                </fieldset>
-              </div>
+              <button class="rail-toggle" type="button" data-rail-toggle data-name="filters and controls" aria-controls="assignmentControls" aria-expanded="true">
+                <span class="material-icons" aria-hidden="true">tune</span><span class="rail-toggle-text">Hide filters and controls</span>
+              </button>
             </div>
 
-            <div class="submission-status-chips" id="statusChips" aria-label="Submission status filters"></div>
+            <div class="assignment-selection-toolbar" id="assignmentSelectionToolbar" hidden>
+              <span id="assignmentSelectionCount">0 submissions selected</span>
+              <button id="jumpToGroupOperations" type="button">Group operations <span class="material-icons" aria-hidden="true">chevron_right</span></button>
+            </div>
 
-            <div class="assignment-table-shell">
+            <div class="assignment-table-shell" role="region" aria-label="Scrollable submissions table" tabindex="0">
               <table class="assignment-table">
                 <thead>
                   <tr>
                     <th class="selection-column"><input id="selectAllRows" type="checkbox" aria-label="Select all visible submissions" /></th>
                     <th class="number-column"><span class="sr-only">Row</span></th>
-                    <th><button class="table-sort" type="button" data-sort="netid">NetID<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
-                    <th><button class="table-sort" type="button" data-sort="group">Group<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
-                    <th><button class="table-sort" type="button" data-sort="due">Due Date<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
-                    <th><button class="table-sort" type="button" data-sort="status">Submission Status<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
-                    <th class="grade-column"><button class="table-sort" type="button" data-sort="partA">Part A<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
-                    <th><button class="table-sort" type="button" data-sort="partB">Part B<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
-                    <th><button class="table-sort" type="button" data-sort="total">Total<span class="material-icons" aria-hidden="true">swap_vert</span><span class="material-icons filter-glyph" aria-hidden="true">filter_alt</span></button></th>
+                    <th><button class="table-sort" type="button" data-sort="netid">NetID<span class="material-icons" aria-hidden="true">swap_vert</span></button></th>
+                    <th><button class="table-sort" type="button" data-sort="group">Group<span class="material-icons" aria-hidden="true">swap_vert</span></button></th>
+                    <th><button class="table-sort" type="button" data-sort="due">Due Date<span class="material-icons" aria-hidden="true">swap_vert</span></button></th>
+                    <th><button class="table-sort" type="button" data-sort="status">Submission Status<span class="material-icons" aria-hidden="true">swap_vert</span></button></th>
+                    <th class="grade-column"><button class="table-sort" type="button" data-sort="total">Total<span class="material-icons" aria-hidden="true">swap_vert</span></button></th>
                     <th class="actions-column">Actions</th>
                   </tr>
                 </thead>
@@ -229,11 +224,7 @@
 
             <footer class="assignment-table-footer">
               <span id="resultCount">0 submissions</span>
-              <div class="pagination" aria-label="Submission pages">
-                <button id="previousPageButton" type="button" aria-label="Previous page"><span class="material-icons" aria-hidden="true">chevron_left</span></button>
-                <span id="pageLabel">Page 1 of 1</span>
-                <button id="nextPageButton" type="button" aria-label="Next page"><span class="material-icons" aria-hidden="true">chevron_right</span></button>
-              </div>
+              <span>Scroll to view all submissions</span>
             </footer>
           </section>
         </div>
