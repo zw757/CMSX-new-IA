@@ -307,6 +307,8 @@
     }
     .status-options { display: flex; flex-direction: column; gap: 12px; }
     .status-option {
+      --status-accent: var(--status-hidden);
+      --status-tint: #f1f3f6;
       position: relative;
       min-height: 60px;
       padding: 8px 12px;
@@ -318,11 +320,15 @@
       cursor: pointer;
       transition: border-color .15s, background .15s;
     }
-    .status-option:hover { border-color: var(--primary); }
+    .status-option.is-open { --status-accent: var(--status-open); --status-tint: #e8f4fa; }
+    .status-option.is-graded-open { --status-accent: var(--status-graded-open); --status-tint: #fff4e5; }
+    .status-option.is-closed { --status-accent: var(--status-closed); --status-tint: #eff1f3; }
+    .status-option.is-graded { --status-accent: var(--status-graded); --status-tint: #edf7ee; }
+    .status-option:hover { border-color: var(--status-accent); }
     .status-option.selected {
-      border: 2px solid var(--primary);
+      border: 2px solid var(--status-accent);
       padding: 7px 11px;
-      background: #e5f6fd;
+      background: var(--status-tint);
     }
     .status-option input {
       appearance: none;
@@ -341,22 +347,27 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--primary);
+      background: var(--status-accent);
       transform: scale(0);
     }
-    .status-option input:checked { border-color: var(--primary); }
+    .status-option input:checked { border-color: var(--status-accent); }
     .status-option input:checked::before { transform: scale(1); }
     .status-option input:focus-visible {
-      outline: 3px solid rgba(0, 102, 153, .22);
+      outline: 2px solid var(--status-accent);
       outline-offset: 3px;
     }
     .status-copy { min-width: 0; display: flex; flex-direction: column; }
     .status-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-size: var(--font-size-ui);
       line-height: var(--line-height-ui);
       letter-spacing: .15px;
-      color: rgba(0, 0, 0, .6);
+      color: var(--status-accent);
+      font-weight: 600;
     }
+    .status-name::before { content: ""; width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--status-accent); }
     .status-description {
       font-size: var(--font-size-ui);
       line-height: var(--line-height-ui);
@@ -366,9 +377,9 @@
 
     .description-field { align-self: stretch; }
     .description-input {
-      height: 145px;
+      min-height: 145px;
       padding: 16px 12px;
-      resize: none;
+      resize: vertical;
       display: block;
     }
     .character-count {
@@ -469,9 +480,33 @@
     .schedule-summary p { margin-top: 12px; }
     .submission-footer { display: none; }
     .submission-footer a, .save-note a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+    .save-note button { border: 0; padding: 0; background: transparent; color: var(--primary); font: inherit; text-decoration: underline; text-underline-offset: 3px; }
     .save-note { margin-top: 16px; }
     .save-note:empty { display: none; }
     .status-description { color: #606572; }
+    .creation-page [hidden] { display: none !important; }
+    .type-specific-help { color: #606572; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .review-dialog {
+      width: min(520px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px);
+      padding: 24px;
+      border: 1px solid var(--divider);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text-primary);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, .2);
+    }
+    .review-dialog::backdrop { background: rgba(20, 28, 36, .48); }
+    .review-dialog h2 { font-size: var(--font-size-section); line-height: var(--line-height-section); font-weight: 500; }
+    .review-dialog p { margin-top: 10px; color: #606572; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .review-list { margin: 20px 0; display: grid; gap: 12px; }
+    .review-list div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .review-list dt { color: #606572; }
+    .review-list dd { margin: 0; font-weight: 500; }
+    .review-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .review-actions button { min-height: 40px; padding: 8px 16px; border: 1px solid var(--primary); border-radius: 4px; font: inherit; }
+    .review-actions .review-cancel { background: #fff; color: var(--primary); }
+    .review-actions .review-confirm { background: var(--primary); color: #fff; }
 
     .step-footer {
       width: 100%;
@@ -777,17 +812,17 @@
               </span>
             </button>
             <button class="type-card" id="type-quiz" type="button" data-type="quiz" aria-pressed="false">
-              <span class="type-card-icon"><span class="material-icons" aria-hidden="true">article</span></span>
+              <span class="type-card-icon"><span class="material-icons" aria-hidden="true">quiz</span></span>
               <span class="type-card-copy">
                 <span class="type-card-label">Quiz</span>
                 <span class="type-card-desc">Timed Assessment</span>
               </span>
             </button>
             <button class="type-card" id="type-survey" type="button" data-type="survey" aria-pressed="false">
-              <span class="type-card-icon"><span class="material-icons" aria-hidden="true">article</span></span>
+              <span class="type-card-icon"><span class="material-icons" aria-hidden="true">poll</span></span>
               <span class="type-card-copy">
                 <span class="type-card-label">Survey</span>
-                <span class="type-card-desc">Anonymous Feedback</span>
+                <span class="type-card-desc">Feedback form</span>
               </span>
             </button>
           </div>
@@ -800,8 +835,7 @@
               <ol class="progress-list" id="progress-list"></ol>
             </div>
             <div class="rail-actions">
-              <button class="rail-button" type="button" id="save-draft">Save Draft</button>
-              <button class="rail-button primary" type="button" id="publish">Publish</button>
+              <button class="rail-button primary" type="button" id="publish">Review and save hidden</button>
               <p class="save-note" id="save-note" role="status" aria-live="polite"></p>
             </div>
           </aside>
@@ -824,35 +858,35 @@
             <fieldset class="status-fieldset">
               <legend class="status-legend">Status <span class="required" aria-hidden="true">*</span></legend>
               <div class="status-options">
-                <label class="status-option selected">
+                <label class="status-option is-hidden selected">
                   <input type="radio" name="status" value="hidden" checked />
                   <span class="status-copy">
                     <span class="status-name">Hidden</span>
                     <span class="status-description">Hidden from students — grades still count toward total</span>
                   </span>
                 </label>
-                <label class="status-option">
+                <label class="status-option is-open">
                   <input type="radio" name="status" value="open" />
                   <span class="status-copy">
                     <span class="status-name">Open</span>
                     <span class="status-description">Students can submit until due or late deadline, grades hidden</span>
                   </span>
                 </label>
-                <label class="status-option">
+                <label class="status-option is-graded-open">
                   <input type="radio" name="status" value="graded-open" />
                   <span class="status-copy">
                     <span class="status-name">Graded &amp; Open</span>
                     <span class="status-description">Students can see released grades and submit again</span>
                   </span>
                 </label>
-                <label class="status-option">
+                <label class="status-option is-closed">
                   <input type="radio" name="status" value="closed" />
                   <span class="status-copy">
                     <span class="status-name">Closed</span>
                     <span class="status-description">Extension-only submissions, grades hidden</span>
                   </span>
                 </label>
-                <label class="status-option">
+                <label class="status-option is-graded">
                   <input type="radio" name="status" value="graded" />
                   <span class="status-copy">
                     <span class="status-name">Graded</span>
@@ -864,8 +898,7 @@
 
             <label class="create-field description-field">
               <span class="create-label">Description / Instructions <span class="required" aria-hidden="true">*</span></span>
-              <textarea class="description-input" id="description" name="description" maxlength="100" placeholder="Ex: This assignment will evaluate your understanding of course concepts..." required></textarea>
-              <span class="character-count" id="character-count">0/100</span>
+              <textarea class="description-input" id="description" name="description" placeholder="Describe the work, requirements, and instructions students need." required></textarea>
             </label>
 
             <button class="next-button" type="button" id="next-section">
@@ -876,27 +909,27 @@
 
             <section class="creation-step" id="submission-section" aria-labelledby="submission-heading">
               <h2 class="section-heading" id="submission-heading" tabindex="-1">Submission</h2>
-              <p class="section-intro">Set deadlines for each submission period. All times are in <span id="schedule-timezone"></span>.</p>
+              <p class="section-intro"><span id="schedule-intro">Set deadlines for each submission period.</span> All times are in <span id="schedule-timezone"></span>.</p>
 
               <fieldset class="period-settings">
-                <legend>Initial submission</legend>
+                <legend id="initial-period-legend">Initial submission</legend>
                 <div class="period-fields">
                   <label class="create-field">
-                    <span class="create-label">Initial submission deadline <span class="required" aria-hidden="true">*</span></span>
+                    <span class="create-label"><span id="initial-due-label">Initial submission deadline</span> <span class="required" aria-hidden="true">*</span></span>
                     <input class="create-input" type="datetime-local" id="initial-due" name="initialDue" required aria-describedby="initial-due-error" />
                     <span class="field-error" id="initial-due-error"></span>
                   </label>
                   <label class="check-setting">
-                    <input class="schedule-checkbox" type="checkbox" id="initial-allow-late" checked />
-                    <span class="create-label">Allow late initial submissions</span>
+                    <input class="schedule-checkbox" type="checkbox" id="initial-allow-late" />
+                    <span class="create-label" id="initial-late-label">Allow late initial submissions</span>
                   </label>
-                  <div class="field-row">
+                  <div class="field-row" id="initial-late-fields" hidden>
                     <label class="create-field">
-                      <span class="create-label">Initial late period ends <span class="required" aria-hidden="true">*</span></span>
+                      <span class="create-label"><span id="initial-late-until-label">Initial late period ends</span> <span class="required" aria-hidden="true">*</span></span>
                       <input class="create-input" type="datetime-local" id="initial-late-until" required aria-describedby="initial-late-until-error" />
                       <span class="field-error" id="initial-late-until-error"></span>
                     </label>
-                    <label class="create-field">
+                    <label class="create-field" id="initial-slip-field">
                       <span class="create-label">Initial submission slip days</span>
                       <input class="create-input" type="number" id="initial-slip-days" value="0" min="0" step="1" required aria-describedby="initial-slip-help initial-slip-days-error" />
                       <span class="field-help" id="initial-slip-help">Maximum allowed for the initial submission. 0 means none.</span>
@@ -907,14 +940,14 @@
               </fieldset>
 
               <hr class="submission-divider" />
-              <label class="check-setting">
-                <input class="schedule-checkbox" type="checkbox" id="allow-resubmissions" checked />
+              <label class="check-setting" id="resubmission-toggle">
+                <input class="schedule-checkbox" type="checkbox" id="allow-resubmissions" />
                 <span class="check-copy">
                   <span class="create-label">Allow resubmissions</span>
                   <span class="field-help">Students can improve their work within the same assignment, quiz, or survey.</span>
                 </span>
               </label>
-              <fieldset class="period-settings" id="resubmission-settings">
+              <fieldset class="period-settings" id="resubmission-settings" hidden>
                 <legend>Resubmission</legend>
                 <div class="period-fields">
                   <label class="create-field">
@@ -923,10 +956,10 @@
                     <span class="field-error" id="resubmission-due-error"></span>
                   </label>
                   <label class="check-setting">
-                    <input class="schedule-checkbox" type="checkbox" id="resubmission-allow-late" checked />
+                    <input class="schedule-checkbox" type="checkbox" id="resubmission-allow-late" />
                     <span class="create-label">Allow late resubmissions</span>
                   </label>
-                  <div class="field-row">
+                  <div class="field-row" id="resubmission-late-fields" hidden>
                     <label class="create-field">
                       <span class="create-label">Resubmission late period ends <span class="required" aria-hidden="true">*</span></span>
                       <input class="create-input" type="datetime-local" id="resubmission-late-until" required aria-describedby="resubmission-late-until-error" />
@@ -940,7 +973,7 @@
                     </label>
                   </div>
                   <label class="check-setting">
-                    <input class="schedule-checkbox" type="checkbox" id="auto-transition" checked />
+                    <input class="schedule-checkbox" type="checkbox" id="auto-transition" />
                     <span class="check-copy">
                       <span class="create-label">Automatically switch Open to Graded &amp; Open</span>
                       <span class="field-help">At the initial deadline, allow resubmissions and show released grades. Unreleased grades stay hidden. Hidden and Closed statuses stay under your control.</span>
@@ -950,11 +983,11 @@
               </fieldset>
 
               <hr class="submission-divider" />
-              <label class="check-setting">
-                <input class="schedule-checkbox" type="checkbox" id="show-slip-days" checked />
+                  <label class="check-setting" id="show-slip-days-setting" hidden>
+                <input class="schedule-checkbox" type="checkbox" id="show-slip-days" />
                 <span class="check-copy">
                   <span class="create-label">Show slip days to students</span>
-                  <span class="field-help">On by default. Display slip-day allowances for both periods. Slip days do not extend either late cutoff; individual extensions are handled separately.</span>
+                  <span class="field-help">Display slip-day allowances for both periods. Slip days do not extend either late cutoff; individual extensions are handled separately.</span>
                 </span>
               </label>
               <section class="schedule-summary" aria-labelledby="schedule-summary-heading">
@@ -966,6 +999,27 @@
                 <button class="next-button" type="button" id="back-section"><span class="material-icons" aria-hidden="true">arrow_back</span> Back: Basic Info</button>
                 <button class="next-button" type="button" id="submission-next"><span>Next: Grading</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
               </div>
+            </section>
+
+            <section class="creation-step" id="quiz-section" aria-labelledby="quiz-heading" hidden>
+              <h2 class="section-heading" id="quiz-heading" tabindex="-1">Quiz Settings</h2>
+              <p class="type-specific-help">Set a completion time for this quiz. Student-side timing is not enforced in this prototype.</p>
+              <label class="create-field">
+                <span class="create-label">Time limit <span class="required" aria-hidden="true">*</span></span>
+                <span class="unit-input">
+                  <input class="create-input" id="quiz-time-limit" name="quizTimeLimit" type="number" min="1" step="1" value="30" required />
+                  <span class="input-unit">minutes</span>
+                </span>
+              </label>
+            </section>
+
+            <section class="creation-step" id="survey-section" aria-labelledby="survey-heading" hidden>
+              <h2 class="section-heading" id="survey-heading" tabindex="-1">Survey Questions</h2>
+              <p class="type-specific-help">Enter one question per line. Surveys do not collect scores or offer regrades in this prototype.</p>
+              <label class="create-field">
+                <span class="create-label">Questions <span class="required" aria-hidden="true">*</span></span>
+                <textarea class="description-input" id="survey-questions" name="surveyQuestions" placeholder="What worked well in this course?&#10;What should we improve?" required></textarea>
+              </label>
             </section>
 
             <section class="creation-step" id="grading-section" aria-labelledby="grading-heading">
@@ -1085,7 +1139,7 @@
             <section class="creation-step" id="content-section" aria-labelledby="content-heading">
               <h2 class="section-heading" id="content-heading" tabindex="-1">Content</h2>
               <div class="content-intro">
-                <h3 class="content-subheading">Provided Assignment Files</h3>
+                <h3 class="content-subheading" id="content-files-heading">Provided Assignment Files</h3>
                 <p class="field-help">Attach files students can download – handouts, starter code, reference materials.</p>
               </div>
 
@@ -1116,6 +1170,15 @@
   </div>
 
   <div class="form-message" id="form-message" role="status" aria-live="polite"></div>
+  <dialog class="review-dialog" id="publish-review" aria-labelledby="review-heading">
+    <h2 id="review-heading">Review before saving</h2>
+    <p>Check the configured visibility and deadlines. This prototype saves settings in this browser only.</p>
+    <dl class="review-list" id="review-list"></dl>
+    <div class="review-actions">
+      <button class="review-cancel" type="button" id="review-cancel">Back to editing</button>
+      <button class="review-confirm" type="button" id="review-confirm">Save</button>
+    </div>
+  </dialog>
   <cmsx-designer-tag name="abolaji"></cmsx-designer-tag>
 
   <script type="module" src="assignment-create.js"></script>

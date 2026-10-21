@@ -53,23 +53,18 @@
         </section>
 
         <div class="assignments-filters" data-node-id="1978:22508">
-          <div class="assignments-search">
+          <div class="cmsx-underline-search">
             <label for="assignmentSearch">Enter Assignment Name</label>
-            <div class="assignments-search-input">
+            <div class="cmsx-underline-search-input">
               <input id="assignmentSearch" type="search" placeholder="Search Assignments..." autocomplete="off" />
               <button type="button" id="clearAssignmentSearch" aria-label="Clear assignment search"><img src="assets/assignments/clear.svg" alt="" /></button>
             </div>
-            <div class="assignments-search-underline" aria-hidden="true"><img src="assets/assignments/search-underline.svg" alt="" /></div>
+            <div class="cmsx-underline-search-rule" aria-hidden="true"></div>
           </div>
-          <div class="assignments-type-filters" id="assignmentTypeFilters" role="group" aria-label="Filter assignments by type"></div>
-        </div>
-
-        <div class="assignments-view-bar" data-node-id="1978:22536">
           <div class="assignments-view-toggle" role="group" aria-label="Assignment view">
             <button type="button" id="assignmentTableToggle" aria-pressed="true" aria-controls="assignmentTablePanel"><img src="assets/assignments/table.svg" alt="" aria-hidden="true" />Table</button>
             <button type="button" id="assignmentCalendarToggle" aria-pressed="false" aria-controls="assignmentCalendarPanel"><img src="assets/assignments/calendar.svg" alt="" aria-hidden="true" />Calendar</button>
           </div>
-          <button type="button" class="assignments-deleted-button" id="deletedAssignmentsButton"><img src="assets/assignments/deleted.svg" alt="" aria-hidden="true" />Deleted Items</button>
         </div>
 
         <section class="assignments-table-panel" id="assignmentTablePanel" aria-label="Assignments table" data-node-id="1978:22550">
@@ -105,6 +100,9 @@
             <div class="assignment-calendar" id="assignmentCalendar"></div>
           </div>
         </section>
+        <div class="assignments-results-footer">
+          <button type="button" class="assignments-deleted-button" id="deletedAssignmentsButton"><img src="assets/assignments/deleted.svg" alt="" aria-hidden="true" />Deleted Items</button>
+        </div>
       </div>
     </main>
   </div>

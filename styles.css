@@ -24,6 +24,11 @@
   --primary: #006699;
   --primary-dark: #004d73;
   --primary-light: #e0f0f7;
+  --status-hidden: #657082;
+  --status-open: #007ac2;
+  --status-graded-open: #a85700;
+  --status-closed: #606572;
+  --status-graded: #2e7d32;
   --text-primary: rgba(0,0,0,0.87);
   --text-secondary: rgba(0,0,0,0.60);
   --text-disabled: rgba(0,0,0,0.38);
@@ -34,11 +39,19 @@
   --bg-page: #f7f8fa;
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-2: 0 1px 3px rgba(0, 0, 0, 0.10);
+  --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   --border-radius: 4px;
 }
 
 /* ============ RESET & BASE ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* The global reset removes the browser's default auto margins from dialogs. */
+dialog:modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
 body { font-family: 'DM Sans', sans-serif; font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--text-primary); background: var(--bg-page); min-height: 100vh; }
 a { text-decoration: none; color: inherit; }
 button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; background: none; }
@@ -175,7 +188,7 @@ cmsx-sidebar { display: contents; }
   border-radius: 99px;
   color: var(--text-primary);
   position: relative;
-  transition: background 0.15s, border-radius 0.25s, padding 0.25s;
+  transition: background 0.15s, border-radius 0.25s;
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
@@ -501,6 +514,19 @@ cmsx-sidebar { display: contents; }
   display: flex; align-items: center;
 }
 
+/* Shared underlined search for dense course tables. */
+.cmsx-underline-search { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 920px; min-width: 0; height: 60px; }
+.cmsx-underline-search label { flex-shrink: 0; height: 24px; color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-body); }
+.cmsx-underline-search-input { display: flex; align-items: center; min-width: 0; height: 24px; flex-shrink: 0; }
+.cmsx-underline-search-input input { flex: 1; min-width: 0; padding: 0; border: 0; outline: 0; appearance: none; background: transparent; color: var(--text-primary); font-size: var(--font-size-body); line-height: var(--line-height-body); }
+.cmsx-underline-search-input input::-webkit-search-cancel-button { appearance: none; }
+.cmsx-underline-search-input input::placeholder { color: var(--text-secondary); opacity: 1; }
+.cmsx-underline-search-input button { display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 24px; height: 24px; }
+.cmsx-underline-search-input button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.cmsx-underline-search-input button img { display: block; width: 24px; height: 24px; }
+.cmsx-underline-search-rule { flex-shrink: 0; height: 1px; background: rgba(0,0,0,0.42); }
+.cmsx-underline-search:focus-within .cmsx-underline-search-rule { background: var(--primary); box-shadow: 0 1px var(--primary); }
+
 .form-control {
   width: 100%; padding: 10px 14px;
   border: 1px solid rgba(0,0,0,0.23); border-radius: var(--border-radius);
@@ -510,6 +536,52 @@ cmsx-sidebar { display: contents; }
 .form-control:focus { border-color: var(--primary); }
 select.form-control { cursor: pointer; }
 textarea.form-control { resize: vertical; min-height: 100px; }
+
+/* Single-value selects share the assignment-status dropdown treatment. Keep the
+   original select in the form for existing value reads and change handlers. */
+.cmsx-select { position: relative; display: inline-block; width: 100%; min-width: 0; vertical-align: middle; }
+select.cmsx-select-native {
+  position: absolute !important; top: 0; left: 0; width: 1px !important; height: 1px !important;
+  min-height: 0 !important; padding: 0 !important; border: 0 !important;
+  clip-path: inset(50%); opacity: 0; pointer-events: none; overflow: hidden;
+}
+.cmsx-select-trigger {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; min-height: 42px; padding: 9px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.23); border-radius: var(--border-radius);
+  background: var(--surface); color: var(--text-primary);
+  font-size: var(--font-size-ui); line-height: var(--line-height-ui); text-align: left;
+}
+.cmsx-select-trigger:hover { border-color: var(--primary); }
+.cmsx-select-trigger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.cmsx-select-trigger[aria-expanded="true"] { border-color: var(--primary); }
+.cmsx-select-trigger:disabled { background: var(--bg); color: var(--text-disabled); cursor: not-allowed; }
+.cmsx-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cmsx-dropdown-chevron {
+  flex: none; width: 8px; height: 8px; margin-top: -4px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+.cmsx-dropdown-menu {
+  position: fixed; z-index: 1100; max-height: min(320px, calc(100dvh - 16px)); overflow-y: auto;
+  padding: 4px; border: 1px solid var(--divider); border-radius: var(--border-radius);
+  background: var(--surface); box-shadow: var(--dropdown-shadow);
+}
+.cmsx-dropdown-menu[hidden] { display: none; }
+.cmsx-dropdown-option {
+  display: flex; align-items: center; min-height: 40px; padding: 8px 12px;
+  border-radius: var(--border-radius); color: var(--text-primary);
+  font-size: var(--font-size-ui); line-height: var(--line-height-ui); cursor: pointer;
+}
+.cmsx-dropdown-option:hover, .cmsx-dropdown-option:focus-visible { background: var(--bg); outline: none; }
+.cmsx-dropdown-option[aria-selected="true"] { background: var(--primary-light); color: var(--primary-dark); font-weight: 500; }
+.cmsx-dropdown-option[aria-selected="true"]:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.cmsx-dropdown-option[aria-disabled="true"] { color: var(--text-disabled); cursor: not-allowed; }
+.students-page .cmsx-select-trigger { min-height: 44px; border-radius: 6px; }
+.creation-page .cmsx-select-trigger { min-height: 56px; }
+.outlined-field .cmsx-select-trigger { min-height: 52px; padding: 14px 34px 10px 12px; border: 0; background: transparent; font-size: var(--font-size-body); }
+.outlined-field .cmsx-select-trigger:hover { border: 0; }
+.outlined-field .cmsx-select-trigger:focus-visible { outline-offset: -2px; }
 
 /* ============ CHECKBOX ============ */
 input[type="checkbox"].cb {

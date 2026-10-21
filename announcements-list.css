@@ -31,8 +31,8 @@
 .announcement-list-item > .announcement-more { position: absolute; right: 20px; top: 34px; }
 .announcement-more img, .announcement-item-menu img { display: block; flex-shrink: 0; }
 .announcement-more:hover { background: var(--bg); }
-.announcement-item-menu { position: absolute; right: 34px; top: 62px; z-index: 10; width: 114px; padding: 8px 0; border-radius: var(--border-radius); background: var(--surface); box-shadow: var(--shadow-1); }
-.announcement-item-menu [role="menuitem"] { display: flex; align-items: center; width: 100%; gap: 12px; padding: 6px 16px; min-height: 36px; color: var(--text-primary); font-size: var(--font-size-body); line-height: var(--line-height-body); text-align: left; }
+.announcement-item-menu { position: absolute; right: 34px; top: 62px; z-index: 10; width: 114px; padding: 4px; border: 1px solid var(--divider); border-radius: var(--border-radius); background: var(--surface); box-shadow: var(--dropdown-shadow); }
+.announcement-item-menu [role="menuitem"] { display: flex; align-items: center; width: 100%; gap: 8px; padding: 8px; min-height: 40px; border-radius: var(--border-radius); color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); text-align: left; }
 .announcement-item-menu [role="menuitem"]:hover, .announcement-item-menu [role="menuitem"]:focus-visible { background: var(--bg); outline: none; }
 .announcement-reader { min-width: 0; height: 100%; display: flex; align-items: flex-start; gap: 20px; padding: 16px 20px; border-radius: var(--border-radius); background: var(--surface); }
 .announcement-reader-avatar { padding-top: 10px; flex-shrink: 0; }

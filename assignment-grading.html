@@ -32,23 +32,6 @@
         </div>
       </div>
 
-      <div class="grading-summary" aria-label="Assignment summary">
-        <div class="grading-summary-item">
-          <span class="material-icons" aria-hidden="true">bar_chart</span>
-          <span class="grading-summary-copy">
-            <strong>82%</strong>
-            <span>Average Grade</span>
-          </span>
-        </div>
-        <span class="grading-summary-divider" aria-hidden="true"></span>
-        <div class="grading-summary-item">
-          <span class="material-icons" aria-hidden="true">school</span>
-          <span class="grading-summary-copy">
-            <strong>160</strong>
-            <span>Number of Students</span>
-          </span>
-        </div>
-      </div>
     </header>
 
     <div class="grading-workspace" id="gradingWorkspace">
@@ -56,56 +39,59 @@
         <h2 class="sr-only" id="submissionViewerTitle">Student submission preview</h2>
 
         <div class="submission-file-picker">
-          <button class="submission-file-trigger" id="fileTrigger" type="button" aria-haspopup="listbox" aria-expanded="true">
+          <button class="submission-file-trigger" id="fileTrigger" type="button" aria-haspopup="listbox" aria-expanded="false">
             <span class="material-icons" aria-hidden="true">article</span>
-            <span id="selectedFileName">Submission_file_1</span>
+            <span id="selectedFileName">Submission_file_1.txt</span>
             <span class="material-icons submission-file-chevron" aria-hidden="true">expand_more</span>
           </button>
-          <div class="submission-file-menu open" id="fileMenu" role="listbox" aria-label="Submission files">
-            <button class="submission-file-option active" type="button" role="option" aria-selected="true" data-file="Submission_file_1" data-icon="article">
+          <div class="submission-file-menu" id="fileMenu" role="listbox" aria-label="Submission files">
+            <button class="submission-file-option active" type="button" role="option" aria-selected="true" data-file="Submission_file_1.txt" data-src="/submissions/submission_file_1.txt" data-icon="article">
               <span class="material-icons" aria-hidden="true">article</span>
-              <span>Submission_file_1</span>
+              <span>Submission_file_1.txt</span>
             </button>
-            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_2" data-icon="title">
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_2.txt" data-src="/submissions/submission_file_2.txt" data-icon="article">
               <span class="material-icons" aria-hidden="true">title</span>
-              <span>Submission_file_2</span>
+              <span>Submission_file_2.txt</span>
             </button>
-            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_3" data-icon="code">
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_3.txt" data-src="/submissions/submission_file_3.txt" data-icon="article">
               <span class="material-icons" aria-hidden="true">code</span>
-              <span>Submission_file_3</span>
+              <span>Submission_file_3.txt</span>
             </button>
-            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_4" data-icon="image">
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_4.txt" data-src="/submissions/submission_file_4.txt" data-icon="article">
               <span class="material-icons" aria-hidden="true">image</span>
-              <span>Submission_file_4</span>
+              <span>Submission_file_4.txt</span>
             </button>
           </div>
         </div>
 
-        <div class="submission-scroll" id="submissionScroll">
-          <article class="submission-paper" id="submissionPaper" aria-label="Preview of Submission file 1">
-            <div class="submission-paper-content">
-              <p class="paper-kicker">CS4998 · Example Assignment 1A</p>
-              <h3>Summary</h3>
-              <p>This submission describes a clear approach to the assignment, documents the implementation choices, and evaluates the final result against the stated requirements. The solution is organized into focused sections so each decision can be reviewed independently.</p>
-              <p>The student identifies the main constraints, explains the tradeoffs made during implementation, and connects the final output back to the goals of the assignment.</p>
-
-              <h3>Requirements</h3>
-              <ul>
-                <li>Meet each of the core functional requirements in the assignment specification.</li>
-                <li>Document the workflow and describe the decisions that affected the final result.</li>
-                <li>Present the work clearly with supporting examples and references.</li>
-              </ul>
-
-              <h3>Project</h3>
-              <p>The implementation uses a structured workflow with reusable pieces and explicit states. Each section is designed to be reviewed on its own while remaining connected to the overall project.</p>
-              <p>Testing focused on the primary tasks, edge cases, and the clarity of the resulting experience. The student also describes possible improvements for a future iteration.</p>
-              <p>Supporting files and source excerpts are included in the remaining pages of this submission.</p>
-
-              <h3>Reflection</h3>
-              <p>The final result meets the intended learning goals and demonstrates a thoughtful understanding of the material covered in the assignment.</p>
-            </div>
-          </article>
+        <div class="submission-viewer-tools">
+          <button class="submission-download" id="downloadSubmission" type="button">
+            <span class="material-icons" aria-hidden="true">download</span>
+            <span>Download</span>
+          </button>
         </div>
+
+        <div class="submission-scroll" id="submissionScroll">
+          <div class="submission-pages" id="submissionPaper" aria-label="Preview of Submission file 1">
+            <div class="submission-pages-content" id="submissionText" tabindex="0">Loading submission…</div>
+          </div>
+        </div>
+
+        <button class="selection-comment-trigger" id="selectionCommentTrigger" type="button" hidden>
+          <span class="material-icons" aria-hidden="true">add_comment</span>
+          <span>Add comment</span>
+        </button>
+
+        <form class="selection-comment-popover" id="selectionCommentPopover" aria-label="Comment on selected text" hidden>
+          <p class="selection-comment-label">Comment on selection</p>
+          <blockquote id="selectionQuote"></blockquote>
+          <label class="sr-only" for="selectionCommentInput">Comment for selected text</label>
+          <textarea id="selectionCommentInput" maxlength="500" rows="3" placeholder="Add a comment for this passage"></textarea>
+          <div class="selection-comment-actions">
+            <button type="button" id="cancelSelectionComment">Cancel</button>
+            <button class="primary" type="submit" id="saveSelectionComment" disabled>Add comment</button>
+          </div>
+        </form>
 
         <div class="submission-zoom" aria-label="Submission zoom controls">
           <button type="button" id="zoomIn" aria-label="Zoom in">
@@ -115,7 +101,7 @@
             <span class="material-icons" aria-hidden="true">remove</span>
           </button>
         </div>
-        <div class="submission-pagination" aria-label="Submission page">Page <strong id="currentPage">1</strong> / Page 5</div>
+        <div class="submission-pagination" id="submissionFileMeta" aria-live="polite">Text file</div>
       </section>
 
       <section class="rubric-panel" aria-labelledby="studentName">
@@ -135,57 +121,99 @@
         <div class="rubric-scroll" id="rubricScroll">
           <h3 class="rubric-title">Rubric Items</h3>
 
-          <div class="rubric-group expanded" data-question="1">
-            <button class="rubric-group-head" type="button" aria-expanded="true">
-              <span><strong>Question 1</strong><span>Question name</span></span>
-              <span class="rubric-points"><span id="questionOneScore">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_less</span></span>
+          <div class="rubric-group" data-question="1">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 1</strong><span>Information architecture</span></span>
+              <span class="rubric-points"><span id="questionScore1">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
             </button>
             <div class="rubric-group-body">
               <label class="rubric-choice selected">
                 <input type="checkbox" checked data-question="1" data-penalty="0" />
                 <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
-                <span>− 0 pts Correct</span>
+                <span>− 0 pts Clear hierarchy and grouping</span>
               </label>
               <label class="rubric-choice">
                 <input type="checkbox" data-question="1" data-penalty="3" />
                 <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
-                <span>− 3 pts Error type 1</span>
+                <span>− 3 pts Key content is difficult to locate</span>
               </label>
               <label class="rubric-choice">
                 <input type="checkbox" data-question="1" data-penalty="4" />
                 <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
-                <span>− 4 pts Error type 2</span>
+                <span>− 4 pts Structure conflicts with user workflow</span>
               </label>
             </div>
           </div>
 
           <div class="rubric-group" data-question="2">
             <button class="rubric-group-head" type="button" aria-expanded="false">
-              <span><strong>Question 1</strong><span>Question name</span></span>
-              <span class="rubric-points">8/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+              <span><strong>Question 2</strong><span>Navigation and wayfinding</span></span>
+              <span class="rubric-points"><span id="questionScore2">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
             </button>
             <div class="rubric-group-body">
-              <p class="rubric-note">Full credit awarded. The response satisfies the rubric criteria.</p>
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="2" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Navigation is predictable</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="2" data-penalty="2" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 2 pts Current location is unclear</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="2" data-penalty="3" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 3 pts Labels do not match destinations</span>
+              </label>
             </div>
           </div>
 
           <div class="rubric-group" data-question="3">
             <button class="rubric-group-head" type="button" aria-expanded="false">
-              <span><strong>Question 1</strong><span>Question name</span></span>
-              <span class="rubric-points">6/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+              <span><strong>Question 3</strong><span>Accessibility and interaction</span></span>
+              <span class="rubric-points"><span id="questionScore3">6</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
             </button>
             <div class="rubric-group-body">
-              <p class="rubric-note">Two points deducted for an incomplete explanation.</p>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="3" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Fully keyboard accessible</span>
+              </label>
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="3" data-penalty="2" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 2 pts Incomplete keyboard focus states</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="3" data-penalty="4" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 4 pts Critical control lacks an accessible name</span>
+              </label>
             </div>
           </div>
 
           <div class="rubric-group" data-question="4">
             <button class="rubric-group-head" type="button" aria-expanded="false">
-              <span><strong>Question 1</strong><span>Question name</span></span>
-              <span class="rubric-points">8/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+              <span><strong>Question 4</strong><span>Visual clarity and consistency</span></span>
+              <span class="rubric-points"><span id="questionScore4">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
             </button>
             <div class="rubric-group-body">
-              <p class="rubric-note">Full credit awarded. The response satisfies the rubric criteria.</p>
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="4" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Consistent hierarchy and spacing</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="4" data-penalty="2" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 2 pts Inconsistent component spacing</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="4" data-penalty="3" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 3 pts Text contrast is insufficient</span>
+              </label>
             </div>
           </div>
 
@@ -206,6 +234,33 @@
             <p>Applies to entire group: Examples: +5, −10%, −15<br />Note: % adjustments are based on the student’s grade, not the max score</p>
             <label for="adjustmentScore" class="sr-only">Grade adjustment</label>
             <input class="rubric-number-input" id="adjustmentScore" type="text" inputmode="decimal" placeholder="Enter score" />
+          </section>
+
+          <section class="grading-comments" aria-labelledby="commentsHeading">
+            <button class="grading-comments-toggle" id="commentsToggle" type="button" aria-expanded="true" aria-controls="commentsBody">
+              <span class="grading-comments-title">
+                <span class="material-icons" aria-hidden="true">chat_bubble_outline</span>
+                <span id="commentsHeading">Comments</span>
+                <span class="grading-comments-count" id="commentsCount">1 comment</span>
+              </span>
+              <span class="material-icons grading-comments-chevron" aria-hidden="true">expand_less</span>
+            </button>
+
+            <div class="grading-comments-body" id="commentsBody">
+              <div class="grading-comments-list" id="commentsList" aria-live="polite"></div>
+
+              <form class="grading-comment-composer" id="commentForm">
+                <label for="commentInput">Add comments</label>
+                <textarea id="commentInput" maxlength="500" rows="4" placeholder="Write a comment for this student"></textarea>
+                <div class="grading-comment-guidance">
+                  <span><span class="material-icons" aria-hidden="true">visibility</span>Visible when grades are released</span>
+                  <span id="commentCharacterCount">0/500</span>
+                </div>
+                <div class="grading-comment-actions">
+                  <button class="grading-comment-submit" id="addComment" type="submit" disabled>Add Comment</button>
+                </div>
+              </form>
+            </div>
           </section>
 
           <section class="grading-log" aria-labelledby="logHeading">
@@ -239,33 +294,6 @@
               </div>
             </div>
           </section>
-
-          <section class="grading-comments" aria-labelledby="commentsHeading">
-            <button class="grading-comments-toggle" id="commentsToggle" type="button" aria-expanded="true" aria-controls="commentsBody">
-              <span class="grading-comments-title">
-                <span class="material-icons" aria-hidden="true">chat_bubble_outline</span>
-                <span id="commentsHeading">Comments</span>
-                <span class="grading-comments-count" id="commentsCount">1 comment</span>
-              </span>
-              <span class="material-icons grading-comments-chevron" aria-hidden="true">expand_less</span>
-            </button>
-
-            <div class="grading-comments-body" id="commentsBody">
-              <div class="grading-comments-list" id="commentsList" aria-live="polite"></div>
-
-              <form class="grading-comment-composer" id="commentForm">
-                <label for="commentInput">Student-facing feedback</label>
-                <textarea id="commentInput" maxlength="500" rows="4" placeholder="Add feedback for this student"></textarea>
-                <div class="grading-comment-guidance">
-                  <span><span class="material-icons" aria-hidden="true">visibility</span>Visible when grades are released</span>
-                  <span id="commentCharacterCount">0/500</span>
-                </div>
-                <div class="grading-comment-actions">
-                  <button class="grading-comment-submit" id="addComment" type="submit" disabled>Add Comment</button>
-                </div>
-              </form>
-            </div>
-          </section>
         </div>
 
         <footer class="grading-footer">
@@ -274,7 +302,6 @@
             <span class="grading-total-value"><span class="material-icons" aria-hidden="true">edit</span><span id="totalScore">30</span>/32 pts</span>
           </div>
           <div class="grading-footer-actions">
-            <button class="grading-button secondary" id="downloadSubmission" type="button">Download Submission</button>
             <button class="grading-button primary" id="updateGrade" type="button">Update Grade</button>
             <button class="grading-button secondary" id="nextSubmission" type="button">Next Submission</button>
           </div>

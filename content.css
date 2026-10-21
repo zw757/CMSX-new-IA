@@ -120,19 +120,21 @@
   width: 150px;
   display: none;
   flex-direction: column;
-  padding: 8px 0;
+  padding: 4px;
   overflow: hidden;
+  border: 1px solid var(--divider);
   border-radius: var(--border-radius);
-  background: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.20);
+  background: var(--surface);
+  box-shadow: var(--dropdown-shadow);
 }
 
 .context-menu.is-open { display: flex; }
 
 .context-menu button {
   width: 100%;
-  min-height: 36px;
-  padding: 6px 16px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
   color: var(--text-primary);
   font-size: var(--font-size-ui);
   line-height: var(--line-height-ui);

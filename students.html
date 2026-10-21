@@ -13,12 +13,13 @@
     .students-page .content-wrapper { padding: 8px 32px 32px; }
     .students-page .students-compact-header {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 2px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
       margin-bottom: 8px;
       flex-shrink: 0;
     }
+    .students-page .students-heading-group { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
     .students-page .students-compact-header .page-title { font-size: 24px; line-height: 32px; }
     .students-page .course-content { --filter-width: 220px; position: relative; gap: 32px; }
     .students-page .rail-resizer {
@@ -67,8 +68,9 @@
       .students-page .rail-resizer { display: none; }
       .students-page .rail-edge-toggle { position: static; order: -1; align-self: flex-start; height: 40px; transform: none; }
     }
-    .students-page .student-search-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
-    .students-page .student-search-row .search-field { flex: 1; min-width: 0; }
+    .students-page .student-top-row { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; flex-shrink: 0; }
+    .students-page .student-search-row { display: flex; flex: 1 1 380px; align-items: center; gap: 12px; min-width: 0; }
+    .students-page .student-search-row .cmsx-underline-search { flex: 1; min-width: 0; max-width: none; }
     .students-page .panel-section {
       display: block;
       flex: 0 0 auto;
@@ -92,6 +94,147 @@
     .students-page .panel-section[open] > summary .material-icons { transform: rotate(180deg); }
     .students-page .panel-section-body { padding: 8px 0 12px; }
 
+    .students-page .student-filter-panel { display: flex; flex-direction: column; gap: 20px; padding: 12px 0 24px; }
+    .students-page .student-filter-heading { display: flex; flex-direction: column; gap: 4px; }
+    .students-page .student-filter-heading h2 { font-size: 20px; line-height: 28px; font-weight: 600; }
+    .students-page .student-filter-heading p,
+    .students-page .filter-results { color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .students-page .filter-fields { display: flex; flex-direction: column; gap: 16px; }
+    .students-page .filter-field { display: flex; flex-direction: column; gap: 6px; }
+    .students-page .filter-field > label { color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 500; }
+    .students-page .filter-input-wrap { position: relative; }
+    .students-page .filter-input-wrap input,
+    .students-page .filter-field select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 36px 9px 12px;
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text-primary);
+      font: inherit;
+    }
+    .students-page .filter-input-wrap input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+      padding-right: 72px;
+    }
+    .students-page .filter-input-wrap input[type="number"]::-webkit-inner-spin-button,
+    .students-page .filter-input-wrap input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .students-page .filter-field select { padding-right: 12px; cursor: pointer; }
+    .students-page .filter-input-wrap input:focus,
+    .students-page .filter-field select:focus { outline: 2px solid var(--primary); outline-offset: -2px; border-color: var(--primary); }
+    .students-page .filter-input-suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
+    .students-page .filter-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; }
+    .students-page .filter-clear-button { border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: 500; cursor: pointer; padding: 6px 0; }
+    .students-page .filter-clear-button:hover { color: var(--primary-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .students-page .filter-clear-button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .students-page .student-selection-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 52px;
+      padding: 8px 12px;
+      border: 1px solid rgba(0, 102, 153, 0.24);
+      border-radius: 8px;
+      background: #eef6fa;
+      flex-shrink: 0;
+    }
+    .students-page .student-selection-toolbar[hidden] { display: none; }
+    .students-page .selection-count { color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 600; }
+    .students-page .selection-actions { display: flex; align-items: center; gap: 8px; }
+    .students-page .selection-actions .btn { min-height: 36px; padding: 7px 12px; }
+
+    .students-page .action-menu { position: relative; }
+    .students-page .action-menu > summary { list-style: none; }
+    .students-page .action-menu > summary::-webkit-details-marker { display: none; }
+    .students-page .action-menu > summary .material-icons { font-size: 18px; }
+    .students-page .action-menu-panel {
+      position: absolute;
+      z-index: 30;
+      top: calc(100% + 6px);
+      right: 0;
+      width: min(280px, calc(100vw - 32px));
+      padding: 4px;
+      border: 1px solid var(--divider);
+      border-radius: var(--border-radius);
+      background: var(--surface);
+      box-shadow: var(--dropdown-shadow);
+    }
+    .students-page .action-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 40px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-primary);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .students-page .action-menu-item:hover { background: var(--bg); }
+    .students-page .action-menu-item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+    .students-page .action-menu-item.is-danger { color: var(--error); }
+    .students-page .action-menu-separator { height: 1px; margin: 6px 4px; background: var(--divider); }
+    .students-page .action-menu-option { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+
+    .students-page .student-result-meta { display: flex; align-items: center; margin-bottom: 8px; flex-wrap: wrap; flex-shrink: 0; }
+    .students-page .student-result-meta[hidden] { display: none; }
+    .students-page .active-filter-list { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .students-page .active-filter-chip { display: inline-flex; align-items: center; gap: 4px; min-height: 28px; padding: 4px 8px; border: 1px solid rgba(0, 102, 153, 0.28); border-radius: 999px; background: #eef6fa; color: var(--primary-dark); font: inherit; font-size: var(--font-size-caption); cursor: pointer; }
+    .students-page .active-filter-chip:hover { border-color: var(--primary); background: #e2f1f8; }
+    .students-page .active-filter-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .students-page .grade-edit-status { margin: 0 0 8px; color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .students-page .grade-edit-status[hidden] { display: none; }
+    .students-page .grade-edit-status[data-state="unsaved"] { color: #765100; }
+    .students-page .grade-edit-status[data-state="saved"] { color: #17633a; }
+    .students-page .grade-edit-status[data-state="error"] { color: var(--error); }
+
+    .students-page .student-filter-divider td {
+      padding: 10px 12px;
+      border-block: 1px solid #cbd3da;
+      background: #e9edf1;
+      color: #46515c;
+      font-size: var(--font-size-caption);
+      line-height: var(--line-height-caption);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .students-page .student-filter-divider-content { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .students-page .student-filter-divider-count { color: #606b76; font-weight: 500; }
+    .students-page .data-table tbody tr.filter-nonmatch td,
+    .students-page .data-table tbody tr.filter-nonmatch .sticky-col { background: #f3f5f7; color: #66717c; }
+    .students-page .data-table tbody tr.filter-nonmatch:hover td,
+    .students-page .data-table tbody tr.filter-nonmatch:hover .sticky-col { background: #eceff2; color: #46515c; }
+    .students-page .data-table tbody tr.filter-nonmatch.selected td,
+    .students-page .data-table tbody tr.filter-nonmatch.selected .sticky-col { background: #e7f0f4; }
+    .students-page .data-table tbody tr.filter-nonmatch .grade-pill { opacity: 0.72; }
+    .students-page .student-table-empty { padding: 24px 16px; background: #f9fafb; color: var(--text-secondary); text-align: center; }
+
+    .students-page .slip-days-cell { text-align: center; font-variant-numeric: tabular-nums; }
+    .students-page .slip-days-value.is-low { color: #8a5a00; }
+    .students-page .slip-days-value.is-exhausted { color: var(--error); }
+
+    .students-page .student-dialog { width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--divider); border-radius: 10px; background: var(--surface); color: var(--text-primary); box-shadow: 0 16px 48px rgba(23, 43, 58, 0.2); }
+    .students-page .student-dialog::backdrop { background: rgba(23, 43, 58, 0.42); }
+    .students-page .student-dialog-form { display: flex; flex-direction: column; gap: 20px; padding: 24px; }
+    .students-page .student-dialog-header { display: flex; flex-direction: column; gap: 4px; }
+    .students-page .student-dialog-header h2 { font-size: 22px; line-height: 30px; }
+    .students-page .student-dialog-header p { color: var(--text-secondary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .students-page .student-dialog-error { min-height: 20px; color: var(--error); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .students-page .student-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .students-page .notify-option { display: flex; align-items: center; gap: 8px; color: var(--text-primary); font-size: var(--font-size-ui); cursor: pointer; }
+    .students-page .student-toast { position: fixed; z-index: 300; right: 24px; bottom: 24px; max-width: min(360px, calc(100vw - 48px)); padding: 10px 14px; border: 1px solid var(--divider); border-radius: 8px; background: #17323f; color: #f7fbfd; box-shadow: 0 8px 24px rgba(23, 43, 58, 0.2); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.16s ease, transform 0.16s ease; }
+    .students-page .student-toast.show { opacity: 1; transform: translateY(0); }
     /* netid-chip row */
     .drop-row { display: flex; gap: 16px; align-items: flex-end; }
     .drop-row .text-field { flex: 1; }
@@ -176,12 +319,22 @@
     @media (max-width: 900px) {
       .students-page .course-content { gap: 20px; }
       .students-page .right-panel { display: contents; }
-      .students-page .student-search-row { order: -1; width: 100%; flex-wrap: wrap; margin-bottom: 0; }
+      .students-page .student-top-row { order: -1; width: 100%; flex-direction: column; align-items: stretch; margin-bottom: 0; }
+      .students-page .student-search-row { flex: none; width: 100%; flex-wrap: wrap; }
+      .students-page .student-selection-toolbar { order: -1; width: 100%; }
+      .students-page .student-result-meta { order: -1; width: 100%; }
       .students-page .table-container { width: 100%; }
     }
     @media (max-width: 640px) {
       .students-page .content-wrapper { padding-inline: 16px; }
-      .students-page .student-search-row .search-field { flex-basis: 100%; }
+      .students-page .students-compact-header { align-items: flex-start; }
+      .students-page .course-actions-menu > summary { padding-inline: 10px; }
+      .students-page .student-search-row .cmsx-underline-search { flex-basis: 100%; }
+      .students-page .student-selection-toolbar { align-items: flex-start; flex-direction: column; }
+      .students-page .selection-actions { width: 100%; }
+      .students-page .selection-actions > .btn { flex: 1; }
+      .students-page .selection-actions .action-menu { flex: 1; }
+      .students-page .selection-actions .action-menu > summary { width: 100%; justify-content: center; }
     }
 
     /* Mobile keeps the established stacked layout and a bounded table. */
@@ -195,7 +348,7 @@
     }
 
     /* Compact column widths — table scrolls horizontally if content exceeds container */
-    .students-page .data-table { min-width: 1296px; table-layout: fixed; }
+    .students-page .data-table { min-width: 1300px; table-layout: fixed; }
     .data-table td, .data-table th { min-width: 0; padding: 10px 12px; }
     .data-table tbody tr:is(
       :nth-child(10n + 6),
@@ -217,9 +370,22 @@
     .students-page .data-table tbody tr:hover .sticky-col { background: #f4f5f6; }
     .students-page .data-table tbody tr.selected .sticky-col { background: #eef6fa; }
     .data-table th:nth-child(n + 6):nth-child(-n + 12) { width: 72px; }
-    .data-table th:nth-child(13) { width: 84px; }
+    .data-table th:nth-child(13) { width: 88px; }
     .data-table th:nth-child(14) { width: 112px; }
     .data-table th:nth-child(15) { width: 104px; }
+    .students-page .data-table td.score-cell { padding: 4px 6px; }
+    .students-page .score-button,
+    .students-page .score-input { width: 100%; min-width: 0; min-height: 32px; padding: 3px 5px; border-radius: 4px; color: inherit; font: inherit; font-variant-numeric: tabular-nums; }
+    .students-page .score-button { display: inline-flex; align-items: center; gap: 3px; border: 1px solid transparent; background: transparent; text-align: left; cursor: text; }
+    .students-page .score-button:hover,
+    .students-page .score-button:focus-visible { border-color: var(--primary); background: #eef6fa; outline: none; }
+    .students-page .score-edit-icon { font-size: 13px; opacity: 0; }
+    .students-page .score-button:hover .score-edit-icon,
+    .students-page .score-button:focus-visible .score-edit-icon { opacity: 1; }
+    .students-page .score-input { border: 1px solid var(--primary); background: var(--surface); outline: 2px solid var(--primary); outline-offset: 0; }
+    .students-page .score-cell.is-dirty .score-input { border-color: #946300; outline-color: #946300; background: #fff9e9; }
+    .students-page .score-input[aria-invalid="true"] { border-color: var(--error); outline-color: var(--error); background: #fff3f3; }
+    @media (hover: none) { .students-page .score-edit-icon { opacity: 0.6; } }
     .data-table .sticky-col-2 { left: 56px; }
     .data-table .sticky-col-3 { left: 100px; }
     .data-table .sticky-col-4 { left: 212px; }
@@ -249,8 +415,6 @@
     .upload-area .material-icons { font-size: 36px; color: var(--text-secondary); display: block; margin-bottom: 8px; }
     .upload-area p { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--text-secondary); }
 
-    /* Slider */
-    #gradeSlider { margin: 8px 0 0; }
   </style>
 </head>
 <body class="students-page">
@@ -264,159 +428,97 @@
     <div class="content-wrapper">
 
       <header class="students-compact-header">
-        <h1 class="page-title">Students</h1>
-        <nav class="breadcrumbs" aria-label="Breadcrumb">
-          <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
-          <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
-          <a class="breadcrumb-link" href="course-home.html">Home</a>
-          <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
-          <span class="breadcrumb-link" aria-current="page">Students</span>
-        </nav>
+        <div class="students-heading-group">
+          <h1 class="page-title">Students</h1>
+          <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+            <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
+            <a class="breadcrumb-link" href="course-home.html">Home</a>
+            <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
+            <span class="breadcrumb-link" aria-current="page">Students</span>
+          </nav>
+        </div>
+        <details class="action-menu course-actions-menu">
+          <summary class="btn btn-outlined">
+            Course actions <span class="material-icons" aria-hidden="true">expand_more</span>
+          </summary>
+          <div class="action-menu-panel" role="menu">
+            <button class="action-menu-item" type="button" role="menuitem" onclick="openDropStudentDialog()">
+              <span class="material-icons" aria-hidden="true">person_remove</span>Drop student by NetID
+            </button>
+            <button class="action-menu-item" type="button" role="menuitem" onclick="document.getElementById('csvUpload').click()">
+              <span class="material-icons" aria-hidden="true">upload_file</span>Import enrollment CSV
+            </button>
+            <div class="action-menu-separator" role="separator"></div>
+            <button class="action-menu-item" type="button" role="menuitem" onclick="reviewFinalGrades()">
+              <span class="material-icons" aria-hidden="true">grade</span>Review final grades
+            </button>
+            <button class="action-menu-item is-danger" type="button" role="menuitem" onclick="confirmRelease()">
+              <span class="material-icons" aria-hidden="true">publish</span>Release final grades
+            </button>
+          </div>
+        </details>
+        <input type="file" id="csvUpload" accept=".csv" hidden onchange="handleCSV(this)" />
       </header>
 
       <!-- Course Content Layout -->
       <div class="course-content rail-layout">
 
-        <!-- ===== LEFT PANEL ===== -->
+        <!-- ===== FILTER PANEL ===== -->
         <div class="left-panel rail-panel" id="studentFilters">
-
-          <!-- Selected Students -->
-          <details class="panel-section" id="selectedStudentsSection" open>
-            <summary class="panel-section-header">
-              <span class="panel-section-title">Selected Students</span>
-              <span class="panel-section-toggle" aria-hidden="true">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </span>
-            </summary>
-            <div class="panel-section-body" id="selected-students">
-              <button class="btn btn-primary w-full" onclick="alert('Email sent to selected students')">
-                Email Students
-              </button>
-              <button class="btn btn-primary w-full" onclick="handleDropSelected()">
-                Drop Selected Students
-              </button>
-              <label style="display:flex;align-items:center;gap:8px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-primary);cursor:pointer;">
-                <input type="checkbox" class="cb" id="notifyEmail1" checked />
-                Notify student by Email
-              </label>
-            </div>
-          </details>
-
-          <!-- Filter by category -->
-          <details class="panel-section" open>
-            <summary class="panel-section-header">
-              <span class="panel-section-title">Filter by category</span>
-              <span class="panel-section-toggle" aria-hidden="true">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </span>
-            </summary>
-            <div class="panel-section-body" id="filter-section">
-
-              <!-- Average Grade Below slider -->
-              <div>
-                <div class="label">Average Grade Below</div>
-                <div class="slider-wrapper" style="padding-top:24px;">
-                  <div class="slider-value-bubble" id="sliderBubble" style="left:20%">20</div>
-                  <input type="range" id="gradeSlider" min="0" max="100" value="20"
-                    oninput="updateSlider(this)" />
-                </div>
-                <div class="slider-labels">
-                  <span>0%</span>
-                  <span>100%</span>
+          <section class="student-filter-panel" aria-labelledby="studentFilterHeading">
+            <header class="student-filter-heading">
+              <h2 id="studentFilterHeading">Filter students</h2>
+              <p>Matching students stay on top.</p>
+            </header>
+            <div class="filter-fields">
+              <div class="filter-field">
+                <label for="enrollmentStatusFilter">Enrollment status</label>
+                <select id="enrollmentStatusFilter" onchange="filterTable()">
+                  <option value="">Any status</option>
+                  <option value="enrolled">Enrolled</option>
+                  <option value="dropped">Dropped</option>
+                </select>
+              </div>
+              <div class="filter-field">
+                <label for="slipDaysFilter">Slip days remaining</label>
+                <div class="filter-input-wrap">
+                  <input id="slipDaysFilter" type="number" min="0" step="1" inputmode="numeric" placeholder="Any" oninput="filterTable()" />
+                  <span class="filter-input-suffix" aria-hidden="true">days</span>
                 </div>
               </div>
-
-              <!-- Missing Assignments -->
-              <div class="text-field">
-                <label>Missing assignments</label>
-                <div style="position:relative;">
-                  <label style="font-family:'DM Sans',sans-serif;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);display:block;margin-bottom:2px;">Numbers</label>
-                  <input type="number" min="0" value="3" placeholder="0" />
+              <div class="filter-field">
+                <label for="averageGradeFilter">Average below</label>
+                <div class="filter-input-wrap">
+                  <input id="averageGradeFilter" type="number" min="0" max="100" inputmode="numeric" placeholder="Any" oninput="filterTable()" />
+                  <span class="filter-input-suffix" aria-hidden="true">%</span>
                 </div>
               </div>
-
-              <!-- Final Grade Below -->
-              <div class="text-field">
-                <label>Final grade below</label>
-                <div>
-                  <label style="font-family:'DM Sans',sans-serif;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);display:block;margin-bottom:2px;">Grade</label>
-                  <select style="width:100%;border:none;border-bottom:1px solid rgba(0,0,0,0.42);padding:4px 0;font-size: var(--font-size-ui); line-height: var(--line-height-ui);background:transparent;outline:none;cursor:pointer;">
-                    <option>A+</option><option>A</option><option>A-</option>
-                    <option>B+</option><option>B</option><option>B-</option>
-                    <option selected>C-</option><option>C</option><option>C+</option>
-                    <option>D</option><option>F</option>
-                  </select>
+              <div class="filter-field">
+                <label for="missingAssignmentsFilter">Missing assignments</label>
+                <div class="filter-input-wrap">
+                  <input id="missingAssignmentsFilter" type="number" min="0" max="7" inputmode="numeric" placeholder="Any" oninput="filterTable()" />
+                  <span class="filter-input-suffix" aria-hidden="true">or more</span>
                 </div>
               </div>
-
-              <button class="btn btn-primary w-full" onclick="applyFilter()">Apply Filter</button>
-              <button class="btn btn-outlined w-full" onclick="clearFilter()">Clear Filter</button>
-            </div>
-          </details>
-
-          <!-- Drop Students -->
-          <details class="panel-section">
-            <summary class="panel-section-header">
-              <span class="panel-section-title">Drop Students</span>
-              <span class="panel-section-toggle" aria-hidden="true">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </span>
-            </summary>
-            <div class="panel-section-body" id="drop-section">
-
-              <!-- CSV Upload -->
-              <button class="btn btn-primary" onclick="document.getElementById('csvUpload').click()">
-                CSV Upload
-              </button>
-              <input type="file" id="csvUpload" accept=".csv" style="display:none;" onchange="handleCSV(this)" />
-
-              <!-- Drop by NetID -->
-              <div class="drop-row">
-                <div class="text-field">
-                  <label style="font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-secondary);">Enter NetID</label>
-                  <input type="text" id="dropNetid" placeholder="e.g. zw757" />
-                </div>
-                <button class="chip chip-filled" onclick="confirmDrop()">Confirm</button>
-              </div>
-
-              <label style="display:flex;align-items:center;gap:8px;font-size: var(--font-size-ui); line-height: var(--line-height-ui);color:var(--text-primary);cursor:pointer;">
-                <input type="checkbox" class="cb" id="notifyEmail2" checked />
-                Notify student by Email
-              </label>
-
-              <button class="btn btn-danger w-full" onclick="handleDropStudent()">
-                Drop Student
-              </button>
-            </div>
-          </details>
-
-          <!-- Final Grades -->
-          <details class="panel-section">
-            <summary class="panel-section-header">
-              <span class="panel-section-title">Final Grades</span>
-              <span class="panel-section-toggle" aria-hidden="true">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </span>
-            </summary>
-            <div class="panel-section-body" id="grades-section">
-              <p style="font-size: var(--font-size-ui);color:var(--text-secondary);line-height: var(--line-height-ui);">
-                Final grades are computed from assignment scores. Review and confirm before releasing to students.
-              </p>
-              <div style="display:flex;flex-direction:column;gap:8px;">
-                <button class="btn btn-outlined w-full" onclick="alert('Viewing final grades')">
-                  <span class="material-icons">grade</span>
-                  View Final Grades
-                </button>
-                <button class="btn btn-primary w-full" onclick="confirmRelease()">
-                  <span class="material-icons">publish</span>
-                  Release Final Grades
-                </button>
+              <div class="filter-field">
+                <label for="finalGradeFilter">Final grade below</label>
+                <select id="finalGradeFilter" onchange="filterTable()">
+                  <option value="">Any grade</option>
+                  <option>A+</option><option>A</option><option>A-</option>
+                  <option>B+</option><option>B</option><option>B-</option>
+                  <option>C+</option><option>C</option><option>C-</option>
+                  <option>D+</option><option>D</option><option>F</option>
+                </select>
               </div>
             </div>
-          </details>
-
+            <footer class="filter-footer">
+              <span class="filter-results" id="filterResults" role="status" aria-live="polite">600 students</span>
+              <button class="filter-clear-button" id="clearFiltersButton" type="button" onclick="clearFilters()" hidden>Clear all</button>
+            </footer>
+          </section>
         </div>
-        <!-- END LEFT PANEL -->
+        <!-- END FILTER PANEL -->
 
         <div class="rail-resizer" id="studentFilterResizer" role="separator" tabindex="0" aria-label="Resize filters" aria-orientation="vertical" aria-controls="studentFilters" aria-valuemin="200" aria-valuemax="520" aria-valuenow="220"></div>
 
@@ -427,13 +529,44 @@
         <!-- ===== RIGHT PANEL ===== -->
         <div class="right-panel">
 
-          <!-- Search bar -->
-          <div class="student-search-row">
-            <div class="search-field">
-              <span class="material-icons search-icon">search</span>
-              <input type="text" placeholder="Search by name, NetID, or grade…" id="searchInput" oninput="filterTable()" />
+          <div class="student-top-row">
+            <div class="student-search-row">
+              <div class="cmsx-underline-search">
+                <label for="searchInput">Search Students</label>
+                <div class="cmsx-underline-search-input">
+                  <input type="search" placeholder="Search by name, NetID, or grade…" id="searchInput" autocomplete="off" oninput="filterTable()" />
+                  <button type="button" aria-label="Clear student search" onclick="clearStudentSearch()"><img src="assets/assignments/clear.svg" alt="" /></button>
+                </div>
+                <div class="cmsx-underline-search-rule" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <div class="student-selection-toolbar" id="studentSelectionToolbar">
+              <span class="selection-count" id="selectionCount">1 student selected</span>
+              <div class="selection-actions">
+                <button class="btn btn-primary" type="button" onclick="emailSelectedStudents()">
+                  <span class="material-icons" aria-hidden="true">mail</span>Email
+                </button>
+                <details class="action-menu selection-more-menu">
+                  <summary class="btn btn-outlined">More <span class="material-icons" aria-hidden="true">expand_more</span></summary>
+                  <div class="action-menu-panel">
+                    <label class="action-menu-option">
+                      <input type="checkbox" class="cb" id="notifyDroppedSelected" checked />
+                      <span>Email dropped students</span>
+                    </label>
+                    <button class="action-menu-item is-danger" type="button" onclick="handleDropSelected()">
+                      <span class="material-icons" aria-hidden="true">person_remove</span>Drop selected students
+                    </button>
+                  </div>
+                </details>
+              </div>
             </div>
           </div>
+
+          <div class="student-result-meta" hidden>
+            <div class="active-filter-list" id="activeFilterList" aria-label="Active filters"></div>
+          </div>
+          <p class="grade-edit-status" id="gradeEditStatus" role="status" aria-live="polite" hidden></p>
 
           <!-- Students Table -->
           <div class="table-container">
@@ -443,7 +576,7 @@
                   <tr>
                     <th class="checkbox-cell sticky-col sticky-col-1">
                       <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;">
-                        <input type="checkbox" class="cb" id="selectAll" onchange="toggleAll(this)" />
+                        <input type="checkbox" class="cb" id="selectAll" aria-label="Select all matching students" onchange="toggleAll(this)" />
                       </div>
                     </th>
                     <th class="num-cell sticky-col sticky-col-2">#</th>
@@ -463,7 +596,7 @@
                     <th class="sortable" onclick="sortTable(9)"><div class="th-inner">A5 <span class="material-icons">swap_vert</span></div></th>
                     <th class="sortable" onclick="sortTable(10)"><div class="th-inner">A6 <span class="material-icons">swap_vert</span></div></th>
                     <th class="sortable" onclick="sortTable(11)"><div class="th-inner">A7 <span class="material-icons">swap_vert</span></div></th>
-                    <th class="sortable" onclick="sortTable(12)"><div class="th-inner">Total <span class="material-icons">swap_vert</span></div></th>
+                    <th class="sortable" onclick="sortTable(12)"><div class="th-inner">Slip Days <span class="material-icons">swap_vert</span></div></th>
                     <th class="sortable" onclick="sortTable(13)"><div class="th-inner">Final Grade <span class="material-icons">swap_vert</span></div></th>
                     <th>Status</th>
                   </tr>
@@ -483,20 +616,46 @@
   </main>
 </div>
 
+<dialog class="student-dialog" id="dropStudentDialog" aria-labelledby="dropStudentDialogTitle">
+  <form class="student-dialog-form" method="dialog" onsubmit="event.preventDefault(); handleDropStudent();">
+    <header class="student-dialog-header">
+      <h2 id="dropStudentDialogTitle">Drop a student</h2>
+      <p>Enter the student’s NetID. This changes their enrollment status immediately.</p>
+    </header>
+    <div class="filter-field">
+      <label for="dropNetid">Student NetID</label>
+      <div class="filter-input-wrap">
+        <input id="dropNetid" type="text" autocomplete="off" placeholder="e.g. zw757" aria-describedby="dropStudentError" />
+      </div>
+      <p class="student-dialog-error" id="dropStudentError" role="alert"></p>
+    </div>
+    <label class="notify-option">
+      <input type="checkbox" class="cb" id="notifyEmail2" checked />
+      Email the dropped student
+    </label>
+    <div class="student-dialog-actions">
+      <button class="btn btn-outlined" type="button" onclick="closeDropStudentDialog()">Cancel</button>
+      <button class="btn btn-danger" type="submit">Drop student</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="student-toast" id="studentToast" role="status" aria-live="polite"></div>
+
 <script>
 // ============ STUDENT DATA ============
 const namedStudents = [
-  { netid:'ax53',   first:'Anne',    last:'Xia',       a1:96, a2:94, a3:97, a4:95, a5:93, a6:96, a7:94, total:665, grade:'A',  status:'enrolled' },
-  { netid:'aw899',  first:'Annie',   last:'Weng',      a1:91, a2:93, a3:90, a4:94, a5:92, a6:91, a7:95, total:646, grade:'A-', status:'enrolled' },
-  { netid:'el728',  first:'Erica',   last:'Lee',       a1:88, a2:92, a3:89, a4:91, a5:90, a6:93, a7:88, total:631, grade:'A-', status:'enrolled' },
-  { netid:'gmg236', first:'Griffin', last:'Guthrie',   a1:84, a2:87, a3:86, a4:88, a5:90, a6:88, a7:89, total:612, grade:'B+', status:'enrolled' },
-  { netid:'jk2582', first:'Jeremy',  last:'Ku-Benjet', a1:92, a2:89, a3:94, a4:91, a5:93, a6:90, a7:95, total:644, grade:'A-', status:'enrolled' },
-  { netid:'jl4229', first:'Jessica', last:'Liu',       a1:98, a2:97, a3:96, a4:99, a5:97, a6:98, a7:96, total:681, grade:'A+', status:'enrolled' },
-  { netid:'jt963',  first:'Justin',  last:'Tang',      a1:87, a2:85, a3:90, a4:89, a5:86, a6:91, a7:88, total:616, grade:'B+', status:'enrolled' },
-  { netid:'zw757',  first:'May',     last:'Wu',        a1:98, a2:95, a3:92, a4:97, a5:96, a6:94, a7:99, total:671, grade:'A',  status:'enrolled' },
-  { netid:'rmg296', first:'Rohen',   last:'Giralt',    a1:90, a2:88, a3:91, a4:93, a5:89, a6:94, a7:92, total:637, grade:'A-', status:'enrolled' },
-  { netid:'st2233', first:'Sylvia',  last:'Tai',       a1:95, a2:96, a3:94, a4:97, a5:96, a6:93, a7:98, total:669, grade:'A',  status:'enrolled' },
-  { netid:'xl966',  first:'Xintong', last:'Lin',       a1:93, a2:95, a3:92, a4:96, a5:94, a6:97, a7:95, total:662, grade:'A',  status:'enrolled' },
+  { netid:'ax53',   first:'Anne',    last:'Xia',       a1:96, a2:94, a3:97, a4:95, a5:93, a6:96, a7:94, total:665, grade:'A',  slipDays:3, status:'enrolled' },
+  { netid:'aw899',  first:'Annie',   last:'Weng',      a1:91, a2:93, a3:90, a4:94, a5:92, a6:91, a7:95, total:646, grade:'A-', slipDays:2, status:'enrolled' },
+  { netid:'el728',  first:'Erica',   last:'Lee',       a1:88, a2:92, a3:89, a4:91, a5:90, a6:93, a7:88, total:631, grade:'A-', slipDays:1, status:'enrolled' },
+  { netid:'gmg236', first:'Griffin', last:'Guthrie',   a1:84, a2:87, a3:86, a4:88, a5:90, a6:88, a7:89, total:612, grade:'B+', slipDays:0, status:'enrolled' },
+  { netid:'jk2582', first:'Jeremy',  last:'Ku-Benjet', a1:92, a2:89, a3:94, a4:91, a5:93, a6:90, a7:95, total:644, grade:'A-', slipDays:3, status:'enrolled' },
+  { netid:'jl4229', first:'Jessica', last:'Liu',       a1:98, a2:97, a3:96, a4:99, a5:97, a6:98, a7:96, total:681, grade:'A+', slipDays:2, status:'enrolled' },
+  { netid:'jt963',  first:'Justin',  last:'Tang',      a1:87, a2:85, a3:90, a4:89, a5:86, a6:91, a7:88, total:616, grade:'B+', slipDays:1, status:'enrolled' },
+  { netid:'zw757',  first:'May',     last:'Wu',        a1:98, a2:95, a3:92, a4:97, a5:96, a6:94, a7:99, total:671, grade:'A',  slipDays:3, status:'enrolled' },
+  { netid:'rmg296', first:'Rohen',   last:'Giralt',    a1:90, a2:88, a3:91, a4:93, a5:89, a6:94, a7:92, total:637, grade:'A-', slipDays:0, status:'enrolled' },
+  { netid:'st2233', first:'Sylvia',  last:'Tai',       a1:95, a2:96, a3:94, a4:97, a5:96, a6:93, a7:98, total:669, grade:'A',  slipDays:2, status:'enrolled' },
+  { netid:'xl966',  first:'Xintong', last:'Lin',       a1:93, a2:95, a3:92, a4:96, a5:94, a6:97, a7:95, total:662, grade:'A',  slipDays:1, status:'enrolled' },
 ];
 
 const mockFirstNames = [
@@ -549,7 +708,9 @@ function createMockStudent(index) {
     a6,
     a7,
     total,
+    missing: (index * 7) % 5,
     grade: gradeFromAverage(total / 7),
+    slipDays: (index * 3 + 1) % 4,
     status: index % 37 === 0 ? 'dropped' : 'enrolled',
   };
 }
@@ -558,14 +719,197 @@ const students = [
   ...namedStudents,
   ...Array.from({ length: 600 - namedStudents.length }, (_, index) => createMockStudent(index)),
 ];
+const assignmentKeys = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7'];
+const studentByNetid = new Map(students.map(student => [student.netid, student]));
+const gradeStorageKey = 'cmsx-student-score-overrides-v1';
+
+function loadSavedScores() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(gradeStorageKey) || '{}');
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+const savedScores = loadSavedScores();
+students.forEach(student => {
+  const overrides = savedScores[student.netid];
+  if (!overrides || typeof overrides !== 'object') return;
+  let changed = false;
+  assignmentKeys.forEach(key => {
+    const value = overrides[key];
+    if (Number.isInteger(value) && value >= 0 && value <= 100) {
+      student[key] = value;
+      changed = true;
+    }
+  });
+  if (changed) {
+    student.total = assignmentKeys.reduce((sum, key) => sum + student[key], 0);
+    student.grade = gradeFromAverage(student.total / assignmentKeys.length);
+  }
+});
 
 console.assert(students.length === 600, 'Students table must contain exactly 600 rows.');
 console.assert(students.every(student => student.total === student.a1 + student.a2 + student.a3 + student.a4 + student.a5 + student.a6 + student.a7), 'Student totals must include all seven assignments.');
 
-let selectedSet = new Set([students.findIndex(student => student.netid === 'zw757')]);
+const gradeOrder = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+let selectedSet = new Set(['zw757']);
+let toastTimer;
+let activeGradeEdit = null;
+let gradeStatusTimer;
 
-function updateSelectedActions() {
-  document.getElementById('selectedStudentsSection').hidden = selectedSet.size === 0;
+function setGradeEditStatus(message, state = '', duration = 0) {
+  const status = document.getElementById('gradeEditStatus');
+  window.clearTimeout(gradeStatusTimer);
+  status.textContent = message;
+  status.dataset.state = state;
+  status.hidden = !message;
+  if (duration) {
+    gradeStatusTimer = window.setTimeout(() => {
+      status.hidden = true;
+      status.textContent = '';
+    }, duration);
+  }
+}
+
+function scoreCellLabel(student, key) {
+  return `${key.toUpperCase()} for ${student.first} ${student.last}`;
+}
+
+function mountGradeEditor(cell, focus = false) {
+  const edit = activeGradeEdit;
+  if (!edit) return;
+  const student = studentByNetid.get(edit.netid);
+  const input = document.createElement('input');
+  input.id = `score-editor-${edit.netid}-${edit.key}`;
+  input.className = 'score-input';
+  input.type = 'text';
+  input.inputMode = 'numeric';
+  input.value = edit.draft;
+  input.setAttribute('aria-label', `${scoreCellLabel(student, edit.key)}. Enter a whole number from 0 to 100.`);
+  input.setAttribute('aria-describedby', 'gradeEditStatus');
+  input.addEventListener('input', () => {
+    edit.draft = input.value;
+    input.setCustomValidity('');
+    input.removeAttribute('aria-invalid');
+    const dirty = input.value !== String(edit.original);
+    cell.classList.toggle('is-dirty', dirty);
+    setGradeEditStatus(
+      dirty ? `Unsaved change — ${scoreCellLabel(student, edit.key)}. Press Enter to save or Escape to cancel.`
+        : `Editing ${scoreCellLabel(student, edit.key)}. Press Enter to save or Escape to cancel.`,
+      dirty ? 'unsaved' : ''
+    );
+  });
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      saveGradeEdit();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      cancelGradeEdit();
+    }
+  });
+  cell.classList.add('is-editing');
+  cell.classList.toggle('is-dirty', edit.draft !== String(edit.original));
+  cell.replaceChildren(input);
+  if (focus) {
+    input.focus();
+    input.select();
+  }
+}
+
+function startGradeEdit(netid, key) {
+  if (!assignmentKeys.includes(key)) return;
+  const student = studentByNetid.get(netid);
+  if (!student) return;
+  if (activeGradeEdit) {
+    activeGradeEdit = null;
+    renderTable();
+  }
+  activeGradeEdit = { netid, key, original: student[key], draft: String(student[key]) };
+  const cell = document.getElementById(`score-${netid}-${key}`)?.closest('td');
+  if (!cell) { activeGradeEdit = null; return; }
+  mountGradeEditor(cell, true);
+  setGradeEditStatus(`Editing ${scoreCellLabel(student, key)}. Press Enter to save or Escape to cancel.`);
+}
+
+function cancelGradeEdit(restoreFocus = true) {
+  if (!activeGradeEdit) return;
+  const { netid, key } = activeGradeEdit;
+  activeGradeEdit = null;
+  renderTable();
+  if (restoreFocus) document.getElementById(`score-${netid}-${key}`)?.focus({ preventScroll: true });
+  setGradeEditStatus('Edit canceled. No changes saved.', '', 2500);
+}
+
+function saveGradeEdit() {
+  if (!activeGradeEdit) return;
+  const { netid, key, original, draft } = activeGradeEdit;
+  const input = document.getElementById(`score-editor-${netid}-${key}`);
+  const valueText = draft.trim();
+  const value = Number(valueText);
+  if (!/^\d+$/.test(valueText) || !Number.isInteger(value) || value < 0 || value > 100) {
+    const message = 'Enter a whole number from 0 to 100.';
+    input?.setAttribute('aria-invalid', 'true');
+    input?.setCustomValidity(message);
+    setGradeEditStatus(`${scoreCellLabel(studentByNetid.get(netid), key)} not saved. ${message}`, 'error');
+    input?.reportValidity();
+    return;
+  }
+  if (value === original) {
+    cancelGradeEdit();
+    return;
+  }
+
+  const nextScores = { ...savedScores, [netid]: { ...savedScores[netid], [key]: value } };
+  try {
+    localStorage.setItem(gradeStorageKey, JSON.stringify(nextScores));
+  } catch {
+    setGradeEditStatus('Could not save this score in this browser. Your change is still unsaved.', 'error');
+    input?.focus();
+    return;
+  }
+  savedScores[netid] = nextScores[netid];
+  const student = studentByNetid.get(netid);
+  student[key] = value;
+  student.total = assignmentKeys.reduce((sum, assignment) => sum + student[assignment], 0);
+  student.grade = gradeFromAverage(student.total / assignmentKeys.length);
+  activeGradeEdit = null;
+  renderTable();
+  document.getElementById(`score-${netid}-${key}`)?.focus({ preventScroll: true });
+  setGradeEditStatus(`Saved locally — ${scoreCellLabel(student, key)}: ${original} → ${value}.`, 'saved', 3000);
+}
+
+document.getElementById('tableBody').addEventListener('click', event => {
+  const button = event.target.closest('.score-button');
+  if (button) startGradeEdit(button.dataset.netid, button.dataset.assignment);
+});
+
+document.addEventListener('click', event => {
+  if (!activeGradeEdit || event.target.closest('.score-input, .score-button')) return;
+  cancelGradeEdit(false);
+});
+
+function showStudentToast(message) {
+  const toast = document.getElementById('studentToast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+function updateSelectedActions(visibleStudents = getFilteredData()) {
+  const toolbar = document.getElementById('studentSelectionToolbar');
+  const count = selectedSet.size;
+  toolbar.hidden = count === 0;
+  document.getElementById('selectionCount').textContent = `${count} ${count === 1 ? 'student' : 'students'} selected`;
+
+  const selectAll = document.getElementById('selectAll');
+  if (!selectAll) return;
+  const selectedVisibleCount = visibleStudents.filter(student => selectedSet.has(student.netid)).length;
+  selectAll.checked = visibleStudents.length > 0 && selectedVisibleCount === visibleStudents.length;
+  selectAll.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleStudents.length;
 }
 
 function gradeClass(g) {
@@ -582,107 +926,278 @@ function statusDot(s) {
   return '<span class="status-dot dot-gray"></span>Unknown';
 }
 
-function renderTable(data) {
-  updateSelectedActions();
+function renderTable(groups = getFilterGroups()) {
+  const { matches, nonmatches, hasActiveFilters } = groups;
+  updateSelectedActions(matches);
+  updateFilterSummary(matches, nonmatches, hasActiveFilters);
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
-  data.forEach((s, idx) => {
-    const origIdx = students.indexOf(s);
-    const isSel = selectedSet.has(origIdx);
-    const row = document.createElement('tr');
-    if (isSel) row.classList.add('selected');
-    row.innerHTML = `
-      <td class="checkbox-cell sticky-col sticky-col-1">
-        <input type="checkbox" class="cb" ${isSel ? 'checked' : ''} onchange="toggleRow(${origIdx}, this)" />
+  let displayIndex = 0;
+
+  const appendRows = (data, isNonmatch = false) => {
+    data.forEach(s => {
+      displayIndex += 1;
+      const isSel = selectedSet.has(s.netid);
+      const row = document.createElement('tr');
+      row.classList.toggle('selected', isSel);
+      row.classList.toggle('filter-nonmatch', isNonmatch);
+      row.innerHTML = `
+        <td class="checkbox-cell sticky-col sticky-col-1">
+          <input type="checkbox" class="cb" aria-label="Select ${s.first} ${s.last}" ${isSel ? 'checked' : ''} onchange="toggleRow('${s.netid}', this)" />
+        </td>
+        <td class="num-cell sticky-col sticky-col-2">${displayIndex}</td>
+        <td class="sticky-col sticky-col-3">${s.netid}</td>
+        <td class="sticky-col sticky-col-4">${s.first}</td>
+        <td class="sticky-col sticky-col-5">${s.last}</td>
+        ${assignmentKeys.map(key => `
+          <td class="score-cell">
+            <button class="score-button" id="score-${s.netid}-${key}" type="button"
+              data-netid="${s.netid}" data-assignment="${key}"
+              aria-label="Edit ${key.toUpperCase()} score for ${s.first} ${s.last}, ${s[key]} out of 100">
+              ${s[key]}<span class="material-icons score-edit-icon" aria-hidden="true">edit</span>
+            </button>
+          </td>
+        `).join('')}
+        <td class="slip-days-cell"><span class="slip-days-value${s.slipDays === 0 ? ' is-exhausted' : s.slipDays === 1 ? ' is-low' : ''}" title="${s.slipDays} slip ${s.slipDays === 1 ? 'day' : 'days'} remaining">${s.slipDays}</span></td>
+        <td><span class="grade-pill ${gradeClass(s.grade)}">${s.grade}</span></td>
+        <td>${statusDot(s.status)}</td>
+      `;
+      if (activeGradeEdit?.netid === s.netid) {
+        const cell = row.querySelector(`#score-${s.netid}-${activeGradeEdit.key}`)?.closest('td');
+        if (cell) mountGradeEditor(cell);
+      }
+      tbody.appendChild(row);
+    });
+  };
+
+  if (hasActiveFilters && matches.length === 0) {
+    tbody.innerHTML = '<tr><td class="student-table-empty" colspan="15">No students match the current filters.</td></tr>';
+  } else {
+    appendRows(matches);
+  }
+
+  if (hasActiveFilters && nonmatches.length > 0) {
+    const divider = document.createElement('tr');
+    divider.className = 'student-filter-divider';
+    divider.innerHTML = `
+      <td colspan="15">
+        <div class="student-filter-divider-content">
+          <span>Outside current filters</span>
+          <span class="student-filter-divider-count">${nonmatches.length} ${nonmatches.length === 1 ? 'student' : 'students'}</span>
+        </div>
       </td>
-      <td class="num-cell sticky-col sticky-col-2">${idx + 1}</td>
-      <td class="sticky-col sticky-col-3">${s.netid}</td>
-      <td class="sticky-col sticky-col-4">${s.first}</td>
-      <td class="sticky-col sticky-col-5">${s.last}</td>
-      <td>${s.a1}</td>
-      <td>${s.a2}</td>
-      <td>${s.a3}</td>
-      <td>${s.a4}</td>
-      <td>${s.a5}</td>
-      <td>${s.a6}</td>
-      <td>${s.a7}</td>
-      <td><strong>${s.total}</strong></td>
-      <td><span class="grade-pill ${gradeClass(s.grade)}">${s.grade}</span></td>
-      <td>${statusDot(s.status)}</td>
     `;
-    tbody.appendChild(row);
-  });
+    tbody.appendChild(divider);
+    appendRows(nonmatches, true);
+  }
 }
 
-function getFilteredData() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  return students.filter(s => !q || s.netid.includes(q) || s.first.toLowerCase().includes(q) || s.last.toLowerCase().includes(q) || s.grade.toLowerCase().includes(q));
+function getFilterState() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const averageValue = document.getElementById('averageGradeFilter').value;
+  const missingValue = document.getElementById('missingAssignmentsFilter').value;
+  const gradeValue = document.getElementById('finalGradeFilter').value;
+  const status = document.getElementById('enrollmentStatusFilter').value;
+  const slipDaysValue = document.getElementById('slipDaysFilter').value;
+  return {
+    q,
+    status,
+    slipDays: slipDaysValue === '' ? null : Number(slipDaysValue),
+    averageBelow: averageValue === '' ? null : Number(averageValue),
+    missingAtLeast: missingValue === '' ? null : Number(missingValue),
+    gradeValue,
+    gradeThreshold: gradeValue ? gradeOrder.indexOf(gradeValue) : -1,
+  };
 }
 
-function filterTable() { renderTable(getFilteredData()); }
+function hasActiveFilterState(state) {
+  return Boolean(state.q || state.status || state.slipDays !== null || state.averageBelow !== null || state.missingAtLeast !== null || state.gradeValue);
+}
 
-function toggleRow(idx, cb) {
-  if (cb.checked) selectedSet.add(idx); else selectedSet.delete(idx);
+function studentMatchesFilters(student, state) {
+  const matchesSearch = !state.q
+    || student.netid.includes(state.q)
+    || student.first.toLowerCase().includes(state.q)
+    || student.last.toLowerCase().includes(state.q)
+    || student.grade.toLowerCase().includes(state.q);
+  const matchesStatus = !state.status || student.status === state.status;
+  const matchesSlipDays = state.slipDays === null || student.slipDays === state.slipDays;
+  const matchesAverage = state.averageBelow === null || (student.total / 7) < state.averageBelow;
+  const matchesMissing = state.missingAtLeast === null || (student.missing ?? 0) >= state.missingAtLeast;
+  const matchesGrade = state.gradeThreshold < 0 || gradeOrder.indexOf(student.grade) > state.gradeThreshold;
+  return matchesSearch && matchesStatus && matchesSlipDays && matchesAverage && matchesMissing && matchesGrade;
+}
+
+function getFilterGroups() {
+  const state = getFilterState();
+  const hasActiveFilters = hasActiveFilterState(state);
+  if (!hasActiveFilters) return { matches: [...students], nonmatches: [], hasActiveFilters };
+
+  const matches = [];
+  const nonmatches = [];
+  students.forEach(student => (studentMatchesFilters(student, state) ? matches : nonmatches).push(student));
+  return { matches, nonmatches, hasActiveFilters };
+}
+
+function getFilteredData() { return getFilterGroups().matches; }
+
+function filterTable() { renderTable(getFilterGroups()); }
+function clearStudentSearch() {
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  filterTable();
+  input.focus();
+}
+
+function toggleRow(netid, cb) {
+  if (cb.checked) selectedSet.add(netid); else selectedSet.delete(netid);
   cb.closest('tr').classList.toggle('selected', cb.checked);
   updateSelectedActions();
 }
 
 function toggleAll(masterCb) {
   const visible = getFilteredData();
-  visible.forEach(s => {
-    const idx = students.indexOf(s);
-    if (masterCb.checked) selectedSet.add(idx); else selectedSet.delete(idx);
+  visible.forEach(student => {
+    if (masterCb.checked) selectedSet.add(student.netid); else selectedSet.delete(student.netid);
   });
   filterTable();
 }
 
 function sortTable(colIdx) {
-  const key = ['','','netid','first','last','a1','a2','a3','a4','a5','a6','a7','total','grade'][colIdx];
+  const key = ['','','netid','first','last','a1','a2','a3','a4','a5','a6','a7','slipDays','grade'][colIdx];
   if (!key) return;
   students.sort((a, b) => String(a[key]).localeCompare(String(b[key]), undefined, { numeric: true }));
   filterTable();
 }
 
-// Slider
-function updateSlider(slider) {
-  const pct = slider.value;
-  const bubble = document.getElementById('sliderBubble');
-  bubble.textContent = pct + '%';
-  bubble.style.left = pct + '%';
-  slider.style.background = `linear-gradient(to right, var(--primary) ${pct}%, rgba(25,118,210,0.38) ${pct}%)`;
+function updateFilterSummary(matches, nonmatches, hasActiveFilters) {
+  const status = document.getElementById('enrollmentStatusFilter').value;
+  const slipDays = document.getElementById('slipDaysFilter').value;
+  const average = document.getElementById('averageGradeFilter').value;
+  const missing = document.getElementById('missingAssignmentsFilter').value;
+  const grade = document.getElementById('finalGradeFilter').value;
+  const countLabel = hasActiveFilters
+    ? `${matches.length} ${matches.length === 1 ? 'match' : 'matches'}`
+    : `${matches.length} ${matches.length === 1 ? 'student' : 'students'}`;
+  document.getElementById('filterResults').textContent = countLabel;
+
+  const activeFilters = [
+    status ? { key: 'status', label: status === 'enrolled' ? 'Enrolled' : 'Dropped' } : null,
+    slipDays !== '' ? { key: 'slipDays', label: `Slip days = ${slipDays}` } : null,
+    average !== '' ? { key: 'average', label: `Average < ${average}%` } : null,
+    missing !== '' ? { key: 'missing', label: `Missing ≥ ${missing}` } : null,
+    grade ? { key: 'grade', label: `Grade below ${grade}` } : null,
+  ].filter(Boolean);
+
+  document.getElementById('activeFilterList').innerHTML = activeFilters.map(filter => `
+    <button class="active-filter-chip" type="button" onclick="clearFilterValue('${filter.key}')" aria-label="Remove ${filter.label} filter">
+      ${filter.label}<span aria-hidden="true">×</span>
+    </button>
+  `).join('');
+  document.querySelector('.student-result-meta').hidden = activeFilters.length === 0;
+  document.getElementById('clearFiltersButton').hidden = activeFilters.length === 0;
 }
 
-function applyFilter() {
-  const maxGrade = parseInt(document.getElementById('gradeSlider').value);
-  alert(`Filter applied: grade below ${maxGrade}%`);
+function clearFilterValue(key) {
+  const fieldId = { status: 'enrollmentStatusFilter', slipDays: 'slipDaysFilter', average: 'averageGradeFilter', missing: 'missingAssignmentsFilter', grade: 'finalGradeFilter' }[key];
+  if (!fieldId) return;
+  document.getElementById(fieldId).value = '';
+  filterTable();
 }
-function clearFilter() { document.getElementById('gradeSlider').value = 20; updateSlider(document.getElementById('gradeSlider')); filterTable(); }
+
+function clearFilters() {
+  for (const id of ['enrollmentStatusFilter', 'slipDaysFilter', 'averageGradeFilter', 'missingAssignmentsFilter', 'finalGradeFilter']) {
+    document.getElementById(id).value = '';
+  }
+  filterTable();
+}
+
+function closeOpenActionMenus() {
+  document.querySelectorAll('.action-menu[open]').forEach(menu => menu.removeAttribute('open'));
+}
+
+function emailSelectedStudents() {
+  if (selectedSet.size === 0) return;
+  const count = selectedSet.size;
+  closeOpenActionMenus();
+  showStudentToast(`Email queued for ${count} selected ${count === 1 ? 'student' : 'students'}.`);
+}
 
 function handleDropSelected() {
-  if (selectedSet.size === 0) { alert('No students selected.'); return; }
-  if (confirm(`Drop ${selectedSet.size} selected student(s)?`)) {
-    selectedSet.forEach(i => students[i].status = 'dropped');
-    selectedSet.clear(); filterTable(); alert('Students dropped.');
-  }
+  if (selectedSet.size === 0) return;
+  const selectedStudents = students.filter(student => selectedSet.has(student.netid));
+  const count = selectedStudents.length;
+  const preview = selectedStudents.slice(0, 3).map(student => `${student.first} ${student.last}`).join(', ');
+  const remainder = count > 3 ? ` and ${count - 3} more` : '';
+  if (!confirm(`Drop ${count} selected ${count === 1 ? 'student' : 'students'}: ${preview}${remainder}?`)) return;
+
+  selectedStudents.forEach(student => { student.status = 'dropped'; });
+  const notify = document.getElementById('notifyDroppedSelected').checked;
+  selectedSet.clear();
+  closeOpenActionMenus();
+  filterTable();
+  showStudentToast(`${count} ${count === 1 ? 'student' : 'students'} dropped${notify ? ' and notified by email' : ''}.`);
 }
-function confirmDrop() {
-  const val = document.getElementById('dropNetid').value.trim();
-  if (!val) { alert('Enter a NetID first.'); return; }
-  alert(`Drop student ${val}? Confirm in the Drop Student button.`);
+
+function openDropStudentDialog() {
+  closeOpenActionMenus();
+  const dialog = document.getElementById('dropStudentDialog');
+  document.getElementById('dropStudentError').textContent = '';
+  document.getElementById('dropNetid').value = '';
+  dialog.showModal();
+  document.getElementById('dropNetid').focus();
 }
+
+function closeDropStudentDialog() {
+  document.getElementById('dropStudentDialog').close();
+}
+
 function handleDropStudent() {
-  const val = document.getElementById('dropNetid').value.trim();
-  if (!val) { alert('Enter a NetID to drop.'); return; }
-  const idx = students.findIndex(s => s.netid === val);
-  if (idx === -1) { alert(`NetID "${val}" not found.`); return; }
-  if (confirm(`Drop ${students[idx].first} ${students[idx].last} (${val})?`)) {
-    students[idx].status = 'dropped';
-    document.getElementById('dropNetid').value = '';
-    filterTable(); alert(`${val} has been dropped.`);
+  const input = document.getElementById('dropNetid');
+  const error = document.getElementById('dropStudentError');
+  const value = input.value.trim().toLowerCase();
+  if (!value) {
+    error.textContent = 'Enter a student NetID.';
+    input.focus();
+    return;
+  }
+  const student = students.find(candidate => candidate.netid.toLowerCase() === value);
+  if (!student) {
+    error.textContent = `No student found with NetID “${value}”.`;
+    input.focus();
+    return;
+  }
+  if (student.status === 'dropped') {
+    error.textContent = `${student.first} ${student.last} is already dropped.`;
+    return;
+  }
+
+  student.status = 'dropped';
+  const notify = document.getElementById('notifyEmail2').checked;
+  closeDropStudentDialog();
+  filterTable();
+  showStudentToast(`${student.first} ${student.last} dropped${notify ? ' and notified by email' : ''}.`);
+}
+
+function handleCSV(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  closeOpenActionMenus();
+  showStudentToast(`${file.name} selected for enrollment import.`);
+  input.value = '';
+}
+
+function reviewFinalGrades() {
+  closeOpenActionMenus();
+  showStudentToast('Final grades are ready for review.');
+}
+
+function confirmRelease() {
+  closeOpenActionMenus();
+  if (confirm('Release final grades to all students? This action cannot be undone.')) {
+    showStudentToast('Final grades released to students.');
   }
 }
-function handleCSV(input) { alert(`CSV file selected: ${input.files[0].name}\nProcessing enrollment changes…`); }
-function confirmRelease() { if (confirm('Release final grades to all students? This action cannot be undone.')) alert('Final grades released!'); }
 
 const filterLayout = document.querySelector('.students-page .course-content');
 const filterPanel = document.getElementById('studentFilters');
@@ -727,7 +1242,7 @@ window.addEventListener('resize', () => {
 });
 
 // Init
-renderTable(students);
+filterTable();
 if (window.matchMedia('(min-width: 901px)').matches) setFilterWidth(filterPanel.getBoundingClientRect().width);
 </script>
 <script type="module" src="rail-toggle.js"></script>

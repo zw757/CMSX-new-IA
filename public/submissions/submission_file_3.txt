@@ -1,0 +1,15 @@
+USABILITY TEST SUMMARY
+
+Participants: 4 teaching assistants and 2 instructors
+Tasks: locate an assignment, inspect submissions, update a grade, and move to the next student
+
+FINDINGS
+
+- Participants understood the assignment table without instruction.
+- The active navigation state needed stronger contrast.
+- Reviewers preferred comments attached directly to the relevant passage.
+- Persistent grading actions reduced scrolling during batch grading.
+
+NEXT STEPS
+
+Add passage-level comments, improve active-state contrast, and test the grading workflow with longer submissions.

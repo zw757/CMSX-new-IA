@@ -1,3 +1,5 @@
+import './cmsx-select.js';
+
 (() => {
   const cmsxLogoUrl = new URL('./cmsx-logo.svg', import.meta.url).href;
 
