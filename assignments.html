@@ -3,619 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CS4998 – Assignments &amp; Grading</title>
+  <title>CS4998 – Assignments</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="assignments-list.css" />
   <script type="module" src="sidebar.js"></script>
   <script type="module" src="designer-tag.js"></script>
-  <style>
-    .assignments-page .page-header { min-height: 57px; margin-bottom: 24px; }
-    .assignments-page .page-title { font-weight: 500; }
-
-    .assignment-summary {
-      display: flex;
-      align-items: stretch;
-      gap: 32px;
-      min-height: 167px;
-      margin-bottom: 24px;
-      padding: 20px;
-      overflow-x: auto;
-      background: var(--surface);
-      border-radius: 8px;
-      box-shadow: var(--shadow-1);
-    }
-    .summary-overview { width: 136px; flex: 0 0 136px; }
-    .summary-eyebrow { color: var(--text-secondary); font-size: var(--font-size-caption); line-height: 24px; }
-    .summary-total { margin: 2px 0 8px; font-size: 3rem; font-weight: 400; line-height: 1; }
-    .summary-status-list { display: grid; gap: 2px; }
-    .summary-status {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 28px;
-      padding: 0 8px;
-      border-radius: var(--border-radius);
-      background: #f4f5f6;
-      color: var(--text-secondary);
-      font-size: var(--font-size-caption);
-    }
-    .summary-status strong { font-weight: 500; }
-    .summary-status.graded strong { color: #2e7d32; }
-    .summary-status.open strong { color: var(--primary); }
-    .summary-divider { width: 1px; min-width: 1px; background: var(--divider); }
-    .summary-recent { width: 242px; flex: 0 0 242px; padding-top: 5px; }
-    .summary-recent-label { color: var(--text-secondary); font-size: var(--font-size-caption); line-height: 24px; }
-    .summary-recent-title { margin: 5px 0 24px; font-size: 1.25rem; font-weight: 500; line-height: 1.2; }
-    .summary-progress-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 5px;
-      font-size: var(--font-size-caption);
-      color: var(--text-secondary);
-    }
-
-    .assignment-filter-bar {
-      display: flex;
-      align-items: flex-end;
-      gap: 60px;
-      min-height: 60px;
-      margin-bottom: 24px;
-    }
-    .assignment-search { position: relative; flex: 1 1 auto; min-width: 240px; }
-    .assignment-search label { display: block; color: var(--text-secondary); font-size: 13px; line-height: 24px; }
-    .assignment-search input {
-      width: 100%;
-      height: 30px;
-      padding: 0 36px 5px 0;
-      border: 0;
-      border-bottom: 1px solid rgba(0,0,0,0.42);
-      outline: 0;
-      color: var(--text-primary);
-      background: transparent;
-      font-size: var(--font-size-body);
-      letter-spacing: .15px;
-    }
-    .assignment-search input:focus { border-bottom: 2px solid var(--primary); }
-    .assignment-search .clear-search {
-      position: absolute;
-      right: 0;
-      bottom: 3px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      color: var(--text-secondary);
-      border-radius: 50%;
-    }
-    .assignment-search .clear-search:hover { background: rgba(0,0,0,.04); }
-    .assignment-search .clear-search.visible { display: inline-flex; }
-    .assignment-search .material-icons { font-size: 20px; }
-    .assignment-filters { display: flex; gap: 16px; flex: 0 0 auto; }
-    .assignment-filters .chip { gap: 6px; min-height: 32px; padding: 4px 8px 4px 14px; border-color: var(--primary); color: var(--primary); background: white; }
-    .assignment-filters .chip.active { color: white; background: var(--primary); }
-    .filter-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 20px;
-      height: 20px;
-      padding: 0 5px;
-      border-radius: 100px;
-      background: var(--primary-light);
-      color: var(--primary);
-      font-size: var(--font-size-caption);
-    }
-    .assignment-filters .chip.active .filter-count { background: white; color: var(--primary); }
-
-    .assignments-table-container { box-shadow: none; }
-    .assignments-table-container .table-scroll-wrapper { padding: 8px 20px; }
-    .assignments-table { min-width: 1380px; table-layout: fixed; }
-    .assignments-table th { height: 56px; padding: 16px; border-bottom-width: 1px; }
-    .assignments-table td { height: 68px; padding: 16px; }
-    .assignments-table th:first-child,
-    .assignments-table td:first-child { width: 50px; padding: 4px; text-align: center; }
-    .assignments-table th:nth-child(2) { width: 300px; }
-    .assignments-table th:nth-child(3) { width: 131px; }
-    .assignments-table th:nth-child(4) { width: 179px; }
-    .assignments-table th:nth-child(5) { width: 73px; }
-    .assignments-table th:nth-child(6) { width: 85px; }
-    .assignments-table th:nth-child(7) { width: 200px; }
-    .assignments-table th:nth-child(8) { width: 100px; }
-    .assignments-table th:last-child,
-    .assignments-table td:last-child { border-left: 1px solid var(--divider); }
-    .assignment-row:hover td { background: rgba(0,102,153,0.025); }
-    .assignment-name { color: var(--text-primary); font-weight: 400; }
-    .assignment-name:hover { color: var(--primary); text-decoration: underline; }
-    .row-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      color: var(--text-secondary);
-    }
-    .row-toggle:hover { color: var(--primary); background: rgba(0,102,153,.08); }
-    .row-toggle .material-icons { font-size: 22px; transition: transform .18s ease; }
-    .row-toggle[aria-expanded="true"] .material-icons { transform: rotate(90deg); }
-    .progress-cell { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-    .progress-bar-wrap { width: 160px; height: 6px; background: rgba(25,118,210,.28); border-radius: 100px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 100px; }
-    .stat-mini { font-size: var(--font-size-caption); line-height: var(--line-height-caption); color: var(--text-secondary); }
-    .assignment-status { font-size: var(--font-size-ui); }
-    .assignment-status.graded { color: #2e7d32; }
-    .assignment-status.open, .assignment-status.graded-open { color: var(--primary); }
-    .assignment-status.upcoming, .assignment-status.draft { color: #9aa1ad; }
-    .assignment-status.closed, .assignment-status.hidden { color: var(--text-secondary); }
-    .assignment-actions { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .assignment-actions-group { display: flex; gap: 6px; }
-    .assignment-action { min-height: 36px; padding: 6px 12px; text-transform: uppercase; letter-spacing: .4px; }
-    .assignment-action.btn-outlined { background: white; }
-    .assignment-action .material-icons { font-size: 18px; }
-
-    .assignment-detail-row[hidden] { display: none; }
-    .assignment-detail-row td {
-      height: auto;
-      padding: 0 16px 20px 50px;
-      white-space: normal;
-      background: white !important;
-      border-bottom: 1px solid var(--divider);
-    }
-    .assignment-detail-panel {
-      display: grid;
-      grid-template-columns: 244px 1fr;
-      gap: 34px;
-      min-height: 148px;
-      padding: 12px 12px;
-      border-left: 1px solid var(--divider);
-    }
-    .detail-heading { margin-bottom: 8px; font-size: var(--font-size-ui); font-weight: 500; }
-    .distribution-list { display: grid; gap: 7px; }
-    .distribution-row { display: grid; grid-template-columns: 40px 150px 28px; align-items: center; gap: 7px; }
-    .distribution-label, .distribution-count { color: var(--text-secondary); font-size: 10px; line-height: 14px; }
-    .distribution-label { white-space: nowrap; }
-    .distribution-track { height: 8px; overflow: hidden; border-radius: 100px; background: #e6f1f6; }
-    .distribution-fill { height: 100%; border-radius: inherit; background: var(--primary); }
-    .statistics-grid { display: grid; grid-template-columns: 118px 118px; gap: 0 20px; width: max-content; }
-    .statistic { display: flex; align-items: center; justify-content: space-between; height: 28px; border-bottom: 1px solid var(--divider); }
-    .statistic dt { color: var(--text-secondary); font-size: 10px; letter-spacing: .5px; text-transform: uppercase; }
-    .statistic dd { font-size: 11px; }
-    .assignment-detail-empty { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; color: var(--text-secondary); }
-    .assignment-detail-empty .material-icons { color: var(--text-disabled); }
-    .assignments-empty { padding: 48px 20px !important; text-align: center; color: var(--text-secondary); }
-
-    .type-assignment { color: white; background: #1e88e5; box-shadow: var(--shadow-1); }
-    .type-quiz { color: white; background: #ab47bc; box-shadow: var(--shadow-1); }
-    .type-survey { color: white; background: #43a047; box-shadow: var(--shadow-1); }
-    .type-exam { color: white; background: #e65100; box-shadow: var(--shadow-1); }
-
-    @media (max-width: 1100px) {
-      .assignment-filter-bar { align-items: stretch; flex-direction: column; gap: 16px; }
-      .assignment-filters { overflow-x: auto; padding-bottom: 4px; }
-    }
-    @media (max-width: 700px) {
-      .assignment-summary { gap: 20px; }
-      .summary-recent { width: 220px; flex-basis: 220px; }
-    }
-  </style>
 </head>
-<body>
-<div class="app-layout">
-
-  <!-- Sidebar -->
-  <cmsx-sidebar></cmsx-sidebar>
-
-  <!-- Main Content -->
-  <main class="main-content assignments-page">
-    <div class="content-wrapper">
-
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-title-group">
-          <h1 class="page-title">CS4998 Intro to CMSX</h1>
-          <nav class="breadcrumbs">
-            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
-            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
-            <span class="breadcrumb-link">Assignments</span>
-          </nav>
-        </div>
-        <a href="assignment-create.html" class="btn btn-primary">+ Create Assignment</a>
-      </div>
-
-      <!-- Assignment summary -->
-      <section class="assignment-summary" aria-label="Assignment summary">
-        <div class="summary-overview">
-          <p class="summary-eyebrow">Total Assignments (<span id="assignment-count-label">9</span>)</p>
-          <p class="summary-total" id="assignment-count">9</p>
-          <div class="summary-status-list">
-            <div class="summary-status graded"><span>Graded</span><strong id="graded-count">5</strong></div>
-            <div class="summary-status"><span>Upcoming</span><strong id="upcoming-count">2</strong></div>
-            <div class="summary-status open"><span>Open</span><strong id="open-count">2</strong></div>
+<body class="assignments-list-page">
+  <div class="app-layout">
+    <cmsx-sidebar></cmsx-sidebar>
+    <main class="main-content">
+      <div class="content-wrapper assignments-shell" data-node-id="1978:22463">
+        <header class="page-header assignments-header" data-node-id="1978:22465">
+          <div class="page-title-group">
+            <h1 class="page-title">CS4998 Intro to CMSX</h1>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
+              <span class="breadcrumb-sep" aria-hidden="true"><img src="assets/assignments/breadcrumb.svg" alt="" /></span>
+              <span class="breadcrumb-link" aria-current="page">Assignments</span>
+            </nav>
           </div>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-recent">
-          <p class="summary-recent-label">Recent Submission Status</p>
-          <p class="summary-recent-title" id="recent-submission-title">Assignment 1</p>
-          <div class="summary-progress-meta">
-            <span>Submitted</span>
-            <span id="recent-submission-value">158/160 (99%)</span>
+          <a class="btn btn-primary assignment-create-link" href="assignment-create.html">+ Create Assignment</a>
+        </header>
+
+        <section class="assignments-summary" aria-label="Assignment summary" data-node-id="1978:22470">
+          <div class="assignments-summary-totals">
+            <div class="assignments-total"><span>Total Assignments</span><strong id="assignmentTotal">7</strong></div>
+            <dl class="assignments-status-counts" id="assignmentStatusCounts"></dl>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="recent-submission-progress" style="width:99%"></div></div>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-recent">
-          <p class="summary-recent-label">Recent Grading Status</p>
-          <p class="summary-recent-title" id="recent-grading-title">Quiz 1</p>
-          <div class="summary-progress-meta">
-            <span>Graded</span>
-            <span id="recent-grading-value">160/160 (100%)</span>
+          <div class="assignments-recent">
+            <a class="assignment-recent-card" href="assignment-detail.html?assignment=assignment-1">
+              <span class="assignment-recent-caption">Recent Submission Status</span>
+              <span class="assignment-recent-title"><span>Assignment 1: Hello CMSX</span><img src="assets/assignments/recent-arrow.svg" alt="" aria-hidden="true" /></span>
+              <span class="assignment-recent-progress">
+                <span class="assignments-progress" role="progressbar" aria-label="Recent submissions" aria-valuemin="0" aria-valuemax="160" aria-valuenow="125"><span style="width:75.62%"></span></span>
+                <span class="assignment-recent-count"><span>125/160</span> (78%)</span>
+              </span>
+            </a>
+            <a class="assignment-recent-card" href="assignment-grading.html?assignment=quiz-1">
+              <span class="assignment-recent-caption is-grading">Recent Grading Status</span>
+              <span class="assignment-recent-title"><span>Quiz 1: Navigation &amp; IA</span><img src="assets/assignments/recent-arrow.svg" alt="" aria-hidden="true" /></span>
+              <span class="assignment-recent-progress">
+                <span class="assignments-progress" role="progressbar" aria-label="Recent grading" aria-valuemin="0" aria-valuemax="160" aria-valuenow="158"><span style="width:97.93%"></span></span>
+                <span class="assignment-recent-count"><span>158/160</span> (99%)</span>
+              </span>
+            </a>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="recent-grading-progress" style="width:100%"></div></div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Filter bar -->
-      <div class="assignment-filter-bar">
-        <div class="assignment-search">
-          <label for="assignment-search-input">Enter Assignment Name</label>
-          <input id="assignment-search-input" type="text" placeholder="Search assignments" oninput="filterAssignments(this.value)" />
-          <button class="clear-search" id="clear-assignment-search" type="button" aria-label="Clear assignment search" onclick="clearAssignmentSearch()">
-            <span class="material-icons" aria-hidden="true">close</span>
-          </button>
-        </div>
-        <div class="assignment-filters" aria-label="Filter assignments by type">
-          <button class="chip chip-outlined active" id="filter-all" type="button" aria-pressed="true" onclick="setFilter('all')">All <span class="material-icons" aria-hidden="true" style="font-size:18px;">cancel</span></button>
-          <button class="chip chip-outlined" id="filter-assignment" type="button" aria-pressed="false" onclick="setFilter('Assignment')">Assignments <span class="filter-count" id="assignment-filter-count">0</span></button>
-          <button class="chip chip-outlined" id="filter-exam" type="button" aria-pressed="false" onclick="setFilter('Exam')">Exams <span class="filter-count" id="exam-filter-count">0</span></button>
-          <button class="chip chip-outlined" id="filter-quiz" type="button" aria-pressed="false" onclick="setFilter('Quiz')">Quizzes <span class="filter-count" id="quiz-filter-count">0</span></button>
-          <button class="chip chip-outlined" id="filter-survey" type="button" aria-pressed="false" onclick="setFilter('Survey')">Surveys <span class="filter-count" id="survey-filter-count">0</span></button>
-        </div>
-      </div>
-
-      <!-- Assignment list table -->
-      <p id="saved-assessments-error" role="alert" hidden></p>
-      <div class="table-container assignments-table-container">
-        <div class="table-scroll-wrapper">
-          <table class="data-table assignments-table" id="assignmentsTable">
-            <thead>
-              <tr>
-                <th><span class="sr-only">Details</span></th>
-                <th class="sortable" onclick="sortAssign('name')"><div class="th-inner">Assignment <span class="material-icons">swap_vert</span></div></th>
-                <th>Type</th>
-                <th class="sortable" onclick="sortAssign('due')"><div class="th-inner">Due Date <span class="material-icons">swap_vert</span></div></th>
-                <th>Points</th>
-                <th>Average</th>
-                <th>Submission</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="assignBody">
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-  </main>
-</div>
-
-<script type="module">
-import { ASSESSMENTS_KEY, effectiveStatus, readAssessments, STATUS_LABELS } from './assessment-schedule.mjs';
-
-const examples = [
-  {
-    id:'assignment-1', name:'Assignment 1: Hello CMSX', type:'Assignment', due:'Feb 2, 2026 11:59 PM',
-    points:100, avg:91, subs:158, total:160, status:'graded', detailHref:'assignment-detail.html',
-    scoreDetails:{
-      distribution:[['90–100',62],['80–89',51],['70–79',31],['60–69',14]],
-      statistics:[['Mean','91.0'],['Highest','100'],['Median','92.0'],['Lowest','64'],['Std. Dev','6.8'],['Passing (≥ 60%)','158']],
-    },
-  },
-  {
-    id:'assignment-2', name:'Assignment 2: Enrollment Workflow', type:'Assignment', due:'Feb 16, 2026 11:59 PM',
-    points:100, avg:85, subs:157, total:160, status:'graded', detailHref:'assignment-detail.html',
-    scoreDetails:{
-      distribution:[['90–100',36],['80–89',50],['70–79',42],['60–69',29]],
-      statistics:[['Mean','85.0'],['Highest','100'],['Median','86.0'],['Lowest','61'],['Std. Dev','8.4'],['Passing (≥ 60%)','157']],
-    },
-  },
-  {
-    id:'quiz-1', name:'Quiz 1: Navigation & IA', type:'Quiz', due:'Feb 23, 2026 11:59 PM',
-    points:50, avg:88, subs:160, total:160, status:'graded', detailHref:'assignment-detail.html',
-    scoreDetails:{
-      distribution:[['90–100',61],['80–89',54],['70–79',31],['60–69',14]],
-      statistics:[['Mean','88.0'],['Highest','100'],['Median','89.0'],['Lowest','62'],['Std. Dev','7.1'],['Passing (≥ 60%)','160']],
-    },
-  },
-  {
-    id:'assignment-3', name:'Assignment 3: Grading Systems', type:'Assignment', due:'Mar 9, 2026 11:59 PM',
-    points:100, avg:79, subs:155, total:160, status:'graded', detailHref:'assignment-detail.html',
-    scoreDetails:{
-      distribution:[['90–100',23],['80–89',45],['70–79',51],['60–69',36]],
-      statistics:[['Mean','79.0'],['Highest','99'],['Median','80.0'],['Lowest','60'],['Std. Dev','9.6'],['Passing (≥ 60%)','155']],
-    },
-  },
-  {
-    id:'survey-midterm', name:'Survey: Midterm Feedback', type:'Survey', due:'Mar 12, 2026 11:59 PM',
-    points:10, avg:10, subs:142, total:160, status:'graded', detailHref:'assignment-detail.html',
-    scoreDetails:{
-      distribution:[['90–100',130],['80–89',8],['70–79',3],['60–69',1]],
-      statistics:[['Mean','9.8'],['Highest','10'],['Median','10'],['Lowest','7'],['Std. Dev','0.6'],['Passing (≥ 60%)','142']],
-    },
-  },
-  { id:'assignment-4', name:'Assignment 4: Announcements', type:'Assignment', due:'Mar 23, 2026 11:59 PM', points:100, avg:null, subs:0, total:160, status:'open', detailHref:'assignment-detail.html' },
-  { id:'quiz-2', name:'Quiz 2: Settings & Permissions', type:'Quiz', due:'Apr 6, 2026 11:59 PM', points:50, avg:null, subs:0, total:160, status:'upcoming', detailHref:'assignment-detail.html' },
-  { id:'prelim-1', name:'Prelim 1', type:'Exam', due:'Apr 20, 2026 11:59 PM', points:100, avg:null, subs:0, total:160, status:'upcoming', detailHref:'assignment-detail.html' },
-  { id:'final-project', name:'Final Project: Full CMSX Build', type:'Assignment', due:'May 4, 2026 11:59 PM', points:200, avg:null, subs:0, total:160, status:'upcoming', detailHref:'assignment-detail.html' },
-  { id:'group-pilot', name:'Test Assignment: Group Formation Pilot', type:'Assignment', due:'May 20, 2026 11:59 PM', points:100, avg:null, subs:0, total:160, status:'open', detailHref:'assignment-detail.html?scenario=group-test' },
-];
-
-let filterType = 'all';
-let filterSearch = '';
-let sortKey = null;
-let sortDirection = 1;
-let expandedAssignmentKey = 'assignment-1';
-const removedExampleIds = new Set();
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
-}
-
-function allAssignments() {
-  let saved = [];
-  try {
-    saved = readAssessments().map(record => ({
-      id: `saved-${record.id}`,
-      recordId: record.id,
-      name: record.name || 'Untitled draft',
-      type: record.type[0].toUpperCase() + record.type.slice(1),
-      due: record.schedule.initial.due
-        ? new Date(record.schedule.initial.due).toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })
-        : 'Not set',
-      dueTimestamp: Date.parse(record.schedule.initial.due),
-      resubmissionDue: record.schedule.resubmissions && record.schedule.resubmission.due,
-      status: effectiveStatus(record),
-      points: record.points ?? null,
-      avg: record.average ?? null,
-      subs: record.submissions ?? 0,
-      total: record.enrollment ?? 160,
-      scoreDetails: record.scoreDetails ?? null,
-      detailHref: `assignment-create.html?type=${encodeURIComponent(record.type)}&id=${encodeURIComponent(record.id)}`,
-      created: true,
-    }));
-    document.getElementById('saved-assessments-error').hidden = true;
-  } catch {
-    const error = document.getElementById('saved-assessments-error');
-    error.hidden = false;
-    error.textContent = 'Saved assessments could not be loaded from this browser. The sample assignments are shown below.';
-  }
-  return [...saved, ...examples.filter(example => !removedExampleIds.has(example.id))];
-}
-
-function typeTag(type) {
-  const className = { Assignment:'type-assignment', Quiz:'type-quiz', Survey:'type-survey', Exam:'type-exam' }[type] || 'type-assignment';
-  return `<span class="assignment-type-tag ${className}">${escapeHtml(type)}</span>`;
-}
-
-function progressCol(submissions, total) {
-  const pct = total ? Math.round((submissions / total) * 100) : 0;
-  return `
-    <div class="progress-cell">
-      <span class="stat-mini">${submissions}/${total} (${pct}%)</span>
-      <div class="progress-bar-wrap" aria-label="${pct}% submitted"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-    </div>`;
-}
-
-function assignmentDetailHref(assignment) {
-  if (assignment.created) return assignment.detailHref;
-  const separator = assignment.detailHref.includes('?') ? '&' : '?';
-  return `${assignment.detailHref}${separator}assignment=${encodeURIComponent(assignment.name)}`;
-}
-
-function scoreDetailsMarkup(assignment) {
-  if (!assignment.scoreDetails) {
-    return `
-      <div class="assignment-detail-panel">
-        <div class="assignment-detail-empty">
-          <span class="material-icons" aria-hidden="true">query_stats</span>
-          <span>Score distribution and statistics will appear after grading begins.</span>
-        </div>
-      </div>`;
-  }
-
-  const maxCount = Math.max(...assignment.scoreDetails.distribution.map(([, count]) => count), 1);
-  const distribution = assignment.scoreDetails.distribution.map(([label, count]) => `
-    <div class="distribution-row">
-      <span class="distribution-label">${escapeHtml(label)}</span>
-      <div class="distribution-track"><div class="distribution-fill" style="width:${Math.round((count / maxCount) * 100)}%"></div></div>
-      <span class="distribution-count">${count}</span>
-    </div>`).join('');
-  const statistics = assignment.scoreDetails.statistics.map(([label, value]) => `
-    <div class="statistic"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('');
-
-  return `
-    <div class="assignment-detail-panel">
-      <section aria-label="Grade distribution for ${escapeHtml(assignment.name)}">
-        <h3 class="detail-heading">Grade Distribution</h3>
-        <div class="distribution-list">${distribution}</div>
-      </section>
-      <section aria-label="Score statistics for ${escapeHtml(assignment.name)}">
-        <h3 class="detail-heading">Statistics</h3>
-        <dl class="statistics-grid">${statistics}</dl>
-      </section>
-    </div>`;
-}
-
-function updateSummary(assignments) {
-  const graded = assignments.filter(assignment => assignment.status === 'graded');
-  const upcoming = assignments.filter(assignment => assignment.status === 'upcoming');
-  const open = assignments.filter(assignment => ['open', 'graded-open'].includes(assignment.status));
-  document.getElementById('assignment-count').textContent = assignments.length;
-  document.getElementById('assignment-count-label').textContent = assignments.length;
-  document.getElementById('graded-count').textContent = graded.length;
-  document.getElementById('upcoming-count').textContent = upcoming.length;
-  document.getElementById('open-count').textContent = open.length;
-
-  const recentSubmission = assignments.find(assignment => assignment.subs > 0);
-  const recentGrading = graded.find(assignment => assignment.type === 'Quiz') || graded[0];
-  updateSummaryProgress('recent-submission', recentSubmission);
-  updateSummaryProgress('recent-grading', recentGrading);
-
-  for (const type of ['Assignment', 'Exam', 'Quiz', 'Survey']) {
-    const count = assignments.filter(assignment => assignment.type === type).length;
-    document.getElementById(`${type.toLowerCase()}-filter-count`).textContent = count;
-  }
-}
-
-function updateSummaryProgress(prefix, assignment) {
-  const title = document.getElementById(`${prefix}-title`);
-  const value = document.getElementById(`${prefix}-value`);
-  const progress = document.getElementById(`${prefix}-progress`);
-  if (!assignment) {
-    title.textContent = 'No activity yet';
-    value.textContent = '0/0 (0%)';
-    progress.style.width = '0%';
-    return;
-  }
-  const pct = assignment.total ? Math.round((assignment.subs / assignment.total) * 100) : 0;
-  title.textContent = assignment.name.split(':')[0];
-  value.textContent = `${assignment.subs}/${assignment.total} (${pct}%)`;
-  progress.style.width = `${pct}%`;
-}
-
-function renderAssignments() {
-  const tbody = document.getElementById('assignBody');
-  const assignments = allAssignments();
-  updateSummary(assignments);
-
-  const filtered = assignments.filter(assignment => {
-    const matchSearch = !filterSearch || assignment.name.toLowerCase().includes(filterSearch);
-    const matchType = filterType === 'all' || assignment.type === filterType;
-    return matchSearch && matchType;
-  });
-  if (sortKey) {
-    filtered.sort((a, b) => {
-      const left = sortKey === 'due' ? (a.dueTimestamp || Date.parse(a.due) || 0) : a[sortKey];
-      const right = sortKey === 'due' ? (b.dueTimestamp || Date.parse(b.due) || 0) : b[sortKey];
-      return String(left ?? '').localeCompare(String(right ?? ''), undefined, { numeric:true }) * sortDirection;
-    });
-  }
-
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td class="assignments-empty" colspan="9">No assignments match these filters.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = filtered.map((assignment, index) => {
-    const key = assignment.id;
-    const detailId = `assignment-score-details-${index}`;
-    const isExpanded = key === expandedAssignmentKey;
-    const detailHref = assignmentDetailHref(assignment);
-    const editHref = assignment.created ? assignment.detailHref : `assignment-create.html?type=${assignment.type.toLowerCase()}`;
-    const resubmission = assignment.resubmissionDue
-      ? `<div class="stat-mini">Resubmit: ${new Date(assignment.resubmissionDue).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' })}</div>`
-      : '';
-    return `
-      <tr class="assignment-row">
-        <td>
-          <button class="row-toggle" type="button" data-assignment-key="${escapeHtml(key)}" aria-expanded="${isExpanded}" aria-controls="${detailId}" aria-label="${isExpanded ? 'Hide' : 'Show'} score details for ${escapeHtml(assignment.name)}">
-            <span class="material-icons" aria-hidden="true">chevron_right</span>
-          </button>
-        </td>
-        <td><a class="assignment-name" href="${detailHref}">${escapeHtml(assignment.name)}</a></td>
-        <td>${typeTag(assignment.type)}</td>
-        <td>${escapeHtml(assignment.due)}${resubmission}</td>
-        <td>${assignment.points === null ? '—' : assignment.points}</td>
-        <td>${assignment.avg === null ? '<span style="color:var(--text-disabled);">---</span>' : `${assignment.avg}%`}</td>
-        <td>${progressCol(assignment.subs, assignment.total)}</td>
-        <td><span class="assignment-status ${escapeHtml(assignment.status)}">${escapeHtml(STATUS_LABELS[assignment.status] || 'Hidden')}</span></td>
-        <td>
-          <div class="assignment-actions">
-            <div class="assignment-actions-group">
-              <a href="assignment-grading.html" class="btn btn-primary assignment-action">Grade</a>
-              <a href="${editHref}" class="btn btn-primary assignment-action"><span class="material-icons" aria-hidden="true">edit</span>Edit</a>
+        <div class="assignments-filters" data-node-id="1978:22508">
+          <div class="assignments-search">
+            <label for="assignmentSearch">Enter Assignment Name</label>
+            <div class="assignments-search-input">
+              <input id="assignmentSearch" type="search" placeholder="Search Assignments..." autocomplete="off" />
+              <button type="button" id="clearAssignmentSearch" aria-label="Clear assignment search"><img src="assets/assignments/clear.svg" alt="" /></button>
             </div>
-            <button class="btn btn-outlined assignment-action remove-assignment" type="button" data-assignment-key="${escapeHtml(key)}"><span class="material-icons" aria-hidden="true">delete_outline</span>Remove</button>
+            <div class="assignments-search-underline" aria-hidden="true"><img src="assets/assignments/search-underline.svg" alt="" /></div>
           </div>
-        </td>
-      </tr>
-      <tr class="assignment-detail-row" id="${detailId}" ${isExpanded ? '' : 'hidden'}>
-        <td colspan="9">${scoreDetailsMarkup(assignment)}</td>
-      </tr>`;
-  }).join('');
+          <div class="assignments-type-filters" id="assignmentTypeFilters" role="group" aria-label="Filter assignments by type"></div>
+        </div>
 
-  tbody.querySelectorAll('.row-toggle').forEach(button => {
-    button.addEventListener('click', () => toggleAssignment(button.dataset.assignmentKey));
-  });
-  tbody.querySelectorAll('.remove-assignment').forEach(button => {
-    button.addEventListener('click', () => removeAssignment(button.dataset.assignmentKey));
-  });
-}
+        <div class="assignments-view-bar" data-node-id="1978:22536">
+          <div class="assignments-view-toggle" role="group" aria-label="Assignment view">
+            <button type="button" id="assignmentTableToggle" aria-pressed="true" aria-controls="assignmentTablePanel"><img src="assets/assignments/table.svg" alt="" aria-hidden="true" />Table</button>
+            <button type="button" id="assignmentCalendarToggle" aria-pressed="false" aria-controls="assignmentCalendarPanel"><img src="assets/assignments/calendar.svg" alt="" aria-hidden="true" />Calendar</button>
+          </div>
+          <button type="button" class="assignments-deleted-button" id="deletedAssignmentsButton"><img src="assets/assignments/deleted.svg" alt="" aria-hidden="true" />Deleted Items</button>
+        </div>
 
-function toggleAssignment(key) {
-  expandedAssignmentKey = expandedAssignmentKey === key ? null : key;
-  renderAssignments();
-}
+        <section class="assignments-table-panel" id="assignmentTablePanel" aria-label="Assignments table" data-node-id="1978:22550">
+          <div class="assignments-table-scroll" tabindex="0" role="region" aria-label="Scrollable assignments table">
+            <table class="assignments-table">
+              <caption class="assignment-sr-only">Course assignments and grading progress</caption>
+              <thead><tr class="assignment-table-head">
+                <th scope="col"><span class="assignment-sr-only">Expand</span></th>
+                <th scope="col" aria-sort="none" data-sort-column="name"><button type="button" data-sort-key="name">Assignment<img src="assets/assignments/sort.svg" alt="" aria-hidden="true" /></button></th>
+                <th scope="col">Type</th>
+                <th scope="col" aria-sort="none" data-sort-column="due"><button type="button" data-sort-key="due">Due Date<img src="assets/assignments/sort.svg" alt="" aria-hidden="true" /></button></th>
+                <th scope="col">Points</th>
+                <th scope="col">Average</th>
+                <th scope="col">Submission</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr></thead>
+              <tbody id="assignmentTableBody"></tbody>
+            </table>
+          </div>
+          <p class="assignments-empty" id="assignmentTableEmpty" role="status" hidden>No assignments match your search.</p>
+        </section>
 
-function setFilter(type) {
-  filterType = type;
-  document.querySelectorAll('.assignment-filters .chip').forEach(chip => {
-    const active = chip.id === `filter-${type.toLowerCase()}`;
-    chip.classList.toggle('active', active);
-    chip.setAttribute('aria-pressed', String(active));
-  });
-  renderAssignments();
-}
+        <section class="assignments-calendar-panel" id="assignmentCalendarPanel" aria-labelledby="assignmentCalendarHeading" data-node-id="1978:22136" hidden>
+          <header class="assignment-calendar-header">
+            <h2 id="assignmentCalendarHeading"><span>April</span> <span>2026</span></h2>
+            <div class="assignment-month-navigation">
+              <button type="button" id="assignmentPreviousMonth" aria-label="Previous month"><img src="assets/assignments/previous-month.svg" alt="" /></button>
+              <button type="button" id="assignmentNextMonth" aria-label="Next month"><img src="assets/assignments/next-month.svg" alt="" /></button>
+            </div>
+          </header>
+          <div class="assignment-calendar-scroll" tabindex="0" role="region" aria-label="Scrollable assignment calendar">
+            <div class="assignment-calendar" id="assignmentCalendar"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
-function filterAssignments(query) {
-  filterSearch = query.trim().toLowerCase();
-  document.getElementById('clear-assignment-search').classList.toggle('visible', Boolean(query));
-  renderAssignments();
-}
-
-function clearAssignmentSearch() {
-  const input = document.getElementById('assignment-search-input');
-  input.value = '';
-  input.focus();
-  filterAssignments('');
-}
-
-function sortAssign(key) {
-  if (sortKey === key) sortDirection *= -1;
-  else { sortKey = key; sortDirection = 1; }
-  renderAssignments();
-}
-
-function removeAssignment(key) {
-  const assignment = allAssignments().find(item => item.id === key);
-  if (!assignment || !confirm(`Remove “${assignment.name}”?`)) return;
-  if (assignment.created) {
-    const remaining = readAssessments().filter(record => record.id !== assignment.recordId);
-    localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify(remaining));
-  } else {
-    removedExampleIds.add(key);
-  }
-  if (expandedAssignmentKey === key) expandedAssignmentKey = null;
-  renderAssignments();
-}
-
-Object.assign(window, { setFilter, filterAssignments, clearAssignmentSearch, sortAssign });
-let renderedStatuses = '';
-function refreshStatuses() {
-  const next = allAssignments().map(assignment => `${assignment.id}:${assignment.status}`).join('|');
-  if (next !== renderedStatuses) {
-    renderedStatuses = next;
-    renderAssignments();
-  }
-}
-setInterval(refreshStatuses, 1000);
-window.addEventListener('storage', event => { if (event.key === ASSESSMENTS_KEY) renderAssignments(); });
-document.addEventListener('visibilitychange', refreshStatuses);
-renderAssignments();
-</script>
-<cmsx-designer-tag name="sylvia"></cmsx-designer-tag>
+  <dialog class="deleted-assignments-dialog" id="deletedAssignmentsDialog" aria-labelledby="deletedAssignmentsHeading" data-node-id="1978:23361">
+    <h2 id="deletedAssignmentsHeading">Deleted Assignments</h2>
+    <button type="button" class="deleted-assignments-close" id="closeDeletedAssignments" aria-label="Close deleted assignments"><img src="assets/assignments/close.svg" alt="" /></button>
+    <div class="deleted-assignments-body">
+      <div class="deleted-assignments-scroll" id="deletedAssignmentsList" tabindex="0"></div>
+      <div class="deleted-assignments-scrollbar" id="deletedAssignmentsScrollbar" role="scrollbar" tabindex="0" aria-label="Scroll deleted assignments" aria-controls="deletedAssignmentsList" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+    </div>
+  </dialog>
+  <div class="assignments-toast" id="assignmentsToast" role="status" aria-live="polite"></div>
+  <cmsx-designer-tag name="jessica a"></cmsx-designer-tag>
+  <script type="module" src="assignments-list.js"></script>
 </body>
 </html>
