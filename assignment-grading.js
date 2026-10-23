@@ -1,15 +1,12 @@
+import { createStudents } from './student-roster.js';
+import { initCommentEditor, sanitizeCommentHtml, renderCommentAttachments } from './grading-comment-editor.js';
+
 const fileTrigger = document.getElementById('fileTrigger');
 const fileMenu = document.getElementById('fileMenu');
 const selectedFileName = document.getElementById('selectedFileName');
 const submissionPaper = document.getElementById('submissionPaper');
 const submissionScroll = document.getElementById('submissionScroll');
 const submissionText = document.getElementById('submissionText');
-const submissionFileMeta = document.getElementById('submissionFileMeta');
-const selectionCommentTrigger = document.getElementById('selectionCommentTrigger');
-const selectionCommentPopover = document.getElementById('selectionCommentPopover');
-const selectionQuote = document.getElementById('selectionQuote');
-const selectionCommentInput = document.getElementById('selectionCommentInput');
-const saveSelectionComment = document.getElementById('saveSelectionComment');
 const totalScore = document.getElementById('totalScore');
 const bonusScore = document.getElementById('bonusScore');
 const adjustmentScore = document.getElementById('adjustmentScore');
@@ -19,26 +16,53 @@ const commentsBody = document.getElementById('commentsBody');
 const commentsList = document.getElementById('commentsList');
 const commentsCount = document.getElementById('commentsCount');
 const commentForm = document.getElementById('commentForm');
-const commentInput = document.getElementById('commentInput');
-const commentCharacterCount = document.getElementById('commentCharacterCount');
-const addCommentButton = document.getElementById('addComment');
+const commentScope = document.getElementById('commentScope');
+const commentEditor = initCommentEditor();
+const previousSubmissionButton = document.getElementById('previousSubmission');
+const nextSubmissionButton = document.getElementById('nextSubmission');
+const groupGrades = document.getElementById('groupGrades');
+const groupGradesMembers = document.getElementById('groupGradesMembers');
+const groupGradesToggle = document.getElementById('groupGradesToggle');
 
-const students = [
-  { name: 'May Wu', netid: 'zw757' },
-  { name: 'Alice Brown', netid: 'ab123' },
-  { name: 'Charlie Davis', netid: 'cd456' },
-  { name: 'Emma Foster', netid: 'ef789' },
-  { name: 'George Harris', netid: 'gh012' },
-  { name: 'Isabella Jones', netid: 'ij345' },
-  { name: 'Kevin Lee', netid: 'kl678' },
-  { name: 'Megan Nelson', netid: 'mn901' },
-  { name: 'Oliver Parker', netid: 'op234' },
-  { name: 'Quinn Roberts', netid: 'qr567' },
-  { name: 'Sophie Turner', netid: 'st890' },
-  { name: 'Yara Zhou', netid: 'yz789' }
-];
+const params = new URLSearchParams(window.location.search);
+const assignmentId = params.get('assignment');
+const isGroupAssignment = assignmentId === 'assignment-2';
+const assignmentLabel = {
+  'assignment-1': 'Individual Assignment',
+  'assignment-2': 'Group Assignment',
+}[assignmentId];
+if (assignmentLabel) {
+  document.querySelector('.grading-heading-wrap h1').textContent = `Grading ${assignmentLabel}`;
+  document.title = `CMSX – Grade ${assignmentLabel}`;
+}
+if (assignmentId) document.querySelector('.grading-back').href = `assignment-detail.html?${new URLSearchParams({ assignment: assignmentId })}`;
+if (isGroupAssignment) {
+  document.getElementById('submissionViewerTitle').textContent = 'Group submission preview';
+  document.getElementById('commentInput').dataset.placeholder = 'Write a comment for this group';
+  groupGrades.hidden = false;
+  document.getElementById('totalScoreLabel').textContent = 'Group rubric score';
+  document.getElementById('updateGrade').textContent = 'Update Grades';
+}
+const roster = createStudents(800);
+const students = isGroupAssignment
+  ? Array.from({ length: Math.ceil(roster.length / 5) }, (_, index) => {
+      const memberRecords = roster.slice(index * 5, index * 5 + 5).map((student) => ({
+        netid: student.netid,
+        name: `${student.first} ${student.last}`,
+      }));
+      return {
+        name: `Group ${index + 1}`,
+        netid: `G${String(index + 1).padStart(3, '0')}`,
+        members: memberRecords.map((member) => member.name),
+        memberRecords,
+      };
+    })
+  : roster.map((student) => ({
+      name: `${student.first} ${student.last}`,
+      netid: student.netid,
+    }));
 
-const requestedNetid = new URLSearchParams(window.location.search).get('student');
+const requestedNetid = params.get('student');
 const requestedStudentIndex = students.findIndex((student) => student.netid === requestedNetid);
 let activeStudentIndex = requestedStudentIndex >= 0 ? requestedStudentIndex : 0;
 let documentZoom = 1;
@@ -46,28 +70,108 @@ let toastTimer;
 let activeFileName = 'Submission_file_1.txt';
 let submissionTemplateText = '';
 let currentSubmissionText = '';
-let pendingSelection = null;
 let gestureStartZoom = 1;
 let gestureEndTimer;
+const GROUP_GRADES_STORAGE_KEY = 'cmsx:group-grades:assignment-2';
+let savedGroupGrades = {};
+try {
+  const stored = JSON.parse(localStorage.getItem(GROUP_GRADES_STORAGE_KEY) || '{}');
+  if (stored && typeof stored === 'object' && !Array.isArray(stored)) savedGroupGrades = stored;
+} catch { /* Keep grading usable when browser storage is unavailable. */ }
+let groupGradeDraft = null;
+const defaultRubricSelections = [1, 2, 3, 4].map((question) =>
+  [...document.querySelectorAll(`.rubric-choice input[data-question="${question}"]:checked`)].map((input) => input.dataset.penalty)
+);
 
 const COMMENTS_STORAGE_KEY = 'cmsx-grading-comments-v1';
+const DEMO_COMMENTS_SEED_KEY = 'cmsx-grading-comments-demo-v4';
+const CURRENT_USER = { id: 'zw757', name: 'May Wu', role: 'Instructor' };
 const defaultComments = new Map([
-  ['zw757', [
+  ['ax53', [
     {
-      id: 1,
-      author: 'acm22',
-      time: 'Today at 10:42 AM',
-      body: 'Strong approach overall. Please clarify the tradeoff described in the project section.'
+      id: -2,
+      author: 'May Wu',
+      authorId: CURRENT_USER.id,
+      role: 'Instructor',
+      time: 'Oct 21 at 3:20 PM',
+      scope: 'general',
+      body: 'The submission is well organized, and the main workflow is easy to follow. Add one concrete example of a frequent staff task to support your design choices.'
+    },
+    {
+      id: -6,
+      author: 'Anne Xia',
+      authorId: 'ax53',
+      role: 'Student',
+      time: 'Oct 22 at 12:40 PM',
+      scope: 'general',
+      body: 'I updated the navigation example after the first round of feedback. Could you check whether the revised path is clear?'
+    },
+    {
+      id: -7,
+      author: 'Anne Xia',
+      authorId: 'ax53',
+      role: 'Student',
+      kind: 'regrade',
+      time: 'Oct 22 at 1:15 PM',
+      body: 'I think my revised submission addresses the feedback. Could you review it again and reconsider the score?'
     }
   ]]
 ]);
+const previousDemoIds = new Map([
+  ['ax53', new Set([-2, -3, -6, -7])],
+  ['aw899', new Set([-4])],
+  ['zw757', new Set([1])],
+  ['G001', new Set([-5])],
+]);
+
+function normalizeSavedComment(netid, comment) {
+  const example = defaultComments.get(netid)?.find((item) => item.id === comment.id);
+  if (comment.author === 'You') {
+    return { ...comment, author: CURRENT_USER.name, authorId: CURRENT_USER.id, role: CURRENT_USER.role };
+  }
+  return {
+    ...comment,
+    author: comment.author === 'acm22' && example ? example.author : comment.author,
+    authorId: comment.authorId ?? example?.authorId,
+    role: comment.role ?? example?.role,
+    kind: comment.kind ?? example?.kind
+  };
+}
 
 function loadComments() {
   try {
     const saved = JSON.parse(localStorage.getItem(COMMENTS_STORAGE_KEY));
-    if (saved && typeof saved === 'object' && Object.values(saved).every(Array.isArray)) return new Map(Object.entries(saved));
+    if (saved && typeof saved === 'object' && Object.values(saved).every(Array.isArray)) {
+      const comments = new Map(Object.entries(saved).map(([netid, entries]) => [
+        netid,
+        entries.map((comment) => normalizeSavedComment(netid, comment))
+      ]));
+      if (localStorage.getItem(DEMO_COMMENTS_SEED_KEY) !== 'done') {
+        // Replace earlier demo fixtures while retaining comments added in this browser.
+        const hadInstructorExample = comments.get('ax53')?.some((comment) => Number(comment.id) === -2);
+        const hadEarlierSeed = localStorage.getItem('cmsx-grading-comments-demo-v2') === 'done';
+        for (const [netid, entries] of comments) {
+          const demoIds = previousDemoIds.get(netid);
+          if (demoIds) comments.set(netid, entries.filter((comment) => {
+            if (!demoIds.has(Number(comment.id))) return true;
+            return netid === 'zw757' && Number(comment.id) === 1
+              && comment.authorId !== 'acm22' && comment.author !== 'Alex Morgan';
+          }));
+        }
+        for (const [netid, examples] of defaultComments) {
+          const newExamples = examples.filter((comment) => comment.id !== -2 || !hadEarlierSeed || hadInstructorExample);
+          comments.set(netid, [...newExamples.map((comment) => ({ ...comment })), ...(comments.get(netid) || [])]);
+        }
+        try {
+          localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(Object.fromEntries(comments)));
+          localStorage.setItem(DEMO_COMMENTS_SEED_KEY, 'done');
+        } catch { /* Keep existing and sample comments available for this session. */ }
+      }
+      return comments;
+    }
+    localStorage.setItem(DEMO_COMMENTS_SEED_KEY, 'done');
   } catch { /* Use the seeded comments when browser storage is unavailable. */ }
-  return defaultComments;
+  return new Map([...defaultComments].map(([netid, examples]) => [netid, examples.map((comment) => ({ ...comment }))]));
 }
 
 const commentsByStudent = loadComments();
@@ -83,8 +187,10 @@ function showToast(message) {
 function persistComments() {
   try {
     localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(Object.fromEntries(commentsByStudent)));
+    return true;
   } catch {
     showToast('Comment saved for this session, but browser storage is unavailable.');
+    return false;
   }
 }
 
@@ -95,7 +201,8 @@ function setFileMenu(open) {
 
 function submissionTextForStudent() {
   const student = students[activeStudentIndex];
-  return submissionTemplateText.replace('May Wu · zw757', `${student.name} · ${student.netid}`);
+  const author = `${student.name} · ${student.netid}${student.members ? `\nMembers: ${student.members.join(', ')}` : ''}`;
+  return submissionTemplateText.replace('May Wu · zw757', author);
 }
 
 fileTrigger.addEventListener('click', () => {
@@ -115,7 +222,6 @@ async function loadSubmissionFile(option) {
   selectedFileName.textContent = activeFileName;
   fileTrigger.querySelector('.material-icons:first-child').textContent = option.dataset.icon;
   submissionPaper.setAttribute('aria-label', `Text preview of ${activeFileName.replaceAll('_', ' ')}`);
-  closeSelectionComment();
   setFileMenu(false);
 
   renderSubmissionMessage('Loading submission…');
@@ -124,15 +230,13 @@ async function loadSubmissionFile(option) {
     if (!response.ok) throw new Error(`Request failed with ${response.status}`);
     submissionTemplateText = await response.text();
     currentSubmissionText = submissionTextForStudent();
-    const pageCount = renderSubmissionText();
-    submissionFileMeta.textContent = `${pageCount} ${pageCount === 1 ? 'A4 page' : 'A4 pages'} · Plain text`;
+    renderSubmissionText();
     submissionScroll.scrollTo({ top: 0, behavior: 'smooth' });
     showToast(`${activeFileName} loaded`);
   } catch {
     submissionTemplateText = '';
     currentSubmissionText = '';
     renderSubmissionMessage('This text submission could not be loaded.');
-    submissionFileMeta.textContent = 'Text unavailable';
     showToast(`Could not load ${activeFileName}`);
   }
 }
@@ -144,7 +248,6 @@ document.addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     setFileMenu(false);
-    closeSelectionComment();
   }
 });
 
@@ -185,6 +288,71 @@ function parseAdjustment(base) {
   return Number.isFinite(points) ? points : 0;
 }
 
+function restoreRubric(record) {
+  const selections = Array.isArray(record?.rubricSelections) ? record.rubricSelections : defaultRubricSelections;
+  [1, 2, 3, 4].forEach((question, index) => {
+    const selected = Array.isArray(selections[index]) ? selections[index] : defaultRubricSelections[index];
+    document.querySelectorAll(`.rubric-choice input[data-question="${question}"]`).forEach((input) => {
+      input.checked = selected.includes(input.dataset.penalty);
+      input.closest('.rubric-choice').classList.toggle('selected', input.checked);
+    });
+  });
+  bonusScore.value = record?.bonus || '';
+  adjustmentScore.value = record?.adjustment || '';
+}
+
+function renderGroupGrades() {
+  if (!isGroupAssignment || !groupGradeDraft) return;
+  const linked = groupGradeDraft.linked;
+  const groupScore = Number(totalScore.textContent);
+  groupGradesToggle.textContent = linked ? 'Unlink grades' : 'Link grades';
+  document.getElementById('groupGradesState').textContent = linked ? 'Linked' : 'Unlinked';
+  document.getElementById('groupGradesHelp').textContent = linked
+    ? Object.keys(groupGradeDraft.memberGrades).length
+      ? 'All members receive the group rubric score. Individual scores return if you unlink again.'
+      : 'All members receive the group rubric score.'
+    : 'Edit a member to override the group rubric score. Other members follow the rubric.';
+  groupGradesMembers.replaceChildren();
+
+  students[activeStudentIndex].memberRecords.forEach((member) => {
+    const row = document.createElement('div');
+    row.className = 'group-grades-member';
+    const identity = document.createElement('span');
+    identity.className = 'group-grades-member-name';
+    identity.append(document.createTextNode(`${member.name} `));
+    const netid = document.createElement('small');
+    netid.textContent = `(${member.netid})`;
+    identity.append(netid);
+    const score = document.createElement('span');
+    score.className = 'group-grades-member-score';
+    if (linked) {
+      score.textContent = `${formatScore(groupScore)} /32 pts`;
+    } else {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.inputMode = 'decimal';
+      input.min = '0';
+      input.step = 'any';
+      input.setAttribute('aria-label', `Grade for ${member.name}`);
+      input.value = formatScore(groupGradeDraft.memberGrades[member.netid] ?? groupScore);
+      input.addEventListener('input', () => {
+        const value = Number(input.value);
+        const valid = input.value.trim() === '' || (Number.isFinite(value) && value >= 0);
+        input.setAttribute('aria-invalid', String(!valid));
+        if (!valid) return;
+        if (input.value.trim() === '' || value === groupScore) delete groupGradeDraft.memberGrades[member.netid];
+        else groupGradeDraft.memberGrades[member.netid] = value;
+      });
+      input.addEventListener('blur', () => {
+        if (!input.value.trim()) input.value = formatScore(Number(totalScore.textContent));
+      });
+      score.append(input, document.createTextNode('/32 pts'));
+    }
+    row.append(identity, score);
+    groupGradesMembers.append(row);
+  });
+}
+
 function updateTotal() {
   const questionScores = [1, 2, 3, 4].map(questionValue);
   const rubricSubtotal = questionScores.reduce((sum, score) => sum + score, 0);
@@ -194,7 +362,15 @@ function updateTotal() {
     document.getElementById(`questionScore${index + 1}`).textContent = formatScore(score);
   });
   totalScore.textContent = formatScore(Math.max(0, rubricSubtotal + bonus + adjustment));
+  renderGroupGrades();
 }
+
+groupGradesToggle.addEventListener('click', () => {
+  if (!groupGradeDraft) return;
+  groupGradeDraft.linked = !groupGradeDraft.linked;
+  renderGroupGrades();
+  showToast(`Grades ${groupGradeDraft.linked ? 'linked' : 'unlinked'}. Select Update Grades to save.`);
+});
 
 document.querySelectorAll('.rubric-choice input[data-question]').forEach((input) => {
   input.addEventListener('change', () => {
@@ -273,9 +449,6 @@ submissionScroll.addEventListener('gestureend', (event) => {
   finishGestureZoom();
 }, { passive: false });
 
-document.getElementById('zoomIn').addEventListener('click', () => applyDocumentZoom(documentZoom + 0.1));
-document.getElementById('zoomOut').addEventListener('click', () => applyDocumentZoom(documentZoom - 0.1));
-
 function addLog(activity, actor = 'acm22') {
   const row = document.createElement('div');
   row.className = 'grading-log-row';
@@ -290,8 +463,45 @@ function addLog(activity, actor = 'acm22') {
   document.getElementById('logCount').textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
 }
 
+const logToggle = document.getElementById('logToggle');
+const logTable = document.getElementById('logTable');
+logToggle.addEventListener('click', () => {
+  const expanded = logToggle.getAttribute('aria-expanded') === 'true';
+  logToggle.setAttribute('aria-expanded', String(!expanded));
+  logTable.hidden = expanded;
+  logToggle.querySelector('.grading-log-chevron').textContent = expanded ? 'expand_more' : 'expand_less';
+});
+
 document.getElementById('updateGrade').addEventListener('click', () => {
   const student = students[activeStudentIndex];
+  if (isGroupAssignment) {
+    const invalid = [...groupGradesMembers.querySelectorAll('input')].find((input) => !input.checkValidity() || input.getAttribute('aria-invalid') === 'true');
+    if (invalid) {
+      invalid.focus();
+      showToast('Enter a valid, non-negative grade for each group member.');
+      return;
+    }
+    const record = {
+      linked: groupGradeDraft.linked,
+      memberGrades: { ...groupGradeDraft.memberGrades },
+      sharedScore: Number(totalScore.textContent),
+      rubricSelections: [1, 2, 3, 4].map((question) =>
+        [...document.querySelectorAll(`.rubric-choice input[data-question="${question}"]:checked`)].map((input) => input.dataset.penalty)
+      ),
+      bonus: bonusScore.value,
+      adjustment: adjustmentScore.value,
+    };
+    try {
+      localStorage.setItem(GROUP_GRADES_STORAGE_KEY, JSON.stringify({ ...savedGroupGrades, [student.netid]: record }));
+      savedGroupGrades[student.netid] = record;
+    } catch {
+      showToast('Could not save group grades in this browser.');
+      return;
+    }
+    addLog(`Updated ${student.name}'s ${record.linked ? 'shared grade' : 'individual grades'}`, CURRENT_USER.id);
+    showToast(`${student.name} grades updated`);
+    return;
+  }
   addLog(`Updated ${student.name}'s grade to ${totalScore.textContent}/32`);
   showToast(`Grade updated for ${student.name}`);
 });
@@ -300,14 +510,6 @@ function activeComments() {
   const netid = students[activeStudentIndex].netid;
   if (!commentsByStudent.has(netid)) commentsByStudent.set(netid, []);
   return commentsByStudent.get(netid);
-}
-
-function closeSelectionComment() {
-  selectionCommentTrigger.hidden = true;
-  selectionCommentPopover.hidden = true;
-  selectionCommentInput.value = '';
-  saveSelectionComment.disabled = true;
-  pendingSelection = null;
 }
 
 function submissionPageRanges(text) {
@@ -330,36 +532,6 @@ function submissionPageRanges(text) {
   return ranges;
 }
 
-function createSubmissionHighlight(comment, text) {
-  const mark = document.createElement('mark');
-  mark.className = 'submission-highlight';
-  mark.dataset.commentId = String(comment.id);
-  mark.tabIndex = 0;
-  mark.title = comment.body;
-  mark.textContent = text;
-  mark.addEventListener('click', () => revealAnchoredComment(comment.id));
-  mark.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      revealAnchoredComment(comment.id);
-    }
-  });
-  return mark;
-}
-
-function appendAnnotatedPage(target, range, comments) {
-  let cursor = range.start;
-  comments.forEach((comment) => {
-    const highlightStart = Math.max(range.start, comment.start);
-    const highlightEnd = Math.min(range.end, comment.end);
-    if (highlightEnd <= highlightStart || highlightStart < cursor) return;
-    target.append(document.createTextNode(currentSubmissionText.slice(cursor, highlightStart)));
-    target.append(createSubmissionHighlight(comment, currentSubmissionText.slice(highlightStart, highlightEnd)));
-    cursor = highlightEnd;
-  });
-  target.append(document.createTextNode(currentSubmissionText.slice(cursor, range.end)));
-}
-
 function renderSubmissionMessage(message) {
   const page = document.createElement('article');
   page.className = 'submission-paper';
@@ -372,10 +544,6 @@ function renderSubmissionMessage(message) {
 }
 
 function renderSubmissionText() {
-  const anchoredComments = activeComments()
-    .filter((comment) => comment.file === activeFileName && Number.isInteger(comment.start) && Number.isInteger(comment.end))
-    .filter((comment) => comment.start >= 0 && comment.end <= currentSubmissionText.length && comment.end > comment.start)
-    .sort((a, b) => a.start - b.start);
   const ranges = submissionPageRanges(currentSubmissionText);
   const fragment = document.createDocumentFragment();
 
@@ -386,7 +554,7 @@ function renderSubmissionText() {
     page.setAttribute('aria-label', `Page ${index + 1} of ${ranges.length}`);
     const content = document.createElement('pre');
     content.className = 'submission-paper-content';
-    appendAnnotatedPage(content, range, anchoredComments);
+    content.textContent = currentSubmissionText.slice(range.start, range.end);
     page.append(content);
     fragment.append(page);
   });
@@ -395,127 +563,12 @@ function renderSubmissionText() {
   return ranges.length;
 }
 
-function revealAnchoredComment(commentId) {
-  if (commentsBody.hidden) commentsToggle.click();
-  const comment = commentsList.querySelector(`[data-comment-id="${commentId}"]`);
-  comment?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  comment?.focus({ preventScroll: true });
-}
-
-function selectionOffsets(range) {
-  const leadingRange = document.createRange();
-  leadingRange.selectNodeContents(submissionText);
-  leadingRange.setEnd(range.startContainer, range.startOffset);
-  const rawSelection = range.toString();
-  const leadingWhitespace = rawSelection.length - rawSelection.trimStart().length;
-  const trailingWhitespace = rawSelection.length - rawSelection.trimEnd().length;
-  const start = leadingRange.toString().length + leadingWhitespace;
-  return { start, end: start + rawSelection.length - leadingWhitespace - trailingWhitespace };
-}
-
-function selectionAnchorRect(range) {
-  const visibleRects = [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0);
-  const rect = visibleRects.at(-1) || range.getBoundingClientRect();
-  return { top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left };
-}
-
-function positionSelectionControl(control, anchor, gap = 7) {
-  const controlWidth = control.offsetWidth;
-  const controlHeight = control.offsetHeight;
-  const left = Math.min(
-    Math.max(12, anchor.right - controlWidth),
-    window.innerWidth - controlWidth - 12
-  );
-  const below = anchor.bottom + gap;
-  const top = below + controlHeight <= window.innerHeight - 12
-    ? below
-    : Math.max(12, anchor.top - controlHeight - gap);
-  control.style.left = `${left}px`;
-  control.style.top = `${top}px`;
-}
-
-function captureTextSelection() {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-    if (selectionCommentPopover.hidden) closeSelectionComment();
-    return;
-  }
-  const range = selection.getRangeAt(0);
-  if (!submissionText.contains(range.commonAncestorContainer)) {
-    if (selectionCommentPopover.hidden) closeSelectionComment();
-    return;
-  }
-  const { start, end } = selectionOffsets(range);
-  const quote = currentSubmissionText.slice(start, end);
-  if (!quote) return;
-
-  pendingSelection = { start, end, quote, file: activeFileName, anchor: selectionAnchorRect(range) };
-  selectionCommentInput.value = '';
-  saveSelectionComment.disabled = true;
-  selectionCommentPopover.hidden = true;
-  selectionCommentTrigger.hidden = false;
-  positionSelectionControl(selectionCommentTrigger, pendingSelection.anchor);
-}
-
-submissionText.addEventListener('mouseup', () => window.setTimeout(captureTextSelection));
-submissionText.addEventListener('keyup', (event) => {
-  if (event.shiftKey || event.key.startsWith('Arrow')) window.setTimeout(captureTextSelection);
-});
-
-selectionCommentTrigger.addEventListener('click', () => {
-  if (!pendingSelection) return;
-  selectionQuote.textContent = `“${pendingSelection.quote.replace(/\s+/g, ' ')}”`;
-  selectionCommentTrigger.hidden = true;
-  selectionCommentPopover.hidden = false;
-  positionSelectionControl(selectionCommentPopover, pendingSelection.anchor, 10);
-  selectionCommentInput.focus({ preventScroll: true });
-});
-
-selectionCommentInput.addEventListener('input', () => {
-  saveSelectionComment.disabled = !selectionCommentInput.value.trim();
-});
-
-document.getElementById('cancelSelectionComment').addEventListener('click', closeSelectionComment);
-
-selectionCommentPopover.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const body = selectionCommentInput.value.trim();
-  if (!body || !pendingSelection) return;
-  const student = students[activeStudentIndex];
-  const { anchor: _anchor, ...selectionDetails } = pendingSelection;
-  activeComments().push({
-    id: nextCommentId++,
-    author: 'You',
-    time: 'Just now',
-    body,
-    ...selectionDetails
-  });
-  persistComments();
-  closeSelectionComment();
-  window.getSelection()?.removeAllRanges();
-  renderSubmissionText();
-  renderComments();
-  addLog(`Commented on selected text in ${activeFileName} for ${student.name}`);
-  showToast(`Passage comment added for ${student.name}`);
-});
-
-document.addEventListener('pointerdown', (event) => {
-  const clickedTrigger = selectionCommentTrigger.contains(event.target);
-  const clickedPopover = selectionCommentPopover.contains(event.target);
-  const clickedSubmission = submissionText.contains(event.target);
-  if (!selectionCommentPopover.hidden && !clickedPopover && !clickedTrigger && !clickedSubmission) closeSelectionComment();
-  if (!selectionCommentTrigger.hidden && !clickedTrigger && !clickedSubmission) closeSelectionComment();
-});
-
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && (!selectionCommentTrigger.hidden || !selectionCommentPopover.hidden)) {
-    closeSelectionComment();
-    window.getSelection()?.removeAllRanges();
-  }
-});
-
 function updateCommentCount(count) {
   commentsCount.textContent = `${count} ${count === 1 ? 'comment' : 'comments'}`;
+}
+
+function commentScopeLabel(scope) {
+  return [...commentScope.options].find((option) => option.value === scope)?.textContent || 'General';
 }
 
 function renderComments() {
@@ -523,74 +576,93 @@ function renderComments() {
   commentsList.replaceChildren();
   updateCommentCount(comments.length);
 
-  if (!comments.length) {
-    const empty = document.createElement('p');
-    empty.className = 'grading-comments-empty';
-    empty.textContent = 'No comments yet. Add a comment for this student.';
-    commentsList.append(empty);
-    return;
-  }
-
   comments.forEach((comment) => {
     const article = document.createElement('article');
-    article.className = 'grading-comment';
+    article.className = `grading-comment${comment.kind === 'regrade' ? ' grading-comment--regrade' : ''}`;
     article.dataset.commentId = String(comment.id);
     article.tabIndex = -1;
 
     const meta = document.createElement('div');
     meta.className = 'grading-comment-meta';
 
+    const identity = document.createElement('span');
+    identity.className = 'grading-comment-identity';
+
     const author = document.createElement('span');
     author.className = 'grading-comment-author';
     author.textContent = comment.author;
+
+    const role = document.createElement('span');
+    role.className = 'grading-comment-role';
+    role.textContent = comment.role || 'Staff';
+    identity.append(author, role);
 
     const time = document.createElement('span');
     time.className = 'grading-comment-time';
     time.textContent = comment.time;
 
-    const remove = document.createElement('button');
-    remove.className = 'grading-comment-delete';
-    remove.type = 'button';
-    remove.setAttribute('aria-label', `Delete comment from ${comment.author}`);
-    remove.innerHTML = '<span class="material-icons" aria-hidden="true">delete_outline</span>';
-    remove.addEventListener('click', () => {
-      const nextComments = activeComments().filter((item) => item.id !== comment.id);
-      commentsByStudent.set(students[activeStudentIndex].netid, nextComments);
-      persistComments();
-      renderComments();
-      renderSubmissionText();
-      showToast('Comment removed');
-    });
-
-    const body = document.createElement('p');
-    body.textContent = comment.body;
-
-    meta.append(author, time, remove);
-    article.append(meta);
-    if (comment.quote) {
-      const anchor = document.createElement('button');
-      anchor.className = 'grading-comment-anchor';
-      anchor.type = 'button';
-      anchor.textContent = `“${comment.quote.replace(/\s+/g, ' ')}” · ${comment.file}`;
-      anchor.addEventListener('click', () => {
-        if (comment.file !== activeFileName) {
-          const option = document.querySelector(`.submission-file-option[data-file="${comment.file}"]`);
-          if (option) loadSubmissionFile(option).then(() => submissionText.querySelector(`[data-comment-id="${comment.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    meta.append(identity, time);
+    if (comment.authorId === CURRENT_USER.id) {
+      const remove = document.createElement('button');
+      remove.className = 'grading-comment-delete';
+      remove.type = 'button';
+      remove.setAttribute('aria-label', `Delete your comment from ${comment.time}`);
+      remove.innerHTML = '<span class="material-icons" aria-hidden="true">delete_outline</span>';
+      remove.addEventListener('click', () => {
+        const current = activeComments().find((item) => item.id === comment.id);
+        if (current?.authorId !== CURRENT_USER.id) return;
+        const nextComments = activeComments().filter((item) => item.id !== comment.id);
+        commentsByStudent.set(students[activeStudentIndex].netid, nextComments);
+        if (!persistComments()) {
+          commentsByStudent.set(students[activeStudentIndex].netid, comments);
+          showToast('Could not remove the comment. Please try again.');
           return;
         }
-        submissionText.querySelector(`[data-comment-id="${comment.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        renderComments();
+        showToast('Comment removed');
       });
-      article.append(anchor);
+      meta.append(remove);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'grading-comment-content';
+    if (comment.html) body.innerHTML = sanitizeCommentHtml(comment.html);
+    else body.textContent = comment.body;
+
+    const scope = document.createElement('span');
+    scope.className = 'grading-comment-scope';
+    scope.textContent = commentScopeLabel(comment.scope);
+
+    article.append(meta);
+    if (comment.kind === 'regrade') {
+      const request = document.createElement('span');
+      request.className = 'grading-comment-request';
+      request.innerHTML = '<span class="material-icons" aria-hidden="true">rate_review</span>Regrade request · Pending';
+      article.append(request);
+    }
+    if (comment.kind !== 'regrade') article.append(scope);
+    if (comment.quote) {
+      const quote = document.createElement('blockquote');
+      quote.className = 'grading-comment-quote';
+      quote.textContent = `“${comment.quote.replace(/\s+/g, ' ')}” · ${comment.file}`;
+      article.append(quote);
     }
     article.append(body);
+    if (comment.attachments?.length) {
+      const attachments = document.createElement('ul');
+      attachments.className = 'comment-attachments';
+      attachments.setAttribute('aria-label', 'Comment attachments');
+      renderCommentAttachments(attachments, comment.attachments);
+      article.append(attachments);
+    }
     commentsList.append(article);
   });
 }
 
 function resetCommentComposer() {
-  commentInput.value = '';
-  commentCharacterCount.textContent = '0/500';
-  addCommentButton.disabled = true;
+  commentEditor.reset();
+  commentScope.value = 'general';
+  commentScope.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 commentsToggle.addEventListener('click', () => {
@@ -600,24 +672,26 @@ commentsToggle.addEventListener('click', () => {
   commentsToggle.querySelector('.grading-comments-chevron').textContent = expanded ? 'expand_more' : 'expand_less';
 });
 
-commentInput.addEventListener('input', () => {
-  commentCharacterCount.textContent = `${commentInput.value.length}/500`;
-  addCommentButton.disabled = !commentInput.value.trim();
-});
-
 commentForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  const body = commentInput.value.trim();
-  if (!body) return;
+  const value = commentEditor.value();
+  if (!value) return;
 
   const student = students[activeStudentIndex];
   activeComments().push({
     id: nextCommentId++,
-    author: 'You',
+    author: CURRENT_USER.name,
+    authorId: CURRENT_USER.id,
+    role: CURRENT_USER.role,
     time: 'Just now',
-    body
+    scope: commentScope.value,
+    ...value
   });
-  persistComments();
+  if (!persistComments()) {
+    activeComments().pop();
+    showToast('Could not save the comment. Your draft is still here; try removing an attachment.');
+    return;
+  }
   renderComments();
   resetCommentComposer();
   addLog(`Added a comment for ${student.name}`);
@@ -625,15 +699,19 @@ commentForm.addEventListener('submit', (event) => {
 });
 
 function renderStudent() {
-  closeSelectionComment();
   window.getSelection()?.removeAllRanges();
   currentSubmissionText = submissionTextForStudent();
   const student = students[activeStudentIndex];
+  previousSubmissionButton.disabled = activeStudentIndex === 0;
+  nextSubmissionButton.disabled = activeStudentIndex === students.length - 1;
   document.getElementById('studentName').textContent = `${student.name} (${student.netid})`;
-  document.getElementById('submissionProgress').textContent = `Grading student submission (${activeStudentIndex + 1}/${students.length})`;
   document.querySelector('.grading-status').lastChild.textContent = 'In Progress';
-  bonusScore.value = '';
-  adjustmentScore.value = '';
+  const savedGrade = isGroupAssignment ? savedGroupGrades[student.netid] : null;
+  groupGradeDraft = isGroupAssignment ? {
+    linked: savedGrade?.linked !== false,
+    memberGrades: { ...(savedGrade?.memberGrades || {}) },
+  } : null;
+  restoreRubric(savedGrade);
   submissionScroll.scrollTop = 0;
   document.getElementById('rubricScroll').scrollTop = 0;
   resetCommentComposer();
@@ -643,22 +721,23 @@ function renderStudent() {
 }
 
 function moveToStudent(direction) {
-  activeStudentIndex = (activeStudentIndex + direction + students.length) % students.length;
+  const nextIndex = activeStudentIndex + direction;
+  if (nextIndex < 0 || nextIndex >= students.length) return;
+  activeStudentIndex = nextIndex;
   renderStudent();
   const url = new URL(window.location.href);
   url.searchParams.set('student', students[activeStudentIndex].netid);
   window.history.replaceState(null, '', url);
-  showToast(`Now grading ${students[activeStudentIndex].name}`);
 }
 
-document.getElementById('nextSubmission').addEventListener('click', () => moveToStudent(1));
+previousSubmissionButton.addEventListener('click', () => moveToStudent(-1));
+nextSubmissionButton.addEventListener('click', () => moveToStudent(1));
 
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
   if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-  if (!selectionCommentPopover.hidden || !selectionCommentTrigger.hidden) return;
   if (window.getSelection()?.toString()) return;
-  if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"], [role="listbox"], [role="option"], [role="slider"]')) return;
+  if (event.target instanceof Element && event.target.closest('input, textarea, select, .cmsx-select, [contenteditable="true"], [role="toolbar"], [role="listbox"], [role="option"], [role="slider"]')) return;
   event.preventDefault();
   moveToStudent(event.key === 'ArrowRight' ? 1 : -1);
 });

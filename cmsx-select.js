@@ -120,6 +120,7 @@ function enhanceSelect(select) {
   let typeahead = '';
   let typeaheadTimer;
   syncControl(control);
+  select.addEventListener('input', () => syncControl(control));
   select.addEventListener('change', () => syncControl(control));
   new MutationObserver(() => syncControl(control)).observe(select, { attributes: true, childList: true, subtree: true, characterData: true });
   trigger.addEventListener('click', () => openMenu(control));

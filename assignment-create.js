@@ -1,5 +1,57 @@
 import { effectiveStatus, periodEnd, readAssessments, saveAssessment, STATUS_LABELS, validateSchedule } from './assessment-schedule.mjs';
 
+const LIST_STORAGE_KEY = 'cmsx-assignments-list-v1';
+const statusValue = { Hidden: 'hidden', Open: 'open', Closed: 'closed', Graded: 'graded', 'Graded & Open': 'graded-open' };
+
+function readListState() {
+  const state = JSON.parse(localStorage.getItem(LIST_STORAGE_KEY) || 'null');
+  return state && Array.isArray(state.assignments) && Array.isArray(state.deleted)
+    ? state : { assignments: [], deleted: [] };
+}
+
+function listItem(id) {
+  return readListState().assignments.find((item) => item.id === id);
+}
+
+function recordFromList(item) {
+  const due = new Date(`${item.due || '2026-04-01'}T23:59:00`).toISOString();
+  return {
+    id: item.id, type: item.type.toLowerCase(), name: item.name, shortName: '',
+    description: item.description || `Instructions for ${item.name}.`, status: statusValue[item.status] || 'hidden', published: true,
+    schedule: {
+      initial: { due, allowLate: false, lateUntil: '', slipDays: 0 },
+      resubmission: { due: '', allowLate: false, lateUntil: '', slipDays: 0 },
+      resubmissions: false, autoTransition: false, showSlipDays: true,
+    },
+    grading: { maxScore: item.points, weight: 1 },
+    groupOptions: { collaboration: item.id === 'assignment-2' ? 'group' : 'individual', assignment: 'self-select', minSize: 2, maxSize: 4 },
+    updatedAt: new Date(0).toISOString(),
+  };
+}
+
+function listMetadata(record, previous = {}) {
+  const due = new Date(record.schedule.initial.due);
+  const hasDue = Number.isFinite(due.getTime());
+  return {
+    ...previous, id: record.id, name: record.name,
+    type: record.type[0].toUpperCase() + record.type.slice(1),
+    due: hasDue ? `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}-${String(due.getDate()).padStart(2, '0')}` : '',
+    dueLabel: hasDue ? due.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '',
+    points: record.grading?.maxScore ?? 0,
+    average: previous.average ?? 0, submissions: previous.submissions ?? 0, total: previous.total ?? 160,
+    status: STATUS_LABELS[effectiveStatus(record)],
+  };
+}
+
+function syncListRecord(record) {
+  const state = readListState();
+  const index = state.assignments.findIndex((item) => item.id === record.id);
+  const item = listMetadata(record, state.assignments[index]);
+  if (index < 0) state.assignments.push(item);
+  else state.assignments[index] = item;
+  localStorage.setItem(LIST_STORAGE_KEY, JSON.stringify(state));
+}
+
 const typeConfig = {
   assignment: {
     namePlaceholder: "Ex: Assignment 1 - Intro to CMSX",
@@ -49,6 +101,7 @@ let scrollSyncFrame = 0;
 let autosaveTimer = 0;
 let hasLocalDraft = false;
 let draftPending = false;
+let leavingAfterDelete = false;
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 $('schedule-timezone').textContent = timeZone.replaceAll('_', ' ');
 
@@ -129,6 +182,10 @@ function selectType(type, updateUrl = true) {
   document.querySelector('.creation-title').textContent = `${savedRecord ? 'Edit' : 'Create'} ${label}`;
   document.title = `CS4998 – ${savedRecord ? 'Edit' : 'Create'} ${label}`;
   document.querySelector('.creation-breadcrumbs [aria-current="page"]').textContent = savedRecord ? 'Edit' : 'Create';
+  $('danger-zone').hidden = !savedRecord;
+  $('delete-assignment').textContent = `Delete ${label.toLowerCase()}`;
+  $('delete-heading').textContent = `Delete ${label.toLowerCase()}?`;
+  $('delete-confirm').textContent = `Delete ${label.toLowerCase()}`;
   const matchingSection = typeConfig[activeType].steps.findIndex((step) => step.key === previousKey);
   activeSection = matchingSection >= 0 ? matchingSection : typeConfig[activeType].steps.length - 1;
   $('grading-next-label').textContent = activeType === 'assignment' ? 'Next: Group Options' : 'Next: Content';
@@ -158,7 +215,8 @@ function publishLabel() {
 }
 
 function renderPublishButton() {
-  $('publish').textContent = `Review and ${publishLabel().toLowerCase()}`;
+  $('publish').textContent = 'Review & save';
+  $('publish').setAttribute('aria-label', `Review and ${publishLabel().toLowerCase()}`);
   $('review-confirm').textContent = publishLabel();
 }
 
@@ -383,7 +441,7 @@ function renderSaveStatus() {
   }
   if (hasLocalDraft) {
     if ($('save-note').querySelector('#discard-draft')) return;
-    $('save-note').replaceChildren(document.createTextNode('Draft autosaved in this browser. '));
+    $('save-note').replaceChildren(document.createTextNode('Autosaved. '));
     const discard = document.createElement('button');
     discard.id = 'discard-draft';
     discard.type = 'button';
@@ -493,6 +551,7 @@ function save() {
   const record = { ...currentRecord(true), id: savedRecord?.id || crypto.randomUUID() };
   try {
     saveAssessment(record);
+    syncListRecord(record);
     savedRecord = record;
     clearTimeout(autosaveTimer);
     autosaveTimer = 0;
@@ -507,6 +566,30 @@ function save() {
     showMessage(`${record.name} saved in this browser as ${STATUS_LABELS[effectiveStatus(record)]}.`);
   } catch {
     showMessage('Could not save in this browser. Your entered settings are still here; try again.');
+  }
+}
+
+function deleteAssignment() {
+  if (!savedRecord) return;
+  try {
+    const state = readListState();
+    const item = state.assignments.find((entry) => entry.id === savedRecord.id)
+      || listMetadata(savedRecord);
+    const deleted = {
+      ...item,
+      deletedOn: new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      deletedBy: 'Professor',
+    };
+    state.assignments = state.assignments.filter((entry) => entry.id !== savedRecord.id);
+    state.deleted = [deleted, ...state.deleted.filter((entry) => entry.id !== savedRecord.id)];
+    localStorage.setItem(LIST_STORAGE_KEY, JSON.stringify(state));
+    clearTimeout(autosaveTimer);
+    autosaveTimer = 0;
+    localStorage.removeItem(editorDraftKey);
+    leavingAfterDelete = true;
+    location.assign('assignments.html');
+  } catch {
+    showMessage('Could not delete this item in this browser. Please try again.');
   }
 }
 
@@ -559,13 +642,19 @@ $('content-file-list').addEventListener('keydown', (event) => {
 $('publish').addEventListener('click', openReview);
 $('review-cancel').addEventListener('click', () => $('publish-review').close());
 $('review-confirm').addEventListener('click', save);
-window.addEventListener('pagehide', () => { if (autosaveTimer) saveDraft(); });
+$('delete-assignment').addEventListener('click', () => $('delete-review').showModal());
+$('delete-cancel').addEventListener('click', () => $('delete-review').close());
+$('delete-confirm').addEventListener('click', deleteAssignment);
+window.addEventListener('pagehide', () => { if (autosaveTimer && !leavingAfterDelete) saveDraft(); });
 
 setContentRow($('content-file-list').firstElementChild);
 
 try {
   if (params.has('id')) {
-    savedRecord = readAssessments().find((record) => record.id === params.get('id'));
+    const item = listItem(params.get('id'));
+    const deleted = readListState().deleted.some((record) => record.id === params.get('id'));
+    savedRecord = deleted ? null : readAssessments().find((record) => record.id === params.get('id')) ||
+      (item && recordFromList(item));
     if (savedRecord) restore(savedRecord);
     else showMessage('This saved item was not found in this browser.');
   }

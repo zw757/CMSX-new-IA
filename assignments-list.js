@@ -10,8 +10,8 @@ import calendarCollapseIcon from './assets/assignments/calendar-collapse.svg';
 const STORAGE_KEY = 'cmsx-assignments-list-v1';
 const ASSIGNMENT_STATUSES = ['Hidden', 'Open', 'Closed', 'Graded & Open', 'Graded'];
 const defaultAssignments = [
-  { id: 'assignment-1', name: 'Assignment 1: Hello CMSX', type: 'Assignment', due: '2026-03-20', dueLabel: 'Mar 20, 2026 11:59 PM', points: 100, average: 90, submissions: 158, total: 160, status: 'Graded', expansion: 'statistics', progressWidth: 156 },
-  { id: 'assignment-2', name: 'Assignment 2', type: 'Assignment', due: '2026-03-25', dueLabel: 'Mar 25, 2026 11:59 PM', points: 60, average: 84, submissions: 125, total: 160, status: 'Graded & Open', expansion: 'grading', unread: true, progressWidth: 124 },
+  { id: 'assignment-1', name: 'Individual Assignment', type: 'Assignment', due: '2026-03-20', dueLabel: 'Mar 20, 2026 11:59 PM', points: 100, average: 90, submissions: 158, total: 160, status: 'Graded', expansion: 'statistics', progressWidth: 156 },
+  { id: 'assignment-2', name: 'Group Assignment', type: 'Assignment', due: '2026-03-25', dueLabel: 'Mar 25, 2026 11:59 PM', points: 60, average: 84, submissions: 125, total: 160, status: 'Graded & Open', expansion: 'grading', unread: true, progressWidth: 124 },
   { id: 'assignment-3', name: 'Assignment 3', type: 'Assignment', due: '2026-03-30', dueLabel: 'Mar 30, 2026 11:59 PM', points: 100, average: 0, submissions: 0, total: 160, status: 'Closed' },
   { id: 'quiz-1', name: 'Quiz 1: Navigation & IA', type: 'Quiz', due: '2026-04-05', dueLabel: 'Apr 05, 2026 11:59 PM', points: 20, average: 94, submissions: 158, total: 160, status: 'Graded', expansion: 'statistics', progressWidth: 155 },
   { id: 'survey-midterm', name: 'Survey: Midterm Feedback', type: 'Survey', due: '2026-04-10', dueLabel: 'Apr 10, 2026 11:59 PM', points: 100, average: 0, submissions: 0, total: 160, status: 'Open' },
@@ -22,7 +22,7 @@ const defaultAssignments = [
   { id: 'survey-final', name: 'Survey: End-of-Course Feedback', type: 'Survey', due: '2026-05-05', dueLabel: 'May 05, 2026 11:59 PM', points: 0, average: 0, submissions: 0, total: 160, status: 'Hidden' },
 ];
 const defaultDeleted = [
-  { id: 'deleted-assignment-1', name: 'Assignment 1: Hello CMSX', type: 'Assignment' },
+  { id: 'deleted-assignment-1', name: 'Individual Assignment', type: 'Assignment' },
   { id: 'deleted-prelim-3', name: 'Prelim 3', type: 'Exam' },
   { id: 'deleted-survey', name: 'End of Semester Survey', type: 'Survey' },
   { id: 'deleted-assignment-4', name: 'Assignment 4', type: 'Assignment' },
@@ -37,14 +37,21 @@ function loadState() {
       const knownIds = new Set([...value.assignments, ...value.deleted].map(item => item.id));
       const newAssignments = defaultAssignments.filter(item => !knownIds.has(item.id));
       const fixtureStartDates = new Map(defaultAssignments.filter(item => item.calendarStart).map(item => [item.id, item.calendarStart]));
-      const assignments = value.assignments.map(item => item.calendarStart || !fixtureStartDates.has(item.id)
-        ? item : { ...item, calendarStart: fixtureStartDates.get(item.id) });
+      const assignments = value.assignments.map(item => {
+        return {
+          ...item,
+          ...(fixtureStartDates.has(item.id) && !item.calendarStart ? { calendarStart: fixtureStartDates.get(item.id) } : {}),
+        };
+      });
       return { ...value, assignments: [...assignments, ...structuredClone(newAssignments)] };
     }
   } catch { /* Use the prototype's Figma fixtures when storage is unavailable. */ }
   return { assignments: structuredClone(defaultAssignments), deleted: structuredClone(defaultDeleted) };
 }
 let state = loadState();
+try {
+  if (!localStorage.getItem(STORAGE_KEY)) localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+} catch { /* Keep the prototype usable when browser storage is unavailable. */ }
 let query = '';
 let sortKey = '';
 let sortDirection = 1;
@@ -87,12 +94,13 @@ function visibleAssignments() {
   });
 }
 const isMutedStatus = item => item.status === 'Hidden' || item.status === 'Closed' || (item.status === 'Open' && item.submissions === 0);
+const hasPublishedAverage = item => item.type !== 'Survey' && item.status === 'Graded' && item.average != null && Number.isFinite(Number(item.average));
+const averageText = item => hasPublishedAverage(item) ? `${item.average}%` : '—';
 const statusClass = status => status === 'Graded' ? 'is-graded' : status === 'Graded & Open' ? 'is-grading' : status === 'Open' ? 'is-open' : 'is-muted';
 function actions(item, calendar = false) {
-  const params = new URLSearchParams({ assignment: item.id });
+  const editParams = new URLSearchParams({ id: item.id, type: item.type.toLowerCase() });
   return `<div class="assignment-row-actions ${calendar ? 'is-calendar' : ''}">
-    <a class="btn btn-outlined assignment-grade-link" href="assignment-grading.html?${params}" aria-label="Grade ${escape(item.name)}">Grade</a>
-    <a class="assignment-edit-link" href="assignment-create.html?${params}&type=${item.type.toLowerCase()}" aria-label="Edit ${escape(item.name)}"><span>${icon(editIcon)}</span></a>
+    <a class="assignment-edit-link" href="assignment-create.html?${editParams}" aria-label="Edit ${escape(item.name)}"><span>${icon(editIcon)}</span></a>
   </div>`;
 }
 function renderSummary() {
@@ -142,15 +150,15 @@ function renderTable() {
   body.innerHTML = items.map(item => {
     const isExpanded = expandedRows.has(item.id);
     const muted = isMutedStatus(item);
-    const progress = item.progressWidth || Math.round(item.submissions / item.total * 160);
-    return `<tr class="assignment-data-row ${isExpanded ? 'is-expanded' : ''}" data-assignment-id="${item.id}">
+    const progress = item.total ? Math.min(100, Math.round(item.submissions / item.total * 100)) : 0;
+    return `<tr class="assignment-data-row ${isExpanded ? 'is-expanded' : ''}" data-assignment-id="${escape(item.id)}" tabindex="0" aria-label="Open ${escape(item.name)}">
       <td class="assignment-expand-cell">${item.expansion ? `<button type="button" class="assignment-expand-button" data-expand-id="${item.id}" aria-label="${isExpanded ? 'Collapse' : 'Expand'} ${escape(item.name)}" aria-expanded="${isExpanded}" aria-controls="assignment-details-${item.id}">${icon(isExpanded ? expandedIcon : expandIcon)}</button>` : ''}</td>
       <td><a class="assignment-name-link" href="assignment-detail.html?assignment=${item.id}">${item.unread ? icon(unreadIcon) : ''}<span>${escape(item.name)}</span></a></td>
       <td>${chip(item)}</td>
       <td class="${muted ? 'is-muted' : ''}">${item.dueLabel}</td>
-      <td class="${muted ? 'is-muted' : ''}">${item.points}</td>
-      <td class="${muted ? 'is-muted' : ''}">${item.average}%</td>
-      <td><div class="assignment-submissions"><span>${item.submissions}/${item.total} (${Math.round(item.submissions / item.total * 100)}%)</span><div class="assignments-progress" role="progressbar" aria-label="Submissions for ${escape(item.name)}" aria-valuemin="0" aria-valuemax="${item.total}" aria-valuenow="${item.submissions}"><span style="width:${progress}px"></span></div></div></td>
+      <td class="${muted || item.type === 'Survey' ? 'is-muted' : ''}">${item.type === 'Survey' ? '—' : item.points}</td>
+      <td class="${muted || !hasPublishedAverage(item) ? 'is-muted' : ''}">${averageText(item)}</td>
+      <td><div class="assignment-submissions"><span>${item.submissions}/${item.total} (${progress}%)</span><div class="assignments-progress" role="progressbar" aria-label="Submissions for ${escape(item.name)}" aria-valuemin="0" aria-valuemax="${item.total}" aria-valuenow="${item.submissions}"><span style="width:${progress}%"></span></div></div></td>
       <td class="assignment-status ${statusClass(item.status)}"><button class="assignment-status-trigger" type="button" data-status-id="${escape(item.id)}" aria-label="Status for ${escape(item.name)}: ${escape(item.status)}" aria-haspopup="listbox" aria-expanded="false" aria-controls="assignmentStatusMenu"><span class="assignment-status-value"><span class="assignment-status-label">${escape(item.status)}</span></span><span class="assignment-status-chevron" aria-hidden="true"></span></button></td>
       <td class="assignment-action-cell">${actions(item)}</td>
     </tr>${isExpanded ? `<tr class="assignment-detail-row" id="assignment-details-${item.id}"><td colspan="9">${item.expansion === 'statistics' ? statistics(item) : grading(item)}</td></tr>` : ''}`;
@@ -202,19 +210,34 @@ function changeStatus(status) {
   trigger.closest('td').className = `assignment-status ${statusClass(status)}`;
   trigger.querySelector('.assignment-status-label').textContent = status;
   trigger.setAttribute('aria-label', `Status for ${item.name}: ${status}`);
-  const muted = isMutedStatus({ ...item, status });
-  for (const index of [3, 4, 5]) row.children[index].classList.toggle('is-muted', muted);
+  const updatedItem = { ...item, status };
+  const muted = isMutedStatus(updatedItem);
+  row.children[3].classList.toggle('is-muted', muted);
+  row.children[4].classList.toggle('is-muted', muted || item.type === 'Survey');
+  row.children[5].textContent = averageText(updatedItem);
+  row.children[5].classList.toggle('is-muted', muted || !hasPublishedAverage(updatedItem));
   renderSummary();
   closeStatusMenu(true);
   toast(`${item.name} set to ${status}.`);
 }
 document.getElementById('assignmentTableBody').addEventListener('click', event => {
   const trigger = event.target.closest('[data-status-id]');
-  if (!trigger) return;
-  if (statusMenuTrigger === trigger) closeStatusMenu(true);
-  else openStatusMenu(trigger);
+  if (trigger) {
+    if (statusMenuTrigger === trigger) closeStatusMenu(true);
+    else openStatusMenu(trigger);
+    return;
+  }
+  const row = event.target.closest('.assignment-data-row');
+  if (!row || event.target.closest('a, button, input, select, textarea') || window.getSelection()?.toString()) return;
+  window.location.assign(`assignment-detail.html?${new URLSearchParams({ assignment: row.dataset.assignmentId })}`);
 });
 document.getElementById('assignmentTableBody').addEventListener('keydown', event => {
+  const row = event.target.closest('.assignment-data-row');
+  if (row && event.target === row && event.key === 'Enter') {
+    event.preventDefault();
+    window.location.assign(`assignment-detail.html?${new URLSearchParams({ assignment: row.dataset.assignmentId })}`);
+    return;
+  }
   const trigger = event.target.closest('[data-status-id]');
   if (!trigger || !['ArrowDown', 'ArrowUp'].includes(event.key)) return;
   event.preventDefault();

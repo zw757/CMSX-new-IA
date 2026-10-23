@@ -1,5 +1,5 @@
 /* Figma announcements browser; typography uses the shared CMSX roles. */
-.announcements-page .main-content { background: rgba(247,247,247,0.97); }
+.announcements-page .main-content { background: var(--bg-page); }
 .announcements-page .announcement-page-header { min-height: 57px; align-items: center; margin-bottom: 32px; }
 .announcements-page .breadcrumb-sep { width: 36px; justify-content: center; }
 .announcements-page .breadcrumb-sep img { display: block; }

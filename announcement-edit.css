@@ -16,7 +16,7 @@
 @media (max-width: 1050px) {
   .announcement-attachments { height: 320px; }
 }
-.announcement-edit-page .main-content { background: rgba(247,247,247,0.97); }
+.announcement-edit-page .main-content { background: var(--bg-page); }
 .announcement-edit-shell { --editor-copy: #606572; --history-border: #b1b6c2; }
 .announcement-edit-page .announcement-page-header { min-height: 57px; margin-bottom: 32px; align-items: center; }
 .announcement-edit-page .breadcrumb-sep { width: 36px; justify-content: center; }
@@ -35,7 +35,6 @@
 .announcement-edit-page .rich-editor-frame { display: flex; flex-direction: column; height: 625px; min-width: 0; }
 .announcement-edit-page .rich-editor-toolbar { flex-shrink: 0; height: 60px; gap: 20px; padding: 7px 12px; overflow-x: auto; overflow-y: hidden; justify-content: safe center; }
 .announcement-edit-page .toolbar-group { gap: 18px; flex-shrink: 0; padding: 10px; }
-.announcement-edit-page .toolbar-group:first-child { gap: 15px; }
 .announcement-edit-page .toolbar-group:last-child { gap: 12px; }
 .announcement-edit-page .toolbar-button { width: 24px; height: 24px; flex-shrink: 0; }
 .announcement-edit-page .toolbar-button img { display: block; width: 24px; height: 24px; }

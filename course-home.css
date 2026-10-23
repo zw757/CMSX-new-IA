@@ -1,12 +1,11 @@
 .course-dashboard-page {
   --dashboard-rail: 68px;
-  --dashboard-canvas: #f8f9fb;
   --dashboard-card-border: #e7e9ed;
   --dashboard-muted-surface: #f5f6f8;
   --dashboard-blue: #006699;
   --dashboard-dark-blue: #2f6f95;
   --dashboard-light-blue: #68bfe5;
-  background: var(--dashboard-canvas);
+  background: var(--bg-page);
   color: #202124;
 }
 

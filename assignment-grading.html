@@ -77,48 +77,27 @@
           </div>
         </div>
 
-        <button class="selection-comment-trigger" id="selectionCommentTrigger" type="button" hidden>
-          <span class="material-icons" aria-hidden="true">add_comment</span>
-          <span>Add comment</span>
-        </button>
-
-        <form class="selection-comment-popover" id="selectionCommentPopover" aria-label="Comment on selected text" hidden>
-          <p class="selection-comment-label">Comment on selection</p>
-          <blockquote id="selectionQuote"></blockquote>
-          <label class="sr-only" for="selectionCommentInput">Comment for selected text</label>
-          <textarea id="selectionCommentInput" maxlength="500" rows="3" placeholder="Add a comment for this passage"></textarea>
-          <div class="selection-comment-actions">
-            <button type="button" id="cancelSelectionComment">Cancel</button>
-            <button class="primary" type="submit" id="saveSelectionComment" disabled>Add comment</button>
-          </div>
-        </form>
-
-        <div class="submission-zoom" aria-label="Submission zoom controls">
-          <button type="button" id="zoomIn" aria-label="Zoom in">
-            <span class="material-icons" aria-hidden="true">add</span>
-          </button>
-          <button type="button" id="zoomOut" aria-label="Zoom out">
-            <span class="material-icons" aria-hidden="true">remove</span>
-          </button>
-        </div>
-        <div class="submission-pagination" id="submissionFileMeta" aria-live="polite">Text file</div>
       </section>
 
       <section class="rubric-panel" aria-labelledby="studentName">
         <div class="rubric-panel-head">
           <div>
             <h2 id="studentName">May Wu (zw757)</h2>
-            <p id="submissionProgress">Grading student submission (1/12)</p>
           </div>
-          <div class="rubric-head-actions">
-            <button class="rubric-close" type="button" aria-label="Close grading workspace" onclick="window.location.href='assignment-detail.html'">
-              <span class="material-icons" aria-hidden="true">close</span>
-            </button>
-            <span class="grading-status"><span aria-hidden="true"></span>In Progress</span>
-          </div>
+          <span class="grading-status"><span aria-hidden="true"></span>In Progress</span>
         </div>
 
         <div class="rubric-scroll" id="rubricScroll">
+          <section class="group-grades" id="groupGrades" aria-labelledby="groupGradesHeading" hidden>
+            <div class="group-grades-heading">
+              <div>
+                <h3 id="groupGradesHeading">Group grades <span class="group-grades-state" id="groupGradesState">Linked</span></h3>
+                <p id="groupGradesHelp">All members receive the group rubric score.</p>
+              </div>
+              <button class="group-grades-toggle" id="groupGradesToggle" type="button">Unlink grades</button>
+            </div>
+            <div class="group-grades-members" id="groupGradesMembers"></div>
+          </section>
           <h3 class="rubric-title">Rubric Items</h3>
 
           <div class="rubric-group" data-question="1">
@@ -217,24 +196,32 @@
             </div>
           </div>
 
-          <section class="score-section" aria-labelledby="bonusHeading">
-            <div class="score-section-head">
-              <h3 id="bonusHeading">Bonus Points</h3>
-              <span class="material-icons" aria-hidden="true">expand_less</span>
-            </div>
-            <label for="bonusScore" class="sr-only">Bonus points</label>
-            <input class="rubric-number-input" id="bonusScore" type="number" inputmode="decimal" placeholder="Enter score" />
-          </section>
+          <div class="score-fields">
+            <section class="score-section" aria-labelledby="bonusHeading">
+              <div class="score-section-head">
+                <h3 id="bonusHeading">Bonus Points</h3>
+              </div>
+              <label for="bonusScore" class="sr-only">Bonus points</label>
+              <input class="rubric-number-input" id="bonusScore" type="number" inputmode="decimal" placeholder="Enter score" />
+            </section>
 
-          <section class="score-section" aria-labelledby="adjustmentHeading">
-            <div class="score-section-head">
-              <h3 id="adjustmentHeading">Adjustment Options</h3>
-              <span class="material-icons" aria-hidden="true">expand_less</span>
-            </div>
-            <p>Applies to entire group: Examples: +5, −10%, −15<br />Note: % adjustments are based on the student’s grade, not the max score</p>
-            <label for="adjustmentScore" class="sr-only">Grade adjustment</label>
-            <input class="rubric-number-input" id="adjustmentScore" type="text" inputmode="decimal" placeholder="Enter score" />
-          </section>
+            <section class="score-section" aria-labelledby="adjustmentHeading">
+              <div class="score-section-head">
+                <h3 id="adjustmentHeading">Adjustment Options</h3>
+                <span class="adjustment-help">
+                  <button class="adjustment-help-trigger" type="button" aria-label="Adjustment options help: Applies to entire group. Examples: plus 5, minus 10 percent, minus 15. Percentage adjustments are based on the student's grade, not the max score.">
+                    <span class="material-icons" aria-hidden="true">help_outline</span>
+                  </button>
+                  <span class="adjustment-help-tooltip" aria-hidden="true">
+                    <span>Applies to entire group: Examples: +5, −10%, −15</span>
+                    <span>Note: % adjustments are based on the student’s grade, not the max score</span>
+                  </span>
+                </span>
+              </div>
+              <label for="adjustmentScore" class="sr-only">Grade adjustment</label>
+              <input class="rubric-number-input" id="adjustmentScore" type="text" inputmode="decimal" placeholder="Enter score" />
+            </section>
+          </div>
 
           <section class="grading-comments" aria-labelledby="commentsHeading">
             <button class="grading-comments-toggle" id="commentsToggle" type="button" aria-expanded="true" aria-controls="commentsBody">
@@ -250,13 +237,48 @@
               <div class="grading-comments-list" id="commentsList" aria-live="polite"></div>
 
               <form class="grading-comment-composer" id="commentForm">
-                <label for="commentInput">Add comments</label>
-                <textarea id="commentInput" maxlength="500" rows="4" placeholder="Write a comment for this student"></textarea>
-                <div class="grading-comment-guidance">
-                  <span><span class="material-icons" aria-hidden="true">visibility</span>Visible when grades are released</span>
-                  <span id="commentCharacterCount">0/500</span>
+                <div class="grading-comment-compose-head">
+                  <label id="commentInputLabel">Add comments</label>
+                  <div class="grading-comment-target">
+                    <label for="commentScope">Comment on</label>
+                    <select id="commentScope">
+                      <option value="general">General</option>
+                      <option value="question-1">Question 1 — Information architecture</option>
+                      <option value="question-2">Question 2 — Navigation and wayfinding</option>
+                      <option value="question-3">Question 3 — Accessibility and interaction</option>
+                      <option value="question-4">Question 4 — Visual clarity and consistency</option>
+                    </select>
+                  </div>
                 </div>
+                <div class="comment-editor-frame">
+                  <div class="comment-editor-toolbar" id="commentToolbar" role="toolbar" aria-label="Comment formatting">
+                    <div class="comment-toolbar-group">
+                      <label class="comment-text-size" title="Text size"><img src="assets/announcement-editor/text-size.svg" alt="" /><select id="commentTextSize" aria-label="Text size" data-native-select><option value="2">Small</option><option value="3" selected>Medium</option><option value="5">Large</option></select></label>
+                    </div>
+                    <div class="comment-toolbar-group">
+                      <button type="button" data-command="bold" aria-label="Bold" aria-pressed="false" title="Bold"><img src="assets/announcement-editor/bold.svg" alt="" /></button>
+                      <button type="button" data-command="italic" aria-label="Italic" aria-pressed="false" title="Italic"><img src="assets/announcement-editor/italic.svg" alt="" /></button>
+                      <button type="button" data-command="underline" aria-label="Underline" aria-pressed="false" title="Underline"><img src="assets/announcement-editor/underline.svg" alt="" /></button>
+                    </div>
+                    <div class="comment-toolbar-group">
+                      <button type="button" id="commentAttachFile" aria-label="Attach file" title="Attach file"><img src="assets/announcement-editor/attachment.svg" alt="" /></button>
+                      <button type="button" id="commentInsertLink" aria-label="Insert link" title="Insert link"><img src="assets/announcement-editor/link.svg" alt="" /></button>
+                      <button type="button" id="commentInsertImage" aria-label="Insert image" title="Insert image"><img src="assets/announcement-editor/image.svg" alt="" /></button>
+                    </div>
+                    <div class="comment-toolbar-group">
+                      <button type="button" id="commentInsertTable" aria-label="Insert table" title="Insert table"><img src="assets/announcement-editor/table.svg" alt="" /></button>
+                      <button type="button" data-command="insertUnorderedList" aria-label="Bulleted list" aria-pressed="false" title="Bulleted list"><img src="assets/announcement-editor/list.svg" alt="" /></button>
+                      <button type="button" data-command="formatBlock" data-value="pre" aria-label="Code block" title="Code block"><img src="assets/announcement-editor/code.svg" alt="" /></button>
+                      <button type="button" id="commentInsertFormula" aria-label="Insert formula" title="Insert formula"><img src="assets/announcement-editor/formula.svg" alt="" /></button>
+                    </div>
+                  </div>
+                  <div class="comment-rich-text" id="commentInput" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="commentInputLabel" aria-describedby="commentEditorError" data-placeholder="Write a comment for this student"></div>
+                </div>
+                <input id="commentFileInput" type="file" multiple hidden />
+                <ul class="comment-attachments" id="commentAttachments" aria-label="Attached files" hidden></ul>
+                <p class="comment-editor-error" id="commentEditorError" role="status" hidden></p>
                 <div class="grading-comment-actions">
+                  <span class="grading-comment-guidance"><span class="material-icons" aria-hidden="true">visibility</span>Visible when grades are released</span>
                   <button class="grading-comment-submit" id="addComment" type="submit" disabled>Add Comment</button>
                 </div>
               </form>
@@ -264,18 +286,25 @@
           </section>
 
           <section class="grading-log" aria-labelledby="logHeading">
-            <div class="grading-log-head">
-              <h3 id="logHeading">Logs</h3>
-              <span id="logCount">3 entries</span>
-              <span class="material-icons" aria-hidden="true">expand_less</span>
-            </div>
-            <div class="grading-log-table" role="table" aria-label="Grading history">
+            <h3 class="grading-log-head">
+              <button class="grading-log-toggle" id="logToggle" type="button" aria-expanded="true" aria-controls="logTable">
+                <span class="grading-log-title" id="logHeading">Submission history</span>
+                <span class="grading-log-count" id="logCount">4 entries</span>
+                <span class="material-icons grading-log-chevron" aria-hidden="true">expand_less</span>
+              </button>
+            </h3>
+            <div class="grading-log-table" id="logTable" role="table" aria-label="Submission history">
               <div class="grading-log-row header" role="row">
                 <span role="columnheader">Time</span>
                 <span role="columnheader">Actor</span>
                 <span role="columnheader">Activity</span>
               </div>
               <div id="logRows">
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 23, 2026</span>
+                  <span role="cell">acm22</span>
+                  <span role="cell">Regraded Submission_file_1 after a regrade request</span>
+                </div>
                 <div class="grading-log-row" role="row">
                   <span role="cell">March 22, 2026</span>
                   <span role="cell">acm22</span>
@@ -298,12 +327,13 @@
 
         <footer class="grading-footer">
           <div class="grading-total-row">
-            <strong>Total Score</strong>
+            <strong id="totalScoreLabel">Total Score</strong>
             <span class="grading-total-value"><span class="material-icons" aria-hidden="true">edit</span><span id="totalScore">30</span>/32 pts</span>
           </div>
           <div class="grading-footer-actions">
             <button class="grading-button primary" id="updateGrade" type="button">Update Grade</button>
-            <button class="grading-button secondary" id="nextSubmission" type="button">Next Submission</button>
+            <button class="grading-button secondary" id="previousSubmission" type="button">Previous</button>
+            <button class="grading-button secondary" id="nextSubmission" type="button">Next</button>
           </div>
         </footer>
       </section>
