@@ -238,8 +238,8 @@
     /* Keep the desktop workspace pinned to the viewport. The filter rail and
        table own their scrolling instead of moving the entire page. */
     @media (min-width: 901px) {
-      /* Match the reference's 90% browser-zoom density at normal zoom. */
-      .students-page { height: 111.111111dvh; zoom: 0.9; overflow: hidden; }
+      /* Keep the dense workspace without shrinking shared navigation or attribution. */
+      .students-page { height: 100dvh; overflow: hidden; }
       .students-page .app-layout {
         height: 100%;
         min-height: 0;
@@ -251,12 +251,15 @@
         overflow: hidden;
       }
       .students-page .content-wrapper {
-        height: 100%;
+        width: 111.111111%;
+        height: 111.111111%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         padding-right: 8px;
         padding-bottom: 8px;
+        transform: scale(0.9);
+        transform-origin: top left;
       }
       .students-page .course-content {
         flex: 1 1 0;
