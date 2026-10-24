@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/theme-init.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CS4998 – Students</title>
@@ -355,7 +356,9 @@
       :nth-child(10n + 8),
       :nth-child(10n + 9),
       :nth-child(10n + 10)
-    ) td { background: #f7f8fa; }
+    ) td { background: #f0f3f6; }
+    .students-page .data-table tbody tr:hover td { background: #e5ebf1; }
+    .students-page .data-table tbody tr.selected td { background: #dceef8; }
     .data-table .checkbox-cell { min-width: 56px; width: 56px; max-width: 56px; padding: 4px 8px 4px 20px; }
     .students-page .data-table input.cb { width: 14px; height: 14px; border-width: 1.5px; }
     .students-page .data-table input.cb:checked::after { left: 2px; top: 0; width: 7px; height: 8px; border-width: 1.5px; }
@@ -367,8 +370,8 @@
     .data-table .sticky-col-5 { min-width: 144px; width: 144px; max-width: 144px; }
     .data-table .sticky-col-4,
     .data-table .sticky-col-5 { overflow: hidden; text-overflow: ellipsis; }
-    .students-page .data-table tbody tr:hover .sticky-col { background: #f4f5f6; }
-    .students-page .data-table tbody tr.selected .sticky-col { background: #eef6fa; }
+    .students-page .data-table tbody tr:hover .sticky-col { background: #e5ebf1; }
+    .students-page .data-table tbody tr.selected .sticky-col { background: #dceef8; }
     .data-table th:nth-child(n + 6):nth-child(-n + 12) { width: 72px; }
     .data-table th:nth-child(13) { width: 88px; }
     .data-table th:nth-child(14) { width: 112px; }
@@ -408,6 +411,7 @@
     .upload-area p { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--text-secondary); }
 
   </style>
+  <link rel="stylesheet" href="dark-theme.css" />
 </head>
 <body class="students-page">
 <div class="app-layout">

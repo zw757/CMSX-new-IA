@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/theme-init.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Course overview for CS4998 Intro to CMSX" />
@@ -9,6 +10,7 @@
   <script type="module" src="sidebar.js"></script>
   <script type="module" src="designer-tag.js"></script>
   <link rel="stylesheet" href="course-home.css" />
+  <link rel="stylesheet" href="dark-theme.css" />
 </head>
 <body class="course-dashboard-page">
   <a class="dashboard-skip-link" href="#dashboard-content">Skip to dashboard content</a>
@@ -173,12 +175,12 @@
             <div class="performance-header">
               <h3>Performance Trend</h3>
               <div class="chart-legend" aria-label="Chart legend">
-                <span><i class="legend-swatch prelim" aria-hidden="true"></i>Prelim Average</span>
-                <span><i class="legend-swatch assignment" aria-hidden="true"></i>Assignment Average</span>
+                <span><i class="legend-swatch assignment" aria-hidden="true"></i>Assignments</span>
+                <span id="examLegend"><i class="legend-swatch exam" aria-hidden="true"></i>Exams</span>
               </div>
             </div>
-            <div class="performance-chart" id="performance-chart" role="img" aria-label="Line chart comparing prelim and assignment averages across three prelims">
-              <p class="chart-fallback">Loading performance trend…</p>
+            <div class="performance-chart" id="performance-chart" role="img" aria-label="Line chart of average scores by course week">
+              <p class="chart-fallback">Loading weekly averages…</p>
             </div>
           </section>
         </aside>

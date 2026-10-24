@@ -2,6 +2,7 @@ import './cmsx-select.js';
 
 (() => {
   const cmsxLogoUrl = new URL('./cmsx-logo.svg', import.meta.url).href;
+  const cmsxDarkLogoUrl = new URL('./assets/cmsx-logo-dark.png', import.meta.url).href;
 
   const installFavicon = () => {
     let favicon = document.querySelector('link[rel~="icon"]');
@@ -70,7 +71,8 @@ import './cmsx-select.js';
       this.innerHTML = `
         <aside class="sidebar" aria-label="Primary navigation">
           <a href="index.html" class="sidebar-logo" title="All Courses" aria-label="All Courses">
-            <img src="${cmsxLogoUrl}" alt="CMSX" class="sidebar-logo-img" width="60" height="44" />
+            <img src="${cmsxLogoUrl}" alt="CMSX" class="sidebar-logo-img sidebar-logo-img--light" width="60" height="44" />
+            <img src="${cmsxDarkLogoUrl}" alt="CMSX" class="sidebar-logo-img sidebar-logo-img--dark" width="60" height="44" />
           </a>
           <nav class="sidebar-nav" aria-label="Course navigation">
             ${links.map((link) => navLink(link, active)).join('')}

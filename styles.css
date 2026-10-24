@@ -167,6 +167,7 @@ cmsx-sidebar { display: contents; }
   display: block;
   flex-shrink: 0;
 }
+.sidebar-logo-img--dark { display: none; }
 .sidebar:hover .sidebar-logo {
   padding: 8px 20px;
 }
