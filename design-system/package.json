@@ -1,0 +1,10 @@
+{
+  "name": "cmsx-design-system-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "build": "node scripts/prepare.mjs --build",
+    "check": "node scripts/check.mjs"
+  }
+}
