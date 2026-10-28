@@ -29,6 +29,10 @@ npm run check
 npm run build
 ```
 
-`dist/` is a standalone static site with its source snapshots. Serve it using a static HTTP server; hash-based routes preserve deep links without server rewrites. Product links still point to the local product. There is no deployment or remote hosting configured.
+`dist/` is a standalone static site with its source snapshots. Serve it using a static HTTP server; hash-based routes preserve deep links without server rewrites. Hosted builds link to page coverage and source snapshots instead of localhost. Local development retains the links to the product server.
+
+## Hosting
+
+The Sites project ID is recorded in `.openai/hosting.json`. Publish only from `design_system`, using a fresh `npm run build` output. The deployment is a documentation-only snapshot; the product application and its persistence logic are not deployed. The source snapshots available in the documentation's source viewer are included.
 
 The catalog is maintained in `content.js`; layout and rendering live in `app.js` and `styles.css`. The preparation script extracts shared light/dark token values and source files directly from CMSX. Avoid manually editing generated snapshots.

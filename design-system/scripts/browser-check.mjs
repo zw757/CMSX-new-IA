@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import assert from 'node:assert/strict';
 import { docs, groups } from '../content.js';
 
+const reviewUrl = new URL(process.env.CMSX_DOCS_REVIEW_URL || 'http://127.0.0.1:5001/');
 const profile = await mkdtemp(join(tmpdir(), 'cmsx-docs-browser-'));
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--remote-debugging-port=9231', `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
 const pause = ms => new Promise(r => setTimeout(r, ms));
@@ -33,7 +34,7 @@ async function until(expression, timeout = 8000) {
   throw new Error(`Condition not met: ${expression}`);
 }
 async function navigate(route, title) {
-  await send('Page.navigate', { url: `http://127.0.0.1:5001/#/${route}` });
+  await send('Page.navigate', { url: `${reviewUrl.href}#/${route}` });
   await until(`document.querySelector('h1')?.textContent === ${JSON.stringify(title)}`);
   await pause(160);
 }
@@ -56,13 +57,14 @@ try {
     const message = JSON.parse(event.data);
     if (message.id) { const call = pending.get(message.id); if (!call) return; pending.delete(message.id); message.error ? call.reject(new Error(message.error.message)) : call.resolve(message.result); }
     if (message.method === 'Runtime.exceptionThrown') errors.push(message.params.exceptionDetails.exception?.description || message.params.exceptionDetails.text);
-    if (message.method === 'Network.responseReceived' && message.params.response.status >= 400 && message.params.response.url.startsWith('http://127.0.0.1:5001')) failedRequests.push(message.params.response.url);
+    if (message.method === 'Network.responseReceived' && message.params.response.status >= 400 && message.params.response.url.startsWith(reviewUrl.origin)) failedRequests.push(message.params.response.url);
   };
   await send('Runtime.enable'); await send('Page.enable'); await send('Network.enable');
   await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1050, deviceScaleFactor: 1, mobile: false });
   await navigate('overview', 'CMSX Design System');
   await evaluate('Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1800))])');
   await screenshot('cmsx-docs-overview.png');
+  const hosted = await evaluate(`fetch('./inventory.json').then(r => r.json()).then(data => data.hosted)`);
   const routes = [{ id: 'overview', title: 'CMSX Design System' }, ...groups, ...docs, { id: 'coverage', title: 'Page coverage' }, { id: 'review', title: 'Review notes' }];
   for (const width of [1440, 390]) {
     await send('Emulation.setDeviceMetricsOverride', { width, height: 950, deviceScaleFactor: 1, mobile: width < 500 });
@@ -70,6 +72,7 @@ try {
       await navigate(page.id, page.title);
       const dimensions = await evaluate(`({ scroll: document.documentElement.scrollWidth, viewport: innerWidth, headings: document.querySelectorAll('h1').length, current: document.querySelector('#navigation [aria-current="page"]')?.getAttribute('href') })`);
       assert(dimensions.scroll <= dimensions.viewport + 1, `Horizontal overflow at ${width}px: ${page.id}: ${JSON.stringify(dimensions)}`);
+      if (hosted) assert.equal(await evaluate(`document.querySelectorAll('a[href^="http://127.0.0.1:5000"]').length`), 0, `Hosted links must not point to localhost: ${page.id}`);
       assert.equal(dimensions.headings, 1, `One main heading: ${page.id}`);
       assert.equal(dimensions.current, `#/${page.id}`, `Current navigation: ${page.id}`);
     }
@@ -105,6 +108,12 @@ try {
   await evaluate(`{ const doc = document.querySelector('iframe').contentDocument; const input = doc.querySelector('[data-filter]'); input.value = 'no matches'; input.dispatchEvent(new Event('input')); }`);
   assert.equal(await evaluate(`document.querySelector('iframe').contentDocument.querySelector('[data-empty]').hidden`), false);
   await navigate('components/buttons', 'Buttons');
+  if (hosted) {
+    await evaluate(`document.querySelector('.usage-links a').click()`);
+    await until(`document.querySelector('h1')?.textContent === 'Page coverage'`);
+    assert(await evaluate(`location.hash.includes('section=page-')`));
+    await navigate('components/buttons', 'Buttons');
+  }
   await screenshot('cmsx-docs-buttons.png');
   await evaluate(`document.querySelector('.search-trigger').click(); document.querySelector('#search-input').value = 'grading'; document.querySelector('#search-input').dispatchEvent(new Event('input'));`);
   assert(await evaluate(`document.querySelector('#search-dialog').open && document.querySelector('#search-results').textContent.includes('Grade & give feedback')`));

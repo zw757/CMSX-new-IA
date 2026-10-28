@@ -13,6 +13,10 @@ let renderedPage = '';
 let toastTimer;
 let frameCount = 0;
 const themes = new Map();
+const coverageId = file => `page-${file.replace('.html', '')}`;
+const productLink = (file, label) => inventory.hosted
+  ? link(`coverage?section=${coverageId(file)}`, `${esc(label)} <span aria-hidden="true">→</span>`)
+  : `<a href="http://127.0.0.1:5000/${file}" target="_blank" rel="noopener">${esc(label)} <span aria-hidden="true">↗</span></a>`;
 
 function toast(message) {
   const element = document.querySelector('#docs-toast');
@@ -98,12 +102,12 @@ function renderGroup(group) {
 function renderComponent(doc) {
   const uses = coverage.filter(row => row[3].includes(doc.id.split('/')[1]));
   const variants = `<div class="table-overflow"><table class="docs-table"><thead><tr><th scope="col">Variant</th><th scope="col">Source selector</th><th scope="col">Purpose</th></tr></thead><tbody>${doc.variants.map(v => `<tr><th scope="row">${v[0]}</th><td><code>${esc(v[1])}</code></td><td>${v[2]}</td></tr>`).join('')}</tbody></table></div>`;
-  return pageHead(doc.title, doc.description, 'Components', 'Component family') + `<div class="page-tools"><button type="button" data-source="${doc.sources[0]}">View source <span aria-hidden="true">↗</span></button><button type="button" data-copy-link>Copy page link</button><span>CMSX implementation</span></div>` + section('examples', 'Visual examples', preview(doc.preview)) + (doc.preview === 'navigation' ? section('product-navigation', 'Shared product navigation', preview('sidebar')) : '') + section('variants', 'Variants & states', variants + `<p class="body-copy">${doc.states}</p>`) + section('usage', 'Usage guidance', list(doc.usage)) + section('used-in', 'Used across the product', `<div class="usage-links">${uses.map(row => `<a href="http://127.0.0.1:5000/${row[0]}" target="_blank" rel="noopener">${row[1]} <span aria-hidden="true">↗</span></a>`).join('')}</div><p class="small-note">Links open the local product. Shared styles may have page-specific overrides.</p>`) + section('review', 'Needs review', noteList(doc.notes)) + sourcesSection(doc.sources) + related(doc.related);
+  return pageHead(doc.title, doc.description, 'Components', 'Component family') + `<div class="page-tools"><button type="button" data-source="${doc.sources[0]}">View source <span aria-hidden="true">↗</span></button><button type="button" data-copy-link>Copy page link</button><span>CMSX implementation</span></div>` + section('examples', 'Visual examples', preview(doc.preview)) + (doc.preview === 'navigation' ? section('product-navigation', 'Shared product navigation', preview('sidebar')) : '') + section('variants', 'Variants & states', variants + `<p class="body-copy">${doc.states}</p>`) + section('usage', 'Usage guidance', list(doc.usage)) + section('used-in', 'Used across the product', `<div class="usage-links">${uses.map(row => productLink(row[0], row[1])).join('')}</div><p class="small-note">${inventory.hosted ? 'Links open the documented product-page inventory.' : 'Links open the local product.'} Shared styles may have page-specific overrides.</p>`) + section('review', 'Needs review', noteList(doc.notes)) + sourcesSection(doc.sources) + related(doc.related);
 }
 
 function renderPattern(doc) {
   const uses = coverage.filter(row => row[4].includes(doc.id.split('/')[1]));
-  return pageHead(doc.title, doc.description, 'Patterns', 'Product workflow') + section('example', 'At a glance', preview(doc.preview, 'Pattern composition')) + section('flow', 'How the pattern works', `<ol class="flow-list">${doc.steps.map(([title, desc, id], i) => `<li><span class="flow-number">${i + 1}</span><div><h3>${title}</h3><p>${desc}</p>${link(id, `${docs.find(d => d.id === id).title} →`)}</div></li>`).join('')}</ol>`) + section('guidance', 'Essential guidance', list(doc.usage)) + section('screens', 'Product screens', `<div class="usage-links">${uses.map(row => `<a href="http://127.0.0.1:5000/${row[0]}" target="_blank" rel="noopener">${row[1]} ↗</a>`).join('')}</div>`) + section('review', 'Needs review', noteList(doc.notes)) + sourcesSection(doc.sources) + related(doc.related);
+  return pageHead(doc.title, doc.description, 'Patterns', 'Product workflow') + section('example', 'At a glance', preview(doc.preview, 'Pattern composition')) + section('flow', 'How the pattern works', `<ol class="flow-list">${doc.steps.map(([title, desc, id], i) => `<li><span class="flow-number">${i + 1}</span><div><h3>${title}</h3><p>${desc}</p>${link(id, `${docs.find(d => d.id === id).title} →`)}</div></li>`).join('')}</ol>`) + section('guidance', 'Essential guidance', list(doc.usage)) + section('screens', 'Product screens', `<div class="usage-links">${uses.map(row => productLink(row[0], row[1])).join('')}</div>`) + section('review', 'Needs review', noteList(doc.notes)) + sourcesSection(doc.sources) + related(doc.related);
 }
 
 function related(ids) {
@@ -132,7 +136,7 @@ function renderFoundation(doc) {
 }
 
 function renderCoverage() {
-  return pageHead('Page coverage', 'An index of every product page reviewed, including the alternate views inside it.', '', '13 pages · one connected reference') + section('inventory', 'Product inventory', `<div class="coverage-list">${coverage.map(([file, title, views, components, patterns], index) => `<article class="coverage-item"><div class="coverage-title"><span>${String(index + 1).padStart(2, '0')}</span><h3>${title}</h3><a href="http://127.0.0.1:5000/${file}" target="_blank" rel="noopener" aria-label="Open ${title} in the product">Open ↗</a></div>${source(file)}<p>${views}</p><div class="coverage-links"><span>Components</span>${components.map(id => link(`components/${id}`)).join('')}</div><div class="coverage-links"><span>Patterns</span>${patterns.map(id => link(`patterns/${id}`)).join('')}</div></article>`).join('')}</div>`) + section('scope', 'Review scope', `<p class="body-copy">This inventory is based on the HTML entry pages, their linked CSS and JavaScript, shared modules, TYPOGRAPHY.md, and .impeccable.md. In-page views and query-string modes are grouped under their owning page. The source audit is not a full end-to-end test of every product interaction.</p><p class="body-copy">No separate editable design file or Figma reference was supplied. The code and design notes are the basis for this initial documentation.</p>`);
+  return pageHead('Page coverage', 'An index of every product page reviewed, including the alternate views inside it.', '', '13 pages · one connected reference') + section('inventory', 'Product inventory', `<div class="coverage-list">${coverage.map(([file, title, views, components, patterns], index) => `<article class="coverage-item" id="${coverageId(file)}"><div class="coverage-title"><span>${String(index + 1).padStart(2, '0')}</span><h3>${title}</h3>${inventory.hosted ? `<button type="button" data-source="${file}" class="coverage-source">View source ↗</button>` : `<a href="http://127.0.0.1:5000/${file}" target="_blank" rel="noopener" aria-label="Open ${title} in the product">Open ↗</a>`}</div>${source(file)}<p>${views}</p><div class="coverage-links"><span>Components</span>${components.map(id => link(`components/${id}`)).join('')}</div><div class="coverage-links"><span>Patterns</span>${patterns.map(id => link(`patterns/${id}`)).join('')}</div></article>`).join('')}</div>`) + section('scope', 'Review scope', `<p class="body-copy">This inventory is based on the HTML entry pages, their linked CSS and JavaScript, shared modules, TYPOGRAPHY.md, and .impeccable.md. In-page views and query-string modes are grouped under their owning page. The source audit is not a full end-to-end test of every product interaction.</p><p class="body-copy">No separate editable design file or Figma reference was supplied. The code and design notes are the basis for this initial documentation.</p>`);
 }
 
 function renderReview() {
@@ -247,5 +251,12 @@ try {
   const response = await fetch('./inventory.json');
   if (!response.ok) throw new Error();
   inventory = await response.json();
+  const productHeaderLink = document.querySelector('.product-link');
+  if (!inventory.hosted) {
+    productHeaderLink.href = 'http://127.0.0.1:5000/';
+    productHeaderLink.target = '_blank';
+    productHeaderLink.rel = 'noopener';
+    productHeaderLink.innerHTML = 'Open product <span aria-hidden="true">↗</span>';
+  }
   render();
 } catch { main.innerHTML = '<h1>Documentation reference unavailable</h1><p>Run <code>npm run dev</code> in the design-system folder to prepare the product snapshots, then reload this page.</p>'; }
