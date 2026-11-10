@@ -1,0 +1,9 @@
+IMPLEMENTATION NOTES
+
+The prototype is organized around a small set of reusable page regions: shared navigation, a compact page header, task-specific controls, and the primary workspace.
+
+State changes are reflected immediately in the interface. Controls use clear labels and visible focus states so the workflow remains usable with a keyboard.
+
+The assignment list uses a dense table because instructors need to compare many records quickly. Filtering and sorting remain close to the table so the relationship between a control and its result is clear.
+
+Known limitation: the prototype stores changes locally and does not connect to a production course database.

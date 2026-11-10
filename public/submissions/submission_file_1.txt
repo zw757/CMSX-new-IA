@@ -1,0 +1,72 @@
+CS4998 · Example Assignment 1A
+May Wu · zw757
+
+SUMMARY
+
+This submission describes a clear approach to the assignment, documents the implementation choices, and evaluates the final result against the stated requirements. The solution is organized into focused sections so each decision can be reviewed independently.
+
+The main constraints were clarity, predictable navigation, and efficient completion of frequent staff tasks. I prioritized direct access to the most common actions while keeping secondary controls available without crowding the interface.
+
+REQUIREMENTS
+
+1. Meet each core functional requirement in the assignment specification.
+2. Document the workflow and describe decisions that affected the final result.
+3. Present the work clearly with supporting examples and references.
+
+PROJECT
+
+The implementation uses a structured workflow with reusable components and explicit interface states. Each section can be reviewed independently while remaining connected to the overall experience.
+
+The navigation model separates course-level destinations from assignment-specific actions. Repeated controls share consistent labels and placement, reducing the amount of relearning required between pages.
+
+Testing focused on primary tasks, keyboard navigation, error states, and the clarity of system feedback. The evaluation showed that the main workflow could be completed without additional instructions, although the filtering controls still need clearer active states.
+
+REFLECTION
+
+The final result meets the intended learning goals and demonstrates a thoughtful understanding of information architecture. With more time, I would test the prototype with additional teaching staff and refine the interaction details based on observed behavior.
+
+IMPLEMENTATION DETAILS
+
+The prototype uses a shared navigation component across every course page. This keeps destination labels, iconography, and active states synchronized while allowing each workspace to define its own task-specific layout. Page content is structured around a consistent header, a primary work area, and contextual actions placed near the content they affect.
+
+For assignment management, I used a table-first model because staff members frequently compare status, due dates, submissions, and grading progress across many records. Filters remain close to the table, and less frequent actions are visually quieter so they do not compete with grading and editing.
+
+The create-assignment workflow uses one continuous document rather than a step-by-step wizard. Each section is reachable from a persistent outline, and the active outline item follows the reader while scrolling. This reduces repeated navigation and makes it easier to review earlier settings before publishing.
+
+INTERACTION DECISIONS
+
+Status controls use both color and text so meaning does not depend on color perception. Destructive actions include specific confirmation language that names the affected student or assignment. Inline feedback appears near the action that caused it and does not interrupt the workflow with an unnecessary modal.
+
+The grading workspace keeps the student submission and rubric visible at the same time. Rubric groups are collapsed initially to preserve vertical space, while scores remain visible for quick scanning. Comments may be attached to a selected passage so feedback retains its context when the student reviews it.
+
+Keyboard focus follows the visual reading order. Interactive controls use visible focus indicators, descriptive accessible names, and native form semantics wherever possible. Motion is limited to state transitions and respects the reduced-motion preference.
+
+EVALUATION
+
+Six participants completed four representative tasks: finding an assignment, reviewing submission progress, updating a rubric score, and moving to the next student. All participants completed the primary workflow without assistance. The median completion time was lower in the continuous create flow than in the multi-step version.
+
+Participants responded positively to the denser assignment table and the persistent grading actions. Two participants initially missed the table filters, suggesting that the active filter state needs stronger contrast. One participant expected passage comments to remain visible after switching files, which informed the persistent highlight treatment.
+
+The evaluation also revealed that summary statistics in the grading header were not used during individual grading. Removing them created more room for the document and rubric without affecting task completion.
+
+LIMITATIONS
+
+This prototype uses local browser storage rather than a production course database. It does not model simultaneous graders, network failures, or conflict resolution. The sample submission is plain text, so additional work would be needed to support PDF annotations and mixed-media files.
+
+The usability session was small and involved participants already familiar with learning-management tools. Future testing should include new teaching assistants, screen-reader users, and instructors grading on smaller laptop displays.
+
+FUTURE WORK
+
+The next iteration would add server-backed comment synchronization, keyboard shortcuts for common rubric deductions, and richer document annotations. I would also test the assignment table with substantially larger courses and evaluate whether saved filter views improve repeated grading sessions.
+
+APPENDIX: TEST CHECKLIST
+
+- Complete the grading workflow using only the keyboard.
+- Verify that every status is communicated with text and color.
+- Confirm that long names and labels wrap or truncate without hiding actions.
+- Test passage comments across multiple submission files.
+- Validate the workflow at 200% browser zoom.
+- Confirm that reduced-motion preferences remove nonessential transitions.
+- Review focus order after expanding and collapsing rubric groups.
+
+The final prototype prioritizes clarity, predictable behavior, and efficient batch work. The remaining limitations are primarily related to production data and broader testing rather than the core information architecture.

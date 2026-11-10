@@ -1,14 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/theme-init.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CS4998 – Students</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="sidebar.js"></script>
+  <script type="module" src="designer-tag.js"></script>
   <style>
-    /* Panel section spacing */
-    .panel-section + .panel-section { border-top: 1px solid var(--divider); padding-top: 28px; margin-top: 0; }
+    /* Native accordions keep every section usable by mouse and keyboard. */
+    .students-page .left-panel { gap: 0; min-width: 0; }
+    .students-page .content-wrapper { padding: 12px 32px 32px; }
+    .students-page .students-rail-header { display: flex; flex-direction: column; gap: 2px; padding: 0 0 22px; }
+    .students-page .students-rail-header .page-title { font-size: 24px; line-height: 32px; }
+    .students-page .students-rail-header .breadcrumbs { gap: 2px; white-space: nowrap; }
+    .students-page .course-content { --filter-width: 176px; position: relative; gap: 32px; }
+    .students-page .rail-resizer {
+      position: absolute;
+      z-index: 7;
+      inset-block: 0;
+      left: var(--filter-width);
+      width: 32px;
+      cursor: col-resize;
+      touch-action: none;
+    }
+    .students-page .rail-resizer::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      left: 50%;
+      width: 1px;
+      background: var(--divider);
+      transform: translateX(-50%);
+    }
+    .students-page .rail-resizer:is(:hover, :focus-visible, .is-dragging)::before { width: 2px; background: var(--primary); }
+    .students-page .rail-resizer:focus-visible { outline: none; }
+    .students-page .course-content.is-rail-collapsed .rail-resizer { display: none; }
+    .students-page:has(.rail-resizer.is-dragging) { cursor: col-resize; user-select: none; }
+    .students-page .rail-edge-toggle {
+      position: absolute;
+      z-index: 8;
+      top: 50%;
+      left: var(--filter-width);
+      transform: translateY(-50%);
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 64px;
+      color: var(--primary);
+      background: var(--bg-page);
+    }
+    .students-page .rail-edge-toggle:hover { color: var(--primary-dark); }
+    .students-page .rail-edge-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .students-page .rail-edge-toggle .material-icons { font-size: 24px; }
+    .students-page .course-content.is-rail-collapsed .rail-edge-toggle { left: -40px; }
+    .students-page .course-content.is-rail-collapsed .rail-edge-toggle .material-icons { transform: rotate(180deg); }
+    @media (max-width: 900px) {
+      .students-page .content-wrapper { padding-inline: 24px; }
+      .students-page .course-content { gap: 12px; }
+      .students-page .rail-resizer { display: none; }
+      .students-page .rail-edge-toggle { position: static; order: -1; align-self: flex-start; height: 40px; transform: none; }
+    }
+    .students-page .student-top-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; flex-shrink: 0; }
+    .students-page .student-search-row { display: flex; flex: 1 1 380px; align-items: center; gap: 12px; min-width: 0; padding-inline: 12px; }
+    .students-page .student-search-row .cmsx-underline-search { flex: 1; min-width: 0; max-width: none; }
+    .students-page .course-actions-menu { flex: 0 0 auto; }
+    .students-page .panel-section {
+      display: block;
+      flex: 0 0 auto;
+      padding: 8px 0;
+    }
+    .students-page .panel-section[hidden] { display: none; }
+    .students-page .panel-section:not([hidden]) + .panel-section {
+      border-top: 1px solid var(--divider);
+    }
+    .students-page .panel-section-header {
+      min-height: 48px;
+      padding: 12px 0;
+      gap: 12px;
+      border-radius: var(--border-radius);
+      list-style: none;
+    }
+    .students-page .panel-section-header::-webkit-details-marker { display: none; }
+    .students-page .panel-section-header:hover { background: var(--primary-light); }
+    .students-page .panel-section-header:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+    .students-page .panel-section-toggle { flex-shrink: 0; }
+    .students-page .panel-section[open] > summary .material-icons { transform: rotate(180deg); }
+    .students-page .panel-section-body { padding: 8px 0 12px; }
 
+    .students-page .student-filter-panel { display: flex; flex-direction: column; gap: 20px; padding: 12px 0 24px; }
+    .students-page .student-filter-heading { display: flex; flex-direction: column; gap: 4px; }
+    .students-page .student-filter-heading h2 { font-size: 20px; line-height: 28px; font-weight: 600; }
+    .students-page .student-filter-heading p,
+    .students-page .filter-results { color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .students-page .filter-fields { display: flex; flex-direction: column; gap: 16px; }
+    .students-page .filter-field { display: flex; flex-direction: column; gap: 6px; }
+    .students-page .filter-field > label { color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 500; }
+    .students-page .filter-input-wrap { position: relative; }
+    .students-page .filter-input-wrap input,
+    .students-page .filter-field select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 36px 9px 12px;
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text-primary);
+      font: inherit;
+    }
+    .students-page .filter-input-wrap input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+      padding-right: 72px;
+    }
+    .students-page .filter-input-wrap input[type="number"]::-webkit-inner-spin-button,
+    .students-page .filter-input-wrap input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .students-page .filter-field select { padding-right: 12px; cursor: pointer; }
+    .students-page .filter-input-wrap input:focus,
+    .students-page .filter-field select:focus { outline: 2px solid var(--primary); outline-offset: -2px; border-color: var(--primary); }
+    .students-page .filter-input-suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
+    .students-page .filter-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; }
+    .students-page .filter-clear-button { border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: 500; cursor: pointer; padding: 6px 0; }
+    .students-page .filter-clear-button:hover { color: var(--primary-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .students-page .filter-clear-button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .students-page .filter-select-button { width: 100%; min-height: 40px; padding: 8px; font-size: var(--font-size-caption); line-height: var(--line-height-caption); text-align: center; white-space: normal; }
+    .students-page .filter-select-button:disabled { background: #e9eef1; color: #46515c; box-shadow: none; cursor: not-allowed; }
+    .students-page .student-filter-actions { flex: 0 0 auto; padding: 12px 14px 12px 0; background: var(--bg-page); }
+
+    .students-page .student-selection-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 52px;
+      padding: 8px 12px;
+      border: 1px solid rgba(0, 102, 153, 0.24);
+      border-radius: 8px;
+      background: #eef6fa;
+      flex-shrink: 0;
+    }
+    .students-page .student-selection-toolbar[hidden] { display: none; }
+    .students-page .selection-count { color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 600; }
+    .students-page .selection-actions { display: flex; align-items: center; gap: 8px; }
+    .students-page .selection-actions .btn { min-height: 36px; padding: 7px 12px; }
+
+    .students-page .action-menu { position: relative; }
+    .students-page .action-menu > summary { list-style: none; }
+    .students-page .action-menu > summary::-webkit-details-marker { display: none; }
+    .students-page .action-menu > summary .material-icons { font-size: 18px; }
+    .students-page .action-menu-panel {
+      position: absolute;
+      z-index: 30;
+      top: calc(100% + 6px);
+      right: 0;
+      width: min(280px, calc(100vw - 32px));
+      padding: 4px;
+      border: 1px solid var(--divider);
+      border-radius: var(--border-radius);
+      background: var(--surface);
+      box-shadow: var(--dropdown-shadow);
+    }
+    .students-page .action-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 40px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-primary);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .students-page .action-menu-item:hover { background: var(--bg); }
+    .students-page .action-menu-item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+    .students-page .action-menu-item.is-danger { color: var(--error); }
+    .students-page .action-menu-separator { height: 1px; margin: 6px 4px; background: var(--divider); }
+    .students-page .action-menu-option { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+
+    .students-page .student-filter-divider td {
+      padding: 10px 12px;
+      border-block: 1px solid #cbd3da;
+      background: #e9edf1;
+      color: #46515c;
+      font-size: var(--font-size-caption);
+      line-height: var(--line-height-caption);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .students-page .student-filter-divider-content { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .students-page .student-filter-divider-count { color: #606b76; font-weight: 500; }
+    .students-page .data-table tbody tr.filter-nonmatch td,
+    .students-page .data-table tbody tr.filter-nonmatch .sticky-col { background: #f3f5f7; color: #66717c; }
+    .students-page .data-table tbody tr.filter-nonmatch:hover td,
+    .students-page .data-table tbody tr.filter-nonmatch:hover .sticky-col { background: #eceff2; color: #46515c; }
+    .students-page .data-table tbody tr.filter-nonmatch.selected td,
+    .students-page .data-table tbody tr.filter-nonmatch.selected .sticky-col { background: #e7f0f4; }
+    .students-page .data-table tbody tr.filter-nonmatch .grade-pill { opacity: 0.72; }
+    .students-page .student-table-empty { padding: 24px 16px; background: #f9fafb; color: var(--text-secondary); text-align: center; }
+
+    .students-page .slip-days-cell { text-align: center; font-variant-numeric: tabular-nums; }
+    .students-page .slip-days-value.is-low { color: #8a5a00; }
+    .students-page .slip-days-value.is-exhausted { color: var(--error); }
+
+    .students-page .student-dialog { width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--divider); border-radius: 10px; background: var(--surface); color: var(--text-primary); box-shadow: 0 16px 48px rgba(23, 43, 58, 0.2); }
+    .students-page .student-dialog::backdrop { background: rgba(23, 43, 58, 0.42); }
+    .students-page .student-dialog-form { display: flex; flex-direction: column; gap: 20px; padding: 24px; }
+    .students-page .student-dialog-header { display: flex; flex-direction: column; gap: 4px; }
+    .students-page .student-dialog-header h2 { font-size: 22px; line-height: 30px; }
+    .students-page .student-dialog-header p { color: var(--text-secondary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .students-page .student-dialog-error { min-height: 20px; color: var(--error); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .students-page .student-dialog-file { display: flex; flex-direction: column; gap: 6px; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
+    .students-page .student-dialog-file input { width: 100%; padding: 10px 12px; border: 1px solid var(--divider); border-radius: 6px; background: var(--surface); font: inherit; }
+    .students-page .student-dialog-help { margin: 0; color: var(--text-secondary); font-size: var(--font-size-caption); line-height: var(--line-height-caption); }
+    .students-page .student-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .students-page .notify-option { display: flex; align-items: center; gap: 8px; color: var(--text-primary); font-size: var(--font-size-ui); cursor: pointer; }
+    .students-page .student-toast { position: fixed; z-index: 300; right: 24px; bottom: 24px; max-width: min(360px, calc(100vw - 48px)); padding: 10px 14px; border: 1px solid var(--divider); border-radius: 8px; background: #17323f; color: #f7fbfd; box-shadow: 0 8px 24px rgba(23, 43, 58, 0.2); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.16s ease, transform 0.16s ease; }
+    .students-page .student-toast.show { opacity: 1; transform: translateY(0); }
     /* netid-chip row */
     .drop-row { display: flex; gap: 16px; align-items: flex-end; }
     .drop-row .text-field { flex: 1; }
@@ -21,19 +236,169 @@
     .dot-red { background: var(--error); }
     .dot-gray { background: #9e9e9e; }
 
-    /* Table wrapper with max height for scroll */
-    .table-scroll-wrapper { max-height: 580px; overflow-y: auto; overflow-x: auto; }
+    /* Keep the desktop workspace pinned to the viewport. The filter rail and
+       table own their scrolling instead of moving the entire page. */
+    @media (min-width: 901px) {
+      /* Keep the dense workspace without shrinking shared navigation or attribution. */
+      .students-page { height: 100dvh; overflow: hidden; }
+      .students-page .app-layout {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .students-page .main-content {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .students-page .content-wrapper {
+        width: 111.111111%;
+        height: 111.111111%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding-right: 8px;
+        padding-bottom: 8px;
+        transform: scale(0.9);
+        transform-origin: top left;
+      }
+      .students-page .course-content {
+        flex: 1 1 0;
+        min-height: 0;
+        align-items: stretch;
+        overflow: visible;
+      }
+      .students-page .left-panel {
+        width: var(--filter-width);
+        flex: 0 0 var(--filter-width);
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .students-page .student-filter-scroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+        padding-right: 4px;
+        scroll-padding-block: 16px;
+      }
+      .students-page .right-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .students-page .table-container {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .students-page .table-scroll-wrapper {
+        height: 100%;
+        max-height: none;
+        overflow: auto;
+        overscroll-behavior: contain;
+      }
+    }
+
+    .students-page .student-filter-scroll { scrollbar-width: auto; scrollbar-color: #9299a5 #e9edf1; }
+    .students-page .student-filter-scroll::-webkit-scrollbar { width: 10px; }
+    .students-page .student-filter-scroll::-webkit-scrollbar-track { background: #e9edf1; border-radius: 999px; }
+    .students-page .student-filter-scroll::-webkit-scrollbar-thumb {
+      background: #9299a5;
+      border: 2px solid #e9edf1;
+      border-radius: 999px;
+      background-clip: padding-box;
+    }
+
+    /* Keep Show/Hide filters above the panel on narrow screens. */
+    @media (max-width: 900px) {
+      .students-page .course-content { gap: 20px; }
+      .students-page .right-panel { display: contents; }
+      .students-page .left-panel { order: -1; }
+      .students-page .student-top-row { order: 0; width: 100%; flex-direction: column; align-items: stretch; margin-bottom: 0; }
+      .students-page .student-search-row { flex: none; width: 100%; flex-wrap: wrap; }
+      .students-page .student-selection-toolbar { width: 100%; }
+      .students-page .course-actions-menu { align-self: flex-start; }
+      .students-page .table-container { width: 100%; }
+    }
+    @media (max-width: 640px) {
+      .students-page .content-wrapper { padding-inline: 16px; }
+      .students-page .course-actions-menu > summary { padding-inline: 10px; }
+      .students-page .student-search-row .cmsx-underline-search { flex-basis: 100%; }
+      .students-page .student-selection-toolbar { align-items: flex-start; flex-direction: column; }
+      .students-page .selection-actions { width: 100%; }
+      .students-page .selection-actions > .btn { flex: 1; }
+      .students-page .selection-actions .action-menu { flex: 1; }
+      .students-page .selection-actions .action-menu > summary { width: 100%; justify-content: center; }
+    }
+
+    /* Mobile keeps the established stacked layout and a bounded table. */
+    .students-page .table-container,
+    .students-page .table-scroll-wrapper { width: 100%; min-width: 0; max-width: 100%; }
+    .table-scroll-wrapper {
+      max-height: 580px;
+      overflow: auto;
+      overscroll-behavior-inline: contain;
+      -webkit-overflow-scrolling: touch;
+    }
 
     /* Compact column widths — table scrolls horizontally if content exceeds container */
-    .data-table td, .data-table th { min-width: 0; padding: 13px 12px; }
-    .data-table .checkbox-cell { min-width: 44px; width: 44px; padding: 4px 8px; }
-    .data-table .num-cell { min-width: 44px; width: 44px; text-align: center; }
-    .data-table .col-netid { min-width: 80px; }
-    .data-table .col-name { min-width: 90px; }
-    .data-table .sticky-col-2 { left: 44px; }
-    .data-table .sticky-col-3 { left: 84px; }
-    .data-table .sticky-col-4 { left: 160px; }
-    .data-table .sticky-col-5 { left: 240px; }
+    .students-page .data-table { min-width: 1272px; table-layout: fixed; }
+    .students-page .data-table.final-grades-hidden { min-width: 1160px; }
+    .students-page .data-table.final-grades-hidden tr > :nth-child(14):not([colspan]) { display: none; }
+    .data-table td, .data-table th { min-width: 0; padding: 10px 12px; }
+    .students-page .data-table :is(th, td):is(.num-cell, .sticky-col-3, .sticky-col-4, .sticky-col-5) { padding-inline: 8px; }
+    .data-table tbody tr:is(
+      :nth-child(10n + 6),
+      :nth-child(10n + 7),
+      :nth-child(10n + 8),
+      :nth-child(10n + 9),
+      :nth-child(10n + 10)
+    ) td { background: #f0f3f6; }
+    .students-page .data-table tbody tr:hover td { background: #e5ebf1; }
+    .students-page .data-table tbody tr.selected td { background: #dceef8; }
+    .data-table .checkbox-cell { min-width: 56px; width: 56px; max-width: 56px; padding: 4px 8px 4px 20px; }
+    .students-page .data-table input.cb { width: 14px; height: 14px; border-width: 1.5px; }
+    .students-page .data-table input.cb:checked::after { left: 2px; top: 0; width: 7px; height: 8px; border-width: 1.5px; }
+    .students-page .data-table input.cb:indeterminate::after { left: 2px; top: 4px; width: 8px; height: 1.5px; }
+    .data-table .num-cell { min-width: 40px; width: 40px; max-width: 40px; text-align: center; }
+    .data-table .col-netid,
+    .data-table .sticky-col-3 { min-width: 104px; width: 104px; max-width: 104px; }
+    .data-table .sticky-col-4 { min-width: 120px; width: 120px; max-width: 120px; }
+    .data-table .sticky-col-5 { min-width: 144px; width: 144px; max-width: 144px; }
+    .data-table .sticky-col-4,
+    .data-table .sticky-col-5 { overflow: hidden; text-overflow: ellipsis; }
+    .students-page .data-table tbody tr:hover .sticky-col { background: #e5ebf1; }
+    .students-page .data-table tbody tr.selected .sticky-col { background: #dceef8; }
+    .data-table th:nth-child(n + 6):nth-child(-n + 12) { width: 72px; }
+    .data-table th:nth-child(13) { width: 88px; }
+    .data-table th:nth-child(14) { width: 112px; }
+    .data-table th:nth-child(15) { width: 104px; }
+    .students-page .data-table td.score-cell { padding: 4px 6px; font-variant-numeric: tabular-nums; }
+    @media (min-width: 901px) {
+      .students-page .data-table tbody tr.student-row td { height: 28px; padding-block: 2px; line-height: 18px; }
+      .students-page .data-table tbody tr.student-row td.score-cell { padding: 1px 6px; }
+    }
+    .data-table .sticky-col-2 { left: 56px; }
+    .data-table .sticky-col-3 { left: 96px; }
+    .data-table .sticky-col-4 { left: 200px; }
+    .data-table .sticky-col-5 { left: 320px; border-right: 1px solid var(--divider); }
+
+    @media (max-width: 900px) {
+      .data-table th.sticky-col-4,
+      .data-table th.sticky-col-5 { left: auto; }
+      .data-table td.sticky-col-4,
+      .data-table td.sticky-col-5 { position: static; }
+      .data-table .sticky-col-3 { border-right: 1px solid var(--divider); }
+    }
+
+    @media (max-width: 640px) {
+      .data-table th.sticky-col-3 { left: auto; }
+      .data-table td.sticky-col-3 { position: static; }
+      .data-table .sticky-col-2 { border-right: 1px solid var(--divider); }
+    }
 
     /* Upload area */
     .upload-area {
@@ -43,286 +408,166 @@
     }
     .upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
     .upload-area .material-icons { font-size: 36px; color: var(--text-secondary); display: block; margin-bottom: 8px; }
-    .upload-area p { font-size: 16px; color: var(--text-secondary); }
+    .upload-area p { font-size: var(--font-size-body); line-height: var(--line-height-body); color: var(--text-secondary); }
 
-    /* Slider */
-    #gradeSlider { margin: 8px 0 0; }
   </style>
+  <link rel="stylesheet" href="dark-theme.css" />
 </head>
-<body>
+<body class="students-page">
 <div class="app-layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="index.html" class="sidebar-logo" title="All Courses">
-      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
-    </a>
-    <nav class="sidebar-nav">
-      <a href="course-home.html" class="sidebar-nav-item ">
-        <span class="material-icons">home</span>
-        <span class="sidebar-label">Home</span>
-      </a>
-      <a href="students.html" class="sidebar-nav-item active">
-        <span class="nav-icon-wrap">
-          <span class="material-icons">school</span>
-          <span class="sidebar-badge">1</span>
-        </span>
-        <span class="sidebar-label">Students</span>
-      </a>
-      <a href="assignments.html" class="sidebar-nav-item ">
-        <span class="material-icons">article</span>
-        <span class="sidebar-label">Assignments</span>
-      </a>
-      <a href="search-logs.html" class="sidebar-nav-item ">
-        <span class="material-icons">manage_search</span>
-        <span class="sidebar-label">Search Logs</span>
-      </a>
-      <a href="course-settings.html" class="sidebar-nav-item ">
-        <span class="material-icons">settings</span>
-        <span class="sidebar-label">Course Settings</span>
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
-        <span class="material-icons">account_circle</span>
-      </a>
-      <div class="sidebar-user-expanded">
-        <div class="sidebar-user-row">
-          <div class="sidebar-user-info">
-            <span class="sidebar-user-name">May Wu</span>
-            <span class="sidebar-user-email">zw757@cornell.edu</span>
-          </div>
-          <a href="#" class="sidebar-logout-btn" title="Log out">
-            <span class="material-icons">exit_to_app</span>
-          </a>
-        </div>
-        <a href="personal-settings.html" class="sidebar-personal-settings-link">
-          <span class="material-icons">manage_accounts</span>
-          <span>Personal Settings</span>
-        </a>
-      </div>
-    </div>
-  </aside>
+  <cmsx-sidebar></cmsx-sidebar>
 
   <!-- Main Content -->
   <main class="main-content">
     <div class="content-wrapper">
 
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-title-group">
-          <h1 class="page-title">CS4998 Intro to CMSX</h1>
-          <nav class="breadcrumbs">
-            <a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a>
-            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
-            <a class="breadcrumb-link" href="course-home.html">Home</a>
-            <span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span>
-            <span class="breadcrumb-link">Students</span>
-          </nav>
-        </div>
-        <div class="stats-card">
-          <div class="stat-item">
-            <div class="stat-icon"><span class="material-icons">bar_chart</span></div>
-            <div class="stat-content">
-              <span class="stat-value">82%</span>
-              <span class="stat-label">Average Grade</span>
-            </div>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-item">
-            <div class="stat-icon"><span class="material-icons">school</span></div>
-            <div class="stat-content">
-              <span class="stat-value">160</span>
-              <span class="stat-label">Number of Students</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Course Content Layout -->
-      <div class="course-content">
+      <div class="course-content rail-layout">
 
-        <!-- ===== LEFT PANEL ===== -->
-        <div class="left-panel">
-
-          <!-- Selected Students -->
-          <div class="panel-section">
-            <div class="panel-section-header" onclick="toggleSection('selected-students','toggle-selected')">
-              <span class="panel-section-title">Selected Students</span>
-              <div class="panel-section-toggle expanded" id="toggle-selected">
-                <span class="material-icons">keyboard_arrow_down</span>
+        <!-- ===== FILTER PANEL ===== -->
+        <div class="left-panel rail-panel" id="studentFilters">
+          <div class="student-filter-scroll">
+          <header class="students-rail-header">
+            <h1 class="page-title">Students</h1>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <a class="breadcrumb-link" href="course-home.html" title="CS4998 Intro to CMSX">CS4998</a>
+              <span class="breadcrumb-sep" aria-hidden="true"><span class="material-icons">chevron_right</span></span>
+              <span class="breadcrumb-link" aria-current="page">Students</span>
+            </nav>
+          </header>
+          <section class="student-filter-panel" aria-labelledby="studentFilterHeading">
+            <header class="student-filter-heading">
+              <h2 id="studentFilterHeading">Filter</h2>
+              <p>Matching students stay on top.</p>
+            </header>
+            <div class="filter-fields">
+              <div class="filter-field">
+                <label for="enrollmentStatusFilter">Enrollment status</label>
+                <select id="enrollmentStatusFilter" onchange="filterTable()">
+                  <option value="">Any status</option>
+                  <option value="enrolled">Enrolled</option>
+                  <option value="dropped">Dropped</option>
+                </select>
+              </div>
+              <div class="filter-field">
+                <label for="slipDaysFilter">Slip days remaining</label>
+                <div class="filter-input-wrap">
+                  <input id="slipDaysFilter" type="number" min="0" step="1" inputmode="numeric" placeholder="Any" oninput="filterTable()" />
+                  <span class="filter-input-suffix" aria-hidden="true">days</span>
+                </div>
+              </div>
+              <div class="filter-field">
+                <label for="averageGradeFilter">Average below</label>
+                <div class="filter-input-wrap">
+                  <input id="averageGradeFilter" type="number" min="0" max="100" inputmode="numeric" placeholder="Any" oninput="filterTable()" />
+                  <span class="filter-input-suffix" aria-hidden="true">%</span>
+                </div>
+              </div>
+              <div class="filter-field">
+                <label for="missingAssignmentsFilter">Missing assignments</label>
+                <div class="filter-input-wrap">
+                  <input id="missingAssignmentsFilter" type="number" min="0" max="7" inputmode="numeric" placeholder="Any" oninput="filterTable()" />
+                  <span class="filter-input-suffix" aria-hidden="true">or more</span>
+                </div>
+              </div>
+              <div class="filter-field">
+                <label for="finalGradeFilter">Final grade below</label>
+                <select id="finalGradeFilter" onchange="filterTable()">
+                  <option value="">Any grade</option>
+                  <option>A+</option><option>A</option><option>A-</option>
+                  <option>B+</option><option>B</option><option>B-</option>
+                  <option>C+</option><option>C</option><option>C-</option>
+                  <option>D+</option><option>D</option><option>F</option>
+                </select>
               </div>
             </div>
-            <div class="panel-section-body" id="selected-students">
-              <button class="btn btn-primary w-full" onclick="alert('Email sent to selected students')">
-                Email Students
-              </button>
-              <button class="btn btn-primary w-full" onclick="handleDropSelected()">
-                Drop Selected Students
-              </button>
-              <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);cursor:pointer;">
-                <input type="checkbox" class="cb" id="notifyEmail1" checked />
-                Notify student by Email
-              </label>
-            </div>
+            <footer class="filter-footer">
+              <span class="filter-results" id="filterResults" role="status" aria-live="polite">600 students</span>
+              <button class="filter-clear-button" id="clearFiltersButton" type="button" onclick="clearFilters()" hidden>Clear all</button>
+            </footer>
+          </section>
           </div>
-
-          <!-- Filter by category -->
-          <div class="panel-section">
-            <div class="panel-section-header" onclick="toggleSection('filter-section','toggle-filter')">
-              <span class="panel-section-title">Filter by category</span>
-              <div class="panel-section-toggle expanded" id="toggle-filter">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </div>
-            </div>
-            <div class="panel-section-body" id="filter-section">
-
-              <!-- Average Grade Below slider -->
-              <div>
-                <div class="label">Average Grade Below</div>
-                <div class="slider-wrapper" style="padding-top:24px;">
-                  <div class="slider-value-bubble" id="sliderBubble" style="left:20%">20</div>
-                  <input type="range" id="gradeSlider" min="0" max="100" value="20"
-                    oninput="updateSlider(this)" />
-                </div>
-                <div class="slider-labels">
-                  <span>0%</span>
-                  <span>100%</span>
-                </div>
-              </div>
-
-              <!-- Missing Assignments -->
-              <div class="text-field">
-                <label>Missing assignments</label>
-                <div style="position:relative;">
-                  <label style="font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-secondary);display:block;margin-bottom:2px;">Numbers</label>
-                  <input type="number" min="0" value="3" placeholder="0" />
-                </div>
-              </div>
-
-              <!-- Final Grade Below -->
-              <div class="text-field">
-                <label>Final grade below</label>
-                <div>
-                  <label style="font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-secondary);display:block;margin-bottom:2px;">Grade</label>
-                  <select style="width:100%;border:none;border-bottom:1px solid rgba(0,0,0,0.42);padding:4px 0;font-size:16px;background:transparent;outline:none;cursor:pointer;">
-                    <option>A+</option><option>A</option><option>A-</option>
-                    <option>B+</option><option>B</option><option>B-</option>
-                    <option selected>C-</option><option>C</option><option>C+</option>
-                    <option>D</option><option>F</option>
-                  </select>
-                </div>
-              </div>
-
-              <button class="btn btn-primary w-full" onclick="applyFilter()">Apply Filter</button>
-              <button class="btn btn-outlined w-full" onclick="clearFilter()">Clear Filter</button>
-            </div>
+          <div class="student-filter-actions">
+            <button class="btn btn-primary filter-select-button" id="selectFilteredStudents" type="button" disabled>Select filtered students</button>
           </div>
-
-          <!-- Drop Students -->
-          <div class="panel-section">
-            <div class="panel-section-header" onclick="toggleSection('drop-section','toggle-drop')">
-              <span class="panel-section-title">Drop Students</span>
-              <div class="panel-section-toggle expanded" id="toggle-drop">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </div>
-            </div>
-            <div class="panel-section-body" id="drop-section">
-
-              <!-- CSV Upload -->
-              <button class="btn btn-primary" onclick="document.getElementById('csvUpload').click()">
-                CSV Upload
-              </button>
-              <input type="file" id="csvUpload" accept=".csv" style="display:none;" onchange="handleCSV(this)" />
-
-              <!-- Drop by NetID -->
-              <div class="drop-row">
-                <div class="text-field">
-                  <label style="font-size:16px;color:var(--text-secondary);">Enter NetID</label>
-                  <input type="text" id="dropNetid" placeholder="e.g. zw757" />
-                </div>
-                <button class="chip chip-filled" onclick="confirmDrop()">Confirm</button>
-              </div>
-
-              <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);cursor:pointer;">
-                <input type="checkbox" class="cb" id="notifyEmail2" checked />
-                Notify student by Email
-              </label>
-
-              <button class="btn btn-danger w-full" onclick="handleDropStudent()">
-                Drop Student
-              </button>
-            </div>
-          </div>
-
-          <!-- Final Grades -->
-          <div class="panel-section">
-            <div class="panel-section-header" onclick="toggleSection('grades-section','toggle-grades')">
-              <span class="panel-section-title">Final Grades</span>
-              <div class="panel-section-toggle expanded" id="toggle-grades">
-                <span class="material-icons">keyboard_arrow_down</span>
-              </div>
-            </div>
-            <div class="panel-section-body" id="grades-section">
-              <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;">
-                Final grades are computed from assignment scores. Review and confirm before releasing to students.
-              </p>
-              <div style="display:flex;flex-direction:column;gap:8px;">
-                <button class="btn btn-outlined w-full" onclick="alert('Viewing final grades')">
-                  <span class="material-icons">grade</span>
-                  View Final Grades
-                </button>
-                <button class="btn btn-primary w-full" onclick="confirmRelease()">
-                  <span class="material-icons">publish</span>
-                  Release Final Grades
-                </button>
-              </div>
-            </div>
-          </div>
-
         </div>
-        <!-- END LEFT PANEL -->
+        <!-- END FILTER PANEL -->
+
+        <div class="rail-resizer" id="studentFilterResizer" role="separator" tabindex="0" aria-label="Resize filters" aria-orientation="vertical" aria-controls="studentFilters" aria-valuemin="176" aria-valuemax="520" aria-valuenow="176"></div>
+
+        <button class="rail-edge-toggle" type="button" data-rail-toggle data-name="filters" aria-controls="studentFilters" aria-expanded="true">
+          <span class="material-icons" aria-hidden="true">chevron_left</span><span class="sr-only rail-toggle-text">Hide filters</span>
+        </button>
 
         <!-- ===== RIGHT PANEL ===== -->
         <div class="right-panel">
 
-          <!-- Search bar -->
-          <div class="search-field" style="margin-bottom:16px;">
-            <span class="material-icons search-icon">search</span>
-            <input type="text" placeholder="Search by name, NetID, or grade…" id="searchInput" oninput="filterTable()" />
-          </div>
+          <div class="student-top-row">
+            <div class="student-search-row">
+              <div class="cmsx-underline-search">
+                <label for="searchInput">Search Students</label>
+                <div class="cmsx-underline-search-input">
+                  <input type="search" placeholder="Search by name, NetID, or grade…" id="searchInput" autocomplete="off" oninput="filterTable()" />
+                  <button type="button" aria-label="Clear student search" onclick="clearStudentSearch()"><img src="assets/assignments/clear.svg" alt="" /></button>
+                </div>
+                <div class="cmsx-underline-search-rule" aria-hidden="true"></div>
+              </div>
+            </div>
 
-          <!-- Filter chips -->
-          <div class="filter-chips-row" style="margin-bottom:16px;">
-            <button class="chip chip-outlined active" id="chip-all" onclick="setChip('all')">All Students (160)</button>
-            <button class="chip chip-outlined" id="chip-selected" onclick="setChip('selected')">Selected (1)</button>
-            <button class="chip chip-outlined" id="chip-passing" onclick="setChip('passing')">Passing ≥ C</button>
-            <button class="chip chip-outlined" id="chip-failing" onclick="setChip('failing')">Failing &lt; C</button>
-          </div>
-
-          <!-- Add/Drop Enrollment Sync bar -->
-          <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
-            <button class="btn btn-outlined" onclick="alert('Enrollment sync triggered')">
-              <span class="material-icons">sync</span>
-              Enrollment Sync
-            </button>
-            <button class="btn btn-outlined" onclick="alert('Add/Drop period opened')">
-              <span class="material-icons">person_add</span>
-              Add/Drop
-            </button>
-            <span style="font-size:13px;color:var(--text-secondary);margin-left:4px;">Last synced: Today at 8:00 AM</span>
+            <div class="student-selection-toolbar" id="studentSelectionToolbar">
+              <span class="selection-count" id="selectionCount">1 student selected</span>
+              <div class="selection-actions">
+                <button class="btn btn-primary" type="button" onclick="emailSelectedStudents()">
+                  <span class="material-icons" aria-hidden="true">mail</span>Email
+                </button>
+                <details class="action-menu selection-more-menu">
+                  <summary class="btn btn-outlined">More <span class="material-icons" aria-hidden="true">expand_more</span></summary>
+                  <div class="action-menu-panel">
+                    <label class="action-menu-option">
+                      <input type="checkbox" class="cb" id="notifyDroppedSelected" checked />
+                      <span>Email dropped students</span>
+                    </label>
+                    <button class="action-menu-item is-danger" type="button" onclick="handleDropSelected()">
+                      <span class="material-icons" aria-hidden="true">person_remove</span>Drop selected students
+                    </button>
+                  </div>
+                </details>
+              </div>
+            </div>
+            <details class="action-menu course-actions-menu">
+              <summary class="btn btn-outlined">
+                Course actions <span class="material-icons" aria-hidden="true">expand_more</span>
+              </summary>
+              <div class="action-menu-panel" role="menu">
+                <button class="action-menu-item" type="button" role="menuitem" onclick="openDropStudentDialog()">
+                  <span class="material-icons" aria-hidden="true">person_remove</span>Drop student by NetID
+                </button>
+                <button class="action-menu-item" type="button" role="menuitem" onclick="document.getElementById('csvUpload').click()">
+                  <span class="material-icons" aria-hidden="true">upload_file</span>Import enrollment CSV
+                </button>
+                <div class="action-menu-separator" role="separator"></div>
+                <button class="action-menu-item" type="button" role="menuitemcheckbox" aria-checked="false" id="finalGradesToggle" onclick="toggleFinalGrades()">
+                  <span class="material-icons" aria-hidden="true">grade</span><span id="finalGradesToggleLabel">Show final grades</span>
+                </button>
+                <button class="action-menu-item is-danger" type="button" role="menuitem" onclick="confirmRelease()">
+                  <span class="material-icons" aria-hidden="true">publish</span>Release final grades
+                </button>
+              </div>
+            </details>
+            <input type="file" id="csvUpload" accept=".csv" hidden onchange="handleCSV(this)" />
           </div>
 
           <!-- Students Table -->
           <div class="table-container">
             <div class="table-scroll-wrapper">
-              <table class="data-table" id="studentsTable">
+              <table class="data-table final-grades-hidden" id="studentsTable">
                 <thead>
                   <tr>
                     <th class="checkbox-cell sticky-col sticky-col-1">
                       <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;">
-                        <span class="select-all-label">Select All</span>
-                        <input type="checkbox" class="cb" id="selectAll" onchange="toggleAll(this)" />
+                        <input type="checkbox" class="cb" id="selectAll" aria-label="Select all matching students" onchange="toggleAll(this)" />
                       </div>
                     </th>
                     <th class="num-cell sticky-col sticky-col-2">#</th>
@@ -339,8 +584,11 @@
                     <th class="sortable" onclick="sortTable(6)"><div class="th-inner">A2 <span class="material-icons">swap_vert</span></div></th>
                     <th class="sortable" onclick="sortTable(7)"><div class="th-inner">A3 <span class="material-icons">swap_vert</span></div></th>
                     <th class="sortable" onclick="sortTable(8)"><div class="th-inner">A4 <span class="material-icons">swap_vert</span></div></th>
-                    <th class="sortable" onclick="sortTable(9)"><div class="th-inner">Total <span class="material-icons">swap_vert</span></div></th>
-                    <th class="sortable" onclick="sortTable(10)"><div class="th-inner">Final Grade <span class="material-icons">swap_vert</span></div></th>
+                    <th class="sortable" onclick="sortTable(9)"><div class="th-inner">A5 <span class="material-icons">swap_vert</span></div></th>
+                    <th class="sortable" onclick="sortTable(10)"><div class="th-inner">A6 <span class="material-icons">swap_vert</span></div></th>
+                    <th class="sortable" onclick="sortTable(11)"><div class="th-inner">A7 <span class="material-icons">swap_vert</span></div></th>
+                    <th class="sortable" onclick="sortTable(12)"><div class="th-inner">Slip Days <span class="material-icons">swap_vert</span></div></th>
+                    <th class="sortable" onclick="sortTable(13)"><div class="th-inner">Final Grade <span class="material-icons">swap_vert</span></div></th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -359,33 +607,76 @@
   </main>
 </div>
 
-<script>
-// ============ STUDENT DATA ============
-const students = [
-  { netid:'zw757',  first:'May',     last:'Wu',       a1:98, a2:95, a3:92, a4:97, total:382, grade:'A+',  status:'enrolled' },
-  { netid:'ab123',  first:'Alice',   last:'Brown',    a1:88, a2:82, a3:85, a4:90, total:345, grade:'B+',  status:'enrolled' },
-  { netid:'cd456',  first:'Charlie', last:'Davis',    a1:72, a2:68, a3:74, a4:70, total:284, grade:'C+',  status:'enrolled' },
-  { netid:'ef789',  first:'Emma',    last:'Foster',   a1:55, a2:60, a3:58, a4:52, total:225, grade:'D',   status:'enrolled' },
-  { netid:'gh012',  first:'George',  last:'Harris',   a1:95, a2:98, a3:97, a4:99, total:389, grade:'A+',  status:'enrolled' },
-  { netid:'ij345',  first:'Isabella',last:'Jackson',  a1:80, a2:84, a3:79, a4:83, total:326, grade:'B',   status:'enrolled' },
-  { netid:'kl678',  first:'Kevin',   last:'Lee',      a1:90, a2:87, a3:91, a4:88, total:356, grade:'A-',  status:'enrolled' },
-  { netid:'mn901',  first:'Megan',   last:'Nelson',   a1:65, a2:70, a3:63, a4:68, total:266, grade:'C-',  status:'enrolled' },
-  { netid:'op234',  first:'Oliver',  last:'Parker',   a1:77, a2:75, a3:80, a4:78, total:310, grade:'B-',  status:'enrolled' },
-  { netid:'qr567',  first:'Quinn',   last:'Roberts',  a1:48, a2:52, a3:45, a4:50, total:195, grade:'F',   status:'enrolled' },
-  { netid:'st890',  first:'Sophie',  last:'Turner',   a1:92, a2:94, a3:90, a4:93, total:369, grade:'A',   status:'enrolled' },
-  { netid:'uv123',  first:'Ulysses', last:'Vargas',   a1:83, a2:80, a3:85, a4:82, total:330, grade:'B',   status:'enrolled' },
-  { netid:'wx456',  first:'Willow',  last:'Xavier',   a1:70, a2:73, a3:69, a4:71, total:283, grade:'C',   status:'enrolled' },
-  { netid:'yz789',  first:'Yara',    last:'Zhou',     a1:97, a2:96, a3:98, a4:95, total:386, grade:'A+',  status:'enrolled' },
-  { netid:'aa111',  first:'Aaron',   last:'Adams',    a1:60, a2:58, a3:62, a4:55, total:235, grade:'D+',  status:'enrolled' },
-  { netid:'bb222',  first:'Bella',   last:'Baker',    a1:85, a2:88, a3:84, a4:87, total:344, grade:'B+',  status:'enrolled' },
-  { netid:'cc333',  first:'Carlos',  last:'Carter',   a1:91, a2:89, a3:93, a4:90, total:363, grade:'A-',  status:'enrolled' },
-  { netid:'dd444',  first:'Diana',   last:'Diaz',     a1:74, a2:76, a3:73, a4:75, total:298, grade:'B-',  status:'enrolled' },
-  { netid:'ee555',  first:'Ethan',   last:'Evans',    a1:50, a2:47, a3:53, a4:49, total:199, grade:'F',   status:'dropped'  },
-  { netid:'ff666',  first:'Fiona',   last:'Flynn',    a1:96, a2:97, a3:95, a4:98, total:386, grade:'A+',  status:'enrolled' },
-];
+<dialog class="student-dialog" id="dropStudentDialog" aria-labelledby="dropStudentDialogTitle">
+  <form class="student-dialog-form" method="dialog" onsubmit="event.preventDefault(); handleDropStudent();">
+    <header class="student-dialog-header">
+      <h2 id="dropStudentDialogTitle">Drop students</h2>
+      <p>Enter NetIDs or upload a CSV. Matching students will be marked dropped.</p>
+    </header>
+    <div class="filter-field">
+      <label for="dropNetid">NetIDs</label>
+      <div class="filter-input-wrap">
+        <input id="dropNetid" type="text" autocomplete="off" placeholder="e.g. zw757, ab123" aria-describedby="dropStudentHelp dropStudentError" />
+      </div>
+      <p class="student-dialog-help" id="dropStudentHelp">Separate multiple NetIDs with commas.</p>
+      <p class="student-dialog-error" id="dropStudentError" role="alert"></p>
+    </div>
+    <label class="student-dialog-file" for="dropCsv">
+      <span>Or upload NetIDs by CSV</span>
+      <input id="dropCsv" type="file" accept=".csv,text/csv" aria-describedby="dropCsvHelp dropStudentError" onchange="handleDropCsv(this)" />
+      <span class="student-dialog-help" id="dropCsvHelp">Use a NetID column, or a single column of NetIDs.</span>
+      <span class="student-dialog-help" id="dropCsvSummary" role="status" aria-live="polite"></span>
+    </label>
+    <label class="notify-option">
+      <input type="checkbox" class="cb" id="notifyEmail2" checked />
+      Email dropped students
+    </label>
+    <div class="student-dialog-actions">
+      <button class="btn btn-outlined" type="button" onclick="closeDropStudentDialog()">Cancel</button>
+      <button class="btn btn-danger" type="submit" id="dropStudentSubmit">Drop students</button>
+    </div>
+  </form>
+</dialog>
 
-let selectedSet = new Set([0]); // zw757 pre-selected
-let activeChip = 'all';
+<div class="student-toast" id="studentToast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { createStudents } from './student-roster.js';
+
+// ============ STUDENT DATA ============
+const students = createStudents(600);
+const assignmentKeys = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7'];
+
+console.assert(students.length === 600, 'Students table must contain exactly 600 rows.');
+console.assert(students.every(student => student.total === student.a1 + student.a2 + student.a3 + student.a4 + student.a5 + student.a6 + student.a7), 'Student totals must include all seven assignments.');
+
+const gradeOrder = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+let selectedSet = new Set(['zw757']);
+let finalGradesVisible = false;
+let toastTimer;
+
+function showStudentToast(message) {
+  const toast = document.getElementById('studentToast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+function updateSelectedActions(visibleStudents = getFilteredData()) {
+  const toolbar = document.getElementById('studentSelectionToolbar');
+  const count = selectedSet.size;
+  toolbar.hidden = count === 0;
+  document.getElementById('selectionCount').textContent = `${count} ${count === 1 ? 'student' : 'students'} selected`;
+
+  const selectAll = document.getElementById('selectAll');
+  if (!selectAll) return;
+  const selectedVisibleCount = visibleStudents.filter(student => selectedSet.has(student.netid)).length;
+  selectAll.checked = visibleStudents.length > 0 && selectedVisibleCount === visibleStudents.length;
+  selectAll.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleStudents.length;
+  document.getElementById('selectFilteredStudents').disabled = !hasActiveFilterState(getFilterState())
+    || visibleStudents.length === 0 || selectedVisibleCount === visibleStudents.length;
+}
 
 function gradeClass(g) {
   if (g.startsWith('A')) return 'grade-a';
@@ -401,129 +692,379 @@ function statusDot(s) {
   return '<span class="status-dot dot-gray"></span>Unknown';
 }
 
-function renderTable(data) {
+function renderTable(groups = getFilterGroups()) {
+  const { matches, nonmatches, hasActiveFilters } = groups;
+  updateSelectedActions(matches);
+  updateFilterSummary(matches, hasActiveFilters);
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
-  data.forEach((s, idx) => {
-    const origIdx = students.indexOf(s);
-    const isSel = selectedSet.has(origIdx);
-    const row = document.createElement('tr');
-    if (isSel) row.classList.add('selected');
-    row.innerHTML = `
-      <td class="checkbox-cell sticky-col sticky-col-1">
-        <input type="checkbox" class="cb" ${isSel ? 'checked' : ''} onchange="toggleRow(${origIdx}, this)" />
+  let displayIndex = 0;
+
+  const appendRows = (data, isNonmatch = false) => {
+    data.forEach(s => {
+      displayIndex += 1;
+      const isSel = selectedSet.has(s.netid);
+      const row = document.createElement('tr');
+      row.classList.add('student-row');
+      row.classList.toggle('selected', isSel);
+      row.classList.toggle('filter-nonmatch', isNonmatch);
+      row.innerHTML = `
+        <td class="checkbox-cell sticky-col sticky-col-1">
+          <input type="checkbox" class="cb" aria-label="Select ${s.first} ${s.last}" ${isSel ? 'checked' : ''} onchange="toggleRow('${s.netid}', this)" />
+        </td>
+        <td class="num-cell sticky-col sticky-col-2">${displayIndex}</td>
+        <td class="sticky-col sticky-col-3">${s.netid}</td>
+        <td class="sticky-col sticky-col-4">${s.first}</td>
+        <td class="sticky-col sticky-col-5">${s.last}</td>
+        ${assignmentKeys.map(key => `<td class="score-cell">${s[key]}</td>`).join('')}
+        <td class="slip-days-cell"><span class="slip-days-value${s.slipDays === 0 ? ' is-exhausted' : s.slipDays === 1 ? ' is-low' : ''}" title="${s.slipDays} slip ${s.slipDays === 1 ? 'day' : 'days'} remaining">${s.slipDays}</span></td>
+        <td><span class="grade-pill ${gradeClass(s.grade)}">${s.grade}</span></td>
+        <td>${statusDot(s.status)}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  };
+
+  if (hasActiveFilters && matches.length === 0) {
+    tbody.innerHTML = `<tr><td class="student-table-empty" colspan="${finalGradesVisible ? 15 : 14}">No students match the current filters.</td></tr>`;
+  } else {
+    appendRows(matches);
+  }
+
+  if (hasActiveFilters && nonmatches.length > 0) {
+    const divider = document.createElement('tr');
+    divider.className = 'student-filter-divider';
+    divider.innerHTML = `
+      <td colspan="${finalGradesVisible ? 15 : 14}">
+        <div class="student-filter-divider-content">
+          <span>Outside current filters</span>
+          <span class="student-filter-divider-count">${nonmatches.length} ${nonmatches.length === 1 ? 'student' : 'students'}</span>
+        </div>
       </td>
-      <td class="num-cell">${idx + 1}</td>
-      <td class="sticky-col sticky-col-3">${s.netid}</td>
-      <td class="sticky-col sticky-col-4">${s.first}</td>
-      <td class="sticky-col sticky-col-5">${s.last}</td>
-      <td>${s.a1}</td>
-      <td>${s.a2}</td>
-      <td>${s.a3}</td>
-      <td>${s.a4}</td>
-      <td><strong>${s.total}</strong></td>
-      <td><span class="grade-pill ${gradeClass(s.grade)}">${s.grade}</span></td>
-      <td>${statusDot(s.status)}</td>
     `;
-    tbody.appendChild(row);
-  });
-  document.getElementById('chip-selected').textContent = `Selected (${selectedSet.size})`;
+    tbody.appendChild(divider);
+    appendRows(nonmatches, true);
+  }
 }
 
-function getFilteredData() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  return students.filter((s, i) => {
-    const matchSearch = !q || s.netid.includes(q) || s.first.toLowerCase().includes(q) || s.last.toLowerCase().includes(q) || s.grade.toLowerCase().includes(q);
-    let matchChip = true;
-    if (activeChip === 'selected') matchChip = selectedSet.has(i);
-    if (activeChip === 'passing') matchChip = !['D','D+','D-','F'].includes(s.grade);
-    if (activeChip === 'failing') matchChip = ['D','D+','D-','F'].includes(s.grade);
-    return matchSearch && matchChip;
-  });
+function getFilterState() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const averageValue = document.getElementById('averageGradeFilter').value;
+  const missingValue = document.getElementById('missingAssignmentsFilter').value;
+  const gradeValue = document.getElementById('finalGradeFilter').value;
+  const status = document.getElementById('enrollmentStatusFilter').value;
+  const slipDaysValue = document.getElementById('slipDaysFilter').value;
+  return {
+    q,
+    status,
+    slipDays: slipDaysValue === '' ? null : Number(slipDaysValue),
+    averageBelow: averageValue === '' ? null : Number(averageValue),
+    missingAtLeast: missingValue === '' ? null : Number(missingValue),
+    gradeValue,
+    gradeThreshold: gradeValue ? gradeOrder.indexOf(gradeValue) : -1,
+  };
 }
 
-function filterTable() { renderTable(getFilteredData()); }
+function hasActiveFilterState(state) {
+  return Boolean(state.q || state.status || state.slipDays !== null || state.averageBelow !== null || state.missingAtLeast !== null || state.gradeValue);
+}
 
-function setChip(name) {
-  activeChip = name;
-  document.querySelectorAll('.filter-chips-row .chip').forEach(c => c.classList.remove('active'));
-  document.getElementById('chip-' + name).classList.add('active');
+function studentMatchesFilters(student, state) {
+  const matchesSearch = !state.q
+    || student.netid.includes(state.q)
+    || student.first.toLowerCase().includes(state.q)
+    || student.last.toLowerCase().includes(state.q)
+    || student.grade.toLowerCase().includes(state.q);
+  const matchesStatus = !state.status || student.status === state.status;
+  const matchesSlipDays = state.slipDays === null || student.slipDays === state.slipDays;
+  const matchesAverage = state.averageBelow === null || (student.total / 7) < state.averageBelow;
+  const matchesMissing = state.missingAtLeast === null || (student.missing ?? 0) >= state.missingAtLeast;
+  const matchesGrade = state.gradeThreshold < 0 || gradeOrder.indexOf(student.grade) > state.gradeThreshold;
+  return matchesSearch && matchesStatus && matchesSlipDays && matchesAverage && matchesMissing && matchesGrade;
+}
+
+function getFilterGroups() {
+  const state = getFilterState();
+  const hasActiveFilters = hasActiveFilterState(state);
+  if (!hasActiveFilters) return { matches: [...students], nonmatches: [], hasActiveFilters };
+
+  const matches = [];
+  const nonmatches = [];
+  students.forEach(student => (studentMatchesFilters(student, state) ? matches : nonmatches).push(student));
+  return { matches, nonmatches, hasActiveFilters };
+}
+
+function getFilteredData() { return getFilterGroups().matches; }
+
+function filterTable() { renderTable(getFilterGroups()); }
+function clearStudentSearch() {
+  const input = document.getElementById('searchInput');
+  input.value = '';
   filterTable();
+  input.focus();
 }
 
-function toggleRow(idx, cb) {
-  if (cb.checked) selectedSet.add(idx); else selectedSet.delete(idx);
+function toggleRow(netid, cb) {
+  if (cb.checked) selectedSet.add(netid); else selectedSet.delete(netid);
   cb.closest('tr').classList.toggle('selected', cb.checked);
-  document.getElementById('chip-selected').textContent = `Selected (${selectedSet.size})`;
+  updateSelectedActions();
 }
 
 function toggleAll(masterCb) {
   const visible = getFilteredData();
-  visible.forEach(s => {
-    const idx = students.indexOf(s);
-    if (masterCb.checked) selectedSet.add(idx); else selectedSet.delete(idx);
+  visible.forEach(student => {
+    if (masterCb.checked) selectedSet.add(student.netid); else selectedSet.delete(student.netid);
   });
   filterTable();
 }
 
+document.getElementById('selectFilteredStudents').addEventListener('click', () => {
+  const { matches, hasActiveFilters } = getFilterGroups();
+  if (!hasActiveFilters || !matches.length) return;
+  matches.forEach(student => selectedSet.add(student.netid));
+  renderTable(getFilterGroups());
+  showStudentToast(`${matches.length} filtered student${matches.length === 1 ? '' : 's'} selected`);
+});
+
 function sortTable(colIdx) {
-  const key = ['','','netid','first','last','a1','a2','a3','a4','total','grade'][colIdx];
+  const key = ['','','netid','first','last','a1','a2','a3','a4','a5','a6','a7','slipDays','grade'][colIdx];
   if (!key) return;
   students.sort((a, b) => String(a[key]).localeCompare(String(b[key]), undefined, { numeric: true }));
   filterTable();
 }
 
-// Slider
-function updateSlider(slider) {
-  const pct = slider.value;
-  const bubble = document.getElementById('sliderBubble');
-  bubble.textContent = pct + '%';
-  bubble.style.left = pct + '%';
-  slider.style.background = `linear-gradient(to right, var(--primary) ${pct}%, rgba(25,118,210,0.38) ${pct}%)`;
+function updateFilterSummary(matches, hasActiveFilters) {
+  const countLabel = hasActiveFilters
+    ? `${matches.length} ${matches.length === 1 ? 'match' : 'matches'}`
+    : `${matches.length} ${matches.length === 1 ? 'student' : 'students'}`;
+  document.getElementById('filterResults').textContent = countLabel;
+  document.getElementById('clearFiltersButton').hidden = !hasActiveFilters;
 }
 
-// Panel toggle
-function toggleSection(bodyId, toggleId) {
-  const body = document.getElementById(bodyId);
-  const toggle = document.getElementById(toggleId);
-  const collapsed = body.classList.toggle('collapsed');
-  toggle.classList.toggle('expanded', !collapsed);
+function clearFilters() {
+  for (const id of ['enrollmentStatusFilter', 'slipDaysFilter', 'averageGradeFilter', 'missingAssignmentsFilter', 'finalGradeFilter']) {
+    document.getElementById(id).value = '';
+  }
+  filterTable();
 }
 
-function applyFilter() {
-  const maxGrade = parseInt(document.getElementById('gradeSlider').value);
-  alert(`Filter applied: grade below ${maxGrade}%`);
+function closeOpenActionMenus() {
+  document.querySelectorAll('.action-menu[open]').forEach(menu => menu.removeAttribute('open'));
 }
-function clearFilter() { document.getElementById('gradeSlider').value = 20; updateSlider(document.getElementById('gradeSlider')); filterTable(); }
+
+function emailSelectedStudents() {
+  if (selectedSet.size === 0) return;
+  const count = selectedSet.size;
+  closeOpenActionMenus();
+  showStudentToast(`Email queued for ${count} selected ${count === 1 ? 'student' : 'students'}.`);
+}
 
 function handleDropSelected() {
-  if (selectedSet.size === 0) { alert('No students selected.'); return; }
-  if (confirm(`Drop ${selectedSet.size} selected student(s)?`)) {
-    selectedSet.forEach(i => students[i].status = 'dropped');
-    selectedSet.clear(); filterTable(); alert('Students dropped.');
+  if (selectedSet.size === 0) return;
+  const selectedStudents = students.filter(student => selectedSet.has(student.netid));
+  const count = selectedStudents.length;
+  const preview = selectedStudents.slice(0, 3).map(student => `${student.first} ${student.last}`).join(', ');
+  const remainder = count > 3 ? ` and ${count - 3} more` : '';
+  if (!confirm(`Drop ${count} selected ${count === 1 ? 'student' : 'students'}: ${preview}${remainder}?`)) return;
+
+  selectedStudents.forEach(student => { student.status = 'dropped'; });
+  const notify = document.getElementById('notifyDroppedSelected').checked;
+  selectedSet.clear();
+  closeOpenActionMenus();
+  filterTable();
+  showStudentToast(`${count} ${count === 1 ? 'student' : 'students'} dropped${notify ? ' and notified by email' : ''}.`);
+}
+
+function openDropStudentDialog() {
+  closeOpenActionMenus();
+  const dialog = document.getElementById('dropStudentDialog');
+  document.getElementById('dropStudentError').textContent = '';
+  document.getElementById('dropNetid').value = '';
+  document.getElementById('dropCsv').value = '';
+  document.getElementById('dropCsvSummary').textContent = '';
+  dropCsvNetids = [];
+  dropCsvInvalid = false;
+  dialog.showModal();
+  document.getElementById('dropNetid').focus();
+}
+
+function closeDropStudentDialog() {
+  document.getElementById('dropStudentDialog').close();
+}
+
+let dropCsvNetids = [];
+let dropCsvInvalid = false;
+
+function parseDropCsv(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let quoted = false;
+  const source = text.replace(/^\uFEFF/, '');
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === '"') {
+      if (quoted && source[index + 1] === '"') { cell += '"'; index += 1; }
+      else quoted = !quoted;
+    } else if (char === ',' && !quoted) {
+      row.push(cell.trim()); cell = '';
+    } else if ((char === '\n' || char === '\r') && !quoted) {
+      if (char === '\r' && source[index + 1] === '\n') index += 1;
+      row.push(cell.trim());
+      if (row.some(Boolean)) rows.push(row);
+      row = []; cell = '';
+    } else cell += char;
+  }
+  if (quoted) throw new Error('The CSV has an unmatched quotation mark.');
+  row.push(cell.trim());
+  if (row.some(Boolean)) rows.push(row);
+  if (!rows.length) throw new Error('The CSV is empty.');
+  const netidColumn = rows[0].findIndex(value => value.toLowerCase().replace(/[^a-z0-9]/g, '') === 'netid');
+  if (netidColumn < 0 && rows.some(entry => entry.length !== 1)) {
+    throw new Error('Use a NetID column header, or a CSV with one NetID per row.');
+  }
+  const netids = rows.slice(netidColumn < 0 ? 0 : 1)
+    .map(entry => (entry[netidColumn < 0 ? 0 : netidColumn] || '').trim().toLowerCase())
+    .filter(Boolean);
+  if (!netids.length) throw new Error('The CSV does not contain any NetIDs.');
+  return netids;
+}
+
+async function handleDropCsv(input) {
+  const file = input.files?.[0];
+  const error = document.getElementById('dropStudentError');
+  const summary = document.getElementById('dropCsvSummary');
+  const submit = document.getElementById('dropStudentSubmit');
+  dropCsvNetids = [];
+  dropCsvInvalid = false;
+  error.textContent = '';
+  summary.textContent = '';
+  if (!file) return;
+  submit.disabled = true;
+  try {
+    if (!file.name.toLowerCase().endsWith('.csv') || file.size > 1024 * 1024) {
+      throw new Error('Choose a CSV file smaller than 1 MB.');
+    }
+    dropCsvNetids = parseDropCsv(await file.text());
+    summary.textContent = `${file.name}: ${dropCsvNetids.length} NetID${dropCsvNetids.length === 1 ? '' : 's'} ready.`;
+  } catch (cause) {
+    dropCsvInvalid = true;
+    error.textContent = cause.message || 'Could not read this CSV.';
+  } finally {
+    submit.disabled = false;
   }
 }
-function confirmDrop() {
-  const val = document.getElementById('dropNetid').value.trim();
-  if (!val) { alert('Enter a NetID first.'); return; }
-  alert(`Drop student ${val}? Confirm in the Drop Student button.`);
-}
+
 function handleDropStudent() {
-  const val = document.getElementById('dropNetid').value.trim();
-  if (!val) { alert('Enter a NetID to drop.'); return; }
-  const idx = students.findIndex(s => s.netid === val);
-  if (idx === -1) { alert(`NetID "${val}" not found.`); return; }
-  if (confirm(`Drop ${students[idx].first} ${students[idx].last} (${val})?`)) {
-    students[idx].status = 'dropped';
-    document.getElementById('dropNetid').value = '';
-    filterTable(); alert(`${val} has been dropped.`);
+  const input = document.getElementById('dropNetid');
+  const error = document.getElementById('dropStudentError');
+  if (dropCsvInvalid) return;
+  const netids = [...new Set([...input.value.split(/[\n,]+/), ...dropCsvNetids].map(value => value.trim().toLowerCase()).filter(Boolean))];
+  if (!netids.length) {
+    error.textContent = 'Enter NetIDs or upload a CSV.';
+    input.focus();
+    return;
+  }
+  const byNetid = new Map(students.map(student => [student.netid.toLowerCase(), student]));
+  const missing = netids.filter(netid => !byNetid.has(netid));
+  if (missing.length) {
+    error.textContent = `No student found for ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? ` and ${missing.length - 3} more` : ''}. No students were dropped.`;
+    input.focus();
+    return;
+  }
+  const targets = netids.map(netid => byNetid.get(netid)).filter(student => student.status !== 'dropped');
+  const alreadyDropped = netids.length - targets.length;
+  if (!targets.length) {
+    error.textContent = 'All of these students are already dropped.';
+    return;
+  }
+  targets.forEach(student => { student.status = 'dropped'; selectedSet.delete(student.netid); });
+  const notify = document.getElementById('notifyEmail2').checked;
+  closeDropStudentDialog();
+  filterTable();
+  const count = targets.length;
+  showStudentToast(`${count} ${count === 1 ? 'student' : 'students'} dropped${notify ? ' and notified by email' : ''}${alreadyDropped ? `; ${alreadyDropped} already dropped` : ''}.`);
+}
+
+function handleCSV(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  closeOpenActionMenus();
+  showStudentToast(`${file.name} selected for enrollment import.`);
+  input.value = '';
+}
+
+function toggleFinalGrades() {
+  finalGradesVisible = !finalGradesVisible;
+  document.getElementById('studentsTable').classList.toggle('final-grades-hidden', !finalGradesVisible);
+  document.getElementById('finalGradesToggle').setAttribute('aria-checked', String(finalGradesVisible));
+  document.getElementById('finalGradesToggleLabel').textContent = `${finalGradesVisible ? 'Hide' : 'Show'} final grades`;
+  closeOpenActionMenus();
+  if (finalGradesVisible) document.querySelector('#studentsTable thead tr th:nth-child(14)')?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  showStudentToast(`Final grades ${finalGradesVisible ? 'shown' : 'hidden'} in the table.`);
+}
+
+function confirmRelease() {
+  closeOpenActionMenus();
+  if (confirm('Release final grades to all students? This action cannot be undone.')) {
+    showStudentToast('Final grades released to students.');
   }
 }
-function handleCSV(input) { alert(`CSV file selected: ${input.files[0].name}\nProcessing enrollment changes…`); }
-function confirmRelease() { if (confirm('Release final grades to all students? This action cannot be undone.')) alert('Final grades released!'); }
+
+const filterLayout = document.querySelector('.students-page .course-content');
+const filterPanel = document.getElementById('studentFilters');
+const filterResizer = document.getElementById('studentFilterResizer');
+const filterWidthLimits = () => ({ min: 176, max: Math.max(176, Math.min(520, filterLayout.clientWidth - 512)) });
+function setFilterWidth(width) {
+  const { min, max } = filterWidthLimits();
+  const next = Math.round(Math.min(max, Math.max(min, width)));
+  filterLayout.style.setProperty('--filter-width', `${next}px`);
+  filterResizer.setAttribute('aria-valuemax', String(max));
+  filterResizer.setAttribute('aria-valuenow', String(next));
+  filterResizer.setAttribute('aria-valuetext', `${next} pixels`);
+}
+let dragStartX;
+let dragStartWidth;
+filterResizer.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || window.matchMedia('(max-width: 900px)').matches) return;
+  dragStartX = event.clientX;
+  dragStartWidth = filterPanel.getBoundingClientRect().width;
+  filterResizer.setPointerCapture(event.pointerId);
+  filterResizer.classList.add('is-dragging');
+});
+filterResizer.addEventListener('pointermove', (event) => {
+  if (filterResizer.hasPointerCapture(event.pointerId)) setFilterWidth(dragStartWidth + event.clientX - dragStartX);
+});
+filterResizer.addEventListener('lostpointercapture', () => filterResizer.classList.remove('is-dragging'));
+for (const type of ['pointerup', 'pointercancel']) {
+  filterResizer.addEventListener(type, (event) => {
+    if (filterResizer.hasPointerCapture(event.pointerId)) filterResizer.releasePointerCapture(event.pointerId);
+  });
+}
+filterResizer.addEventListener('keydown', (event) => {
+  const { min, max } = filterWidthLimits();
+  const current = filterPanel.getBoundingClientRect().width;
+  const next = { ArrowLeft: current - 16, ArrowRight: current + 16, Home: min, End: max }[event.key];
+  if (next === undefined) return;
+  event.preventDefault();
+  setFilterWidth(next);
+});
+window.addEventListener('resize', () => {
+  if (window.matchMedia('(min-width: 901px)').matches) setFilterWidth(filterPanel.getBoundingClientRect().width);
+});
+
+// Inline event handlers in the existing table need these module functions on window.
+Object.assign(window, {
+  filterTable, clearFilters, clearStudentSearch, emailSelectedStudents,
+  handleDropSelected, openDropStudentDialog, toggleFinalGrades, confirmRelease,
+  handleCSV, handleDropCsv, handleDropStudent, toggleAll, sortTable, closeDropStudentDialog, toggleRow,
+});
 
 // Init
-renderTable(students);
+filterTable();
+if (window.matchMedia('(min-width: 901px)').matches) setFilterWidth(filterPanel.getBoundingClientRect().width);
 </script>
+<script type="module" src="rail-toggle.js"></script>
+<cmsx-designer-tag name="may"></cmsx-designer-tag>
 </body>
 </html>

@@ -1,0 +1,217 @@
+/* Shared dark palette. The light theme remains the default in styles.css. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --primary: #4daafc;
+  --primary-dark: #85c6ff;
+  --primary-light: #263e52;
+  --status-hidden: #9d9d9d;
+  --status-open: #4daafc;
+  --status-graded-open: #e2b56b;
+  --status-closed: #9d9d9d;
+  --status-graded: #68dc8c;
+  --success-surface: #215035;
+  --success-text: #adf3bd;
+  --text-primary: #d4d4d4;
+  --text-secondary: #b3b3b3;
+  --text-disabled: #989898;
+  --divider: #3c3c3c;
+  --error: #f85149;
+  --surface: #252526;
+  --bg: #2b2b2b;
+  --bg-page: #1f1f1f;
+  --control-bg: #313131;
+  --sidebar-bg: #181818;
+  --sidebar-idle: #bdbdbd;
+  --selection-bg: #173b55;
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 2px 7px rgba(0, 0, 0, 0.38);
+  --dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Shared shell and controls */
+html[data-theme="dark"] body,
+html[data-theme="dark"] .main-content { background: var(--bg-page); color: var(--text-primary); }
+html[data-theme="dark"] { scrollbar-color: #555 var(--bg-page); }
+html[data-theme="dark"] ::selection { background: #264f78; color: #fff; }
+html[data-theme="dark"] :focus-visible { outline-color: #4daafc; }
+html[data-theme="dark"] .sidebar { background: var(--sidebar-bg); }
+html[data-theme="dark"] :is(.sidebar-nav-item:hover, .sidebar-account-icon:hover, .sidebar-logout-btn:hover, .sidebar-personal-settings-link:hover, .sidebar-logo:hover) { background: var(--bg); }
+html[data-theme="dark"] :is(.sidebar-nav-item, .sidebar-account-icon .material-icons, .sidebar-personal-settings-link, .sidebar-logout-btn) { color: var(--sidebar-idle); }
+html[data-theme="dark"] :is(.sidebar-nav-item:hover, .sidebar-account-icon:hover .material-icons, .sidebar-personal-settings-link:hover, .sidebar-logout-btn:hover) { color: #fff; }
+html[data-theme="dark"] :is(.sidebar-nav-item.active, .sidebar-nav-item.active .material-icons, .sidebar-account-icon.active .material-icons, .sidebar-personal-settings-link.active, .sidebar-personal-settings-link.active .material-icons) { color: #fff; }
+html[data-theme="dark"] .sidebar-logo-img--light { display: none; }
+html[data-theme="dark"] .sidebar-logo-img--dark { display: block; }
+html[data-theme="dark"] :is(.stats-card, .table-container, .card, .global-nav, .course-card, .announcement-item, .home-card, .settings-card, .search-field input, .form-control) {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+html[data-theme="dark"] .data-table th { background: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] .data-table .sticky-col { background: var(--bg-page); color: var(--text-primary); }
+html[data-theme="dark"] :is(input, textarea, select, button) { color: inherit; }
+html[data-theme="dark"] :is(input, textarea, select)::placeholder { color: var(--text-disabled); opacity: 1; }
+html[data-theme="dark"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):not(.cmsx-select-native) {
+  color: var(--text-primary);
+  background-color: var(--control-bg);
+  border-color: var(--divider);
+}
+html[data-theme="dark"] :is(.cmsx-underline-search-input input, .text-field input) {
+  background: transparent !important;
+}
+html[data-theme="dark"] :is(.cmsx-underline-search-rule, .stat-divider) { background: var(--divider); }
+html[data-theme="dark"] .cmsx-underline-search-input button img { filter: brightness(0) invert(.8); }
+html[data-theme="dark"] .breadcrumbs { opacity: 1; color: var(--text-secondary); }
+html[data-theme="dark"] :is(.breadcrumb-link, .breadcrumb-sep .material-icons) { color: var(--text-secondary); }
+html[data-theme="dark"] :is(.data-table th.sortable:hover, .data-table tbody tr:hover td, .data-table tbody tr:hover .sticky-col, .global-nav-link:hover, .icon-btn:hover) { background: var(--bg); }
+html[data-theme="dark"] :is(.data-table tbody tr.selected td, .data-table tbody tr.selected .sticky-col) { background: var(--selection-bg); }
+html[data-theme="dark"] .data-table .select-all-label { color: var(--text-secondary); }
+html[data-theme="dark"] input[type="checkbox"].cb { border-color: var(--text-secondary); }
+html[data-theme="dark"] .toggle-slider { background: #616161; }
+html[data-theme="dark"] .toggle input:focus-visible + .toggle-slider { outline: 2px solid var(--primary); outline-offset: 3px; }
+html[data-theme="dark"] :is(.btn-primary, .chip-filled, .course-open-btn, .rail-button.primary) { color: #111; }
+html[data-theme="dark"] .btn-primary:disabled {
+  background: var(--control-bg);
+  border: 1px solid var(--divider);
+  color: var(--text-disabled);
+  box-shadow: none;
+}
+html[data-theme="dark"] .students-page .filter-select-button:disabled {
+  background: var(--control-bg);
+  color: var(--text-disabled);
+}
+html[data-theme="dark"] .course-open-btn { background: var(--primary); }
+html[data-theme="dark"] .course-open-btn:hover { background: var(--primary-dark); }
+html[data-theme="dark"] :is(.badge-success, .grade-a, .type-survey) { background: var(--success-surface); color: var(--success-text); }
+html[data-theme="dark"] :is(.badge-warning, .grade-c) { background: #483c27; color: #ffd28a; }
+html[data-theme="dark"] :is(.badge-error, .grade-f) { background: #4a2c31; color: #ffaaa2; }
+html[data-theme="dark"] :is(.grade-b, .type-assignment) { background: #25415a; color: #b5ddff; }
+html[data-theme="dark"] :is(.grade-d, .type-quiz) { background: #443047; color: #e6b7eb; }
+html[data-theme="dark"] .designer-tag { background: var(--surface); border-color: var(--divider); color: var(--text-secondary); }
+html[data-theme="dark"] .designer-tag strong { color: var(--text-primary); }
+html[data-theme="dark"] .designer-tag-status { color: #ffd28a; }
+
+/* Course dashboard */
+html[data-theme="dark"] .course-dashboard-page {
+  --dashboard-card-border: var(--divider);
+  --dashboard-muted-surface: var(--bg);
+  --dashboard-blue: var(--primary);
+  --dashboard-dark-blue: #0078d4;
+  --dashboard-light-blue: #4daafc;
+  --dashboard-chart-axis: #b3b3b3;
+  --dashboard-chart-rule: #747474;
+  --dashboard-chart-grid: #484848;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+html[data-theme="dark"] :is(.dashboard-card, .communication-card, .dashboard-skip-link) { background: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] .dashboard-tabs { border-color: var(--divider); }
+html[data-theme="dark"] .category-pill { border-color: var(--divider); }
+html[data-theme="dark"] :is(.dashboard-breadcrumbs, .course-detail-row dt, .communication-meta, .communication-body, .analytics-metric dt, .chart-legend, .chart-fallback) { color: var(--text-secondary); }
+html[data-theme="dark"] :is(.course-detail-row dd, .dashboard-tab:hover) { color: var(--text-primary); }
+html[data-theme="dark"] :is(.quick-action, .analytics-card, .communication-menu:focus-visible) { color: var(--text-primary); }
+html[data-theme="dark"] :is(.course-description-copy, .dashboard-tab, .category-pill, .communication-menu, .empty-communications) { color: var(--text-secondary); }
+html[data-theme="dark"] .communication-menu:hover { background: var(--bg); color: var(--text-primary); }
+html[data-theme="dark"] :is(.dashboard-edit-button:hover, .dashboard-edit-button:focus-visible, .quick-action:hover, .quick-action:focus-visible) { background: var(--control-bg); color: var(--primary); box-shadow: none; }
+html[data-theme="dark"] .empty-communications { border-color: var(--divider); }
+
+/* Dense student and submission tables */
+html[data-theme="dark"] :is(.students-page, .assignment-detail-page) { background: var(--bg-page); }
+html[data-theme="dark"] .students-page .student-selection-toolbar,
+html[data-theme="dark"] .assignment-detail-page .assignment-selection-toolbar { background: var(--bg); border-color: var(--divider); }
+html[data-theme="dark"] .students-page .data-table tbody tr.student-row td { background: var(--bg-page); }
+html[data-theme="dark"] .students-page .data-table tbody tr:is(:nth-child(10n + 6), :nth-child(10n + 7), :nth-child(10n + 8), :nth-child(10n + 9), :nth-child(10n + 10)) td { background: #2b2b2b; }
+html[data-theme="dark"] .assignment-table tbody tr:is(:nth-child(10n + 6), :nth-child(10n + 7), :nth-child(10n + 8), :nth-child(10n + 9), :nth-child(10n + 10)) td { background: #232323; }
+html[data-theme="dark"] .students-page .data-table tbody tr:hover td { background: #343434; }
+html[data-theme="dark"] .assignment-table tbody tr:hover td { background: var(--bg); }
+html[data-theme="dark"] :is(.students-page .data-table tbody tr.selected td, .students-page .data-table tbody tr.selected .sticky-col, .assignment-table tbody tr.is-selected td) { background: var(--selection-bg); }
+html[data-theme="dark"] :is(.students-page .data-table tbody tr.filter-nonmatch .sticky-col, .assignment-table tbody tr.filter-nonmatch td) { background: #1b1b1b; color: var(--text-secondary); }
+html[data-theme="dark"] :is(.student-table-empty, .assignment-table-empty) { background: var(--surface); color: var(--text-secondary); }
+html[data-theme="dark"] .assignment-table thead th { background-color: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] .assignment-table tbody td { background-color: var(--bg-page); color: var(--text-primary); }
+html[data-theme="dark"] .assignment-table .table-sort .material-icons { color: var(--text-secondary); }
+html[data-theme="dark"] .students-page .slip-days-value.is-low { color: #e6b965; }
+html[data-theme="dark"] .students-page .dot-green { background: var(--status-graded); }
+
+/* Assignment list and calendar */
+html[data-theme="dark"] .assignments-list-page { --assignment-muted: #9d9d9d; --assignment-secondary: var(--text-secondary); --assignment-progress: #4daafc; }
+html[data-theme="dark"] :is(.assignments-status-counts > div, .assignments-view-toggle > button[aria-pressed="true"]) { background: var(--bg); color: var(--text-secondary); }
+html[data-theme="dark"] .assignment-data-row:hover { background: var(--bg); }
+html[data-theme="dark"] :is(.assignment-data-row.is-expanded, .assignment-data-row.is-expanded:hover) { background: var(--selection-bg); }
+html[data-theme="dark"] :is(.assignment-update-list, .assignment-calendar-weekdays > div, .assignment-calendar-day, .assignment-calendar-card, .deleted-assignments-dialog) { background: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] :is(.assignment-calendar-weekdays > div:first-child, .assignment-calendar-weekdays > div:last-child, .assignment-calendar-day.is-weekend, .assignment-calendar-day.is-outside-month) { background: var(--bg); }
+html[data-theme="dark"] .assignment-type-pill { background: #25415a; color: #b5ddff; }
+html[data-theme="dark"] .assignment-type-quiz { background: #443047; color: #e6b7eb; }
+html[data-theme="dark"] .assignment-type-survey { background: var(--success-surface); color: var(--success-text); }
+html[data-theme="dark"] .assignments-list-page .assignment-recent-caption.is-grading { color: var(--status-graded); }
+html[data-theme="dark"] .assignment-calendar-card.is-survey { border-left-color: var(--status-graded); }
+html[data-theme="dark"] .assignment-type-exam { background: #49382d; color: #ffc08e; }
+
+/* Assignment creation */
+html[data-theme="dark"] :is(.type-card, .creation-form, .basic-information, .create-input, .review-panel, .review-actions .review-cancel) { background: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] :is(.section-rail, .schedule-summary, .creation-page .rail-content, .creation-page .rail-actions) { background: var(--bg); }
+html[data-theme="dark"] :is(.type-card:hover, .rail-button:hover) { background: var(--control-bg); }
+html[data-theme="dark"] .type-card.selected { background: var(--selection-bg); }
+html[data-theme="dark"] :is(.section-rail .rail-step.active, .creation-page .rail-step.is-active) { background: var(--selection-bg); }
+html[data-theme="dark"] .danger-zone { background: #34292d; }
+html[data-theme="dark"] .creation-page .status-option {
+  --status-tint: #2b2b2b;
+  background: var(--surface);
+  border-color: var(--divider);
+}
+html[data-theme="dark"] .creation-page .status-option.selected { background: var(--status-tint); border-color: var(--status-accent); }
+html[data-theme="dark"] .creation-page .status-option input[type="radio"] { background: var(--control-bg); }
+html[data-theme="dark"] .creation-page :is(.status-description, .step-description, .character-count, .section-intro, .field-help, .save-note, .review-dialog p, .review-list dt) { color: var(--text-secondary); }
+html[data-theme="dark"] .creation-page .step-number { background: var(--surface); color: var(--text-secondary); }
+html[data-theme="dark"] .creation-page .progress-step.active .step-number { background: var(--selection-bg); color: var(--primary); }
+html[data-theme="dark"] .creation-page :is(.rail-button, .next-button, .review-dialog) { background: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] .creation-page :is(.rail-button.primary, .review-actions .review-confirm) { background: var(--primary); color: #111; }
+html[data-theme="dark"] .creation-page .danger-zone button { background: var(--surface); color: var(--error); border-color: var(--error); }
+
+/* Announcements, editor, and content */
+html[data-theme="dark"] :is(.announcement-list-item, .announcement-reader, .announcement-actions-menu, .announcement-detail, .rich-editor, .version-history-panel, .thread-message, .thread-reply-composer, .announcement-version-list, .attachment-dropzone, .category-row.is-current) { background: var(--surface); color: var(--text-primary); }
+html[data-theme="dark"] :is(.announcement-item-category, .editor-category-chip, .comment-editor-toolbar, .toolbar, .toolbar-divider) { background: var(--bg); color: var(--text-secondary); }
+html[data-theme="dark"] :is(.announcement-item-summary, .announcement-meta, .announcement-reader-body, .announcement-version-caption, .announcement-history-empty, .attachment-dropzone > p, .thread-message-heading) { color: var(--text-secondary); }
+html[data-theme="dark"] :is(.category-row:hover, .content-table tbody tr:hover td, .announcement-actions-menu button:focus-visible) { background: var(--bg); }
+html[data-theme="dark"] .content-table-card { background: var(--surface); }
+html[data-theme="dark"] .content-status { background: var(--success-surface); color: var(--success-text); }
+html[data-theme="dark"] .announcement-edit-page .rich-editor-toolbar { background: var(--bg); border-color: var(--divider); }
+html[data-theme="dark"] .announcement-edit-page :is(.toolbar-button, .toolbar-size-control):hover { background: var(--control-bg); }
+html[data-theme="dark"] .announcement-edit-page :is(.toolbar-button, .toolbar-size-control) img,
+html[data-theme="dark"] .announcement-history h3 img { filter: brightness(0) invert(.86); }
+html[data-theme="dark"] .announcement-edit-page .editor-category-option { background: var(--bg); }
+html[data-theme="dark"] .announcement-edit-page .editor-category-option[aria-pressed="true"] { background: var(--primary); color: #111; }
+html[data-theme="dark"] .log-course-value { background: var(--surface) !important; border-color: var(--divider) !important; }
+html[data-theme="dark"] .announcement-detail-menu-button { color: var(--text-secondary); }
+html[data-theme="dark"] .announcement-detail-menu-button:hover { background: var(--bg); color: var(--text-primary); }
+html[data-theme="dark"] :is(.content-table th, .content-table td) { background-color: var(--surface); color: var(--text-primary); }
+
+/* Grading workspace: preserve the white A4 document as paper. */
+html[data-theme="dark"] :is(.grading-page, .grading-main, .rubric-panel, .grading-actions, .grading-footer) { background: var(--bg-page); color: var(--text-primary); }
+html[data-theme="dark"] :is(.grading-heading-wrap h1, .rubric-panel-head h2, .grading-log-title, .grading-total-value, .grading-comment-content, .rubric-choice, .grading-comment-card) { color: var(--text-primary); }
+html[data-theme="dark"] :is(.grading-breadcrumbs, .grading-log-chevron, .grading-log-row, .grading-comment-guidance, .grading-comment-target) { color: var(--text-secondary); }
+html[data-theme="dark"] :is(.rubric-title, .rubric-group-head, .rubric-points, .grading-comments-toggle, .grading-comments-chevron, .grading-comment-compose-head > label:first-child, .grading-comment p) { color: var(--text-primary); }
+html[data-theme="dark"] :is(.rubric-group-head strong, .grading-comments-count, .grading-comments-title > .material-icons, .grading-comment-scope, .grading-log-count, .grading-log-row.header) { color: var(--primary); }
+html[data-theme="dark"] .score-section-head h3 { color: var(--primary); }
+html[data-theme="dark"] .adjustment-help-tooltip { background: var(--surface); color: var(--text-primary); border: 1px solid var(--divider); }
+html[data-theme="dark"] :is(.submission-file-trigger, .submission-file-option, .submission-download, .group-grades-member-score input, .rubric-number-input, .comment-editor-frame, .comment-rich-text, .grading-comment-card, .grading-action-button, .grading-secondary-button) { background: var(--surface); color: var(--text-primary); border-color: var(--divider); }
+html[data-theme="dark"] :is(.rubric-choice:hover, .rubric-choice.selected) { background: var(--bg); }
+html[data-theme="dark"] :is(.grading-status, .group-grades-summary, .grading-comment-target-chip) { background: var(--success-surface); color: var(--success-text); }
+html[data-theme="dark"] :is(.grading-log-note, .comment-attachment, .grading-comment-guidance, .comment-rich-text pre, .grading-comment-content pre) { background: var(--bg); color: var(--text-secondary); border-color: var(--divider); }
+html[data-theme="dark"] .grading-comment-warning { background: #493b27; color: #ffd28a; }
+html[data-theme="dark"] .grading-comment-editor { background: var(--surface); }
+html[data-theme="dark"] :is(.grading-comment, .grading-comment-composer) { background: var(--surface); color: var(--text-primary); border-color: var(--divider); }
+html[data-theme="dark"] .grading-comment--regrade { background: #352f2a; border-color: #766346; }
+html[data-theme="dark"] .grading-comment-request { color: #ffd28a; }
+html[data-theme="dark"] .grading-comment-quote { background: var(--bg); border-color: var(--divider); color: var(--text-secondary); }
+html[data-theme="dark"] .grading-button.primary,
+html[data-theme="dark"] .grading-comment-submit:not(:disabled) { color: #111; }
+html[data-theme="dark"] .grading-button.secondary { background: var(--surface); border-color: var(--divider); color: var(--text-primary); }
+html[data-theme="dark"] .grading-button.secondary:disabled { background: var(--bg); border-color: var(--divider); color: var(--text-disabled); }
+html[data-theme="dark"] .grading-comment-submit:disabled { background: var(--bg); border-color: var(--divider); color: var(--text-disabled); }
+html[data-theme="dark"] .submission-paper,
+html[data-theme="dark"] .submission-paper-content { color-scheme: light; }
+
+/* Native control details and high-contrast interactive states. */
+html[data-theme="dark"] :is(.btn-primary, .chip-filled, .grading-primary-button, .grading-submit-button, .next-button.primary) { color: #111; }
+html[data-theme="dark"] :is(.btn-primary, .chip-filled, .grading-primary-button, .grading-submit-button):hover { color: #111; }
+html[data-theme="dark"] :is(.cmsx-select-trigger, .cmsx-dropdown-menu, .cmsx-dropdown-option) { color: var(--text-primary); }
+html[data-theme="dark"] .cmsx-dropdown-option[aria-selected="true"] { color: var(--primary-dark); }

@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/theme-init.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Personal Settings</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="sidebar.js"></script>
+  <script type="module" src="designer-tag.js"></script>
   <style>
     .settings-card { background: white; border-radius: 8px; box-shadow: var(--shadow-1); padding: 28px 32px; margin-bottom: 24px; }
     .settings-card-title {
-      font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; font-size: var(--font-size-section); line-height: var(--line-height-section); font-weight: 600;
       color: var(--text-primary); margin-bottom: 20px;
       padding-bottom: 12px; border-bottom: 1px solid var(--divider);
       display: flex; align-items: center; gap: 10px;
@@ -20,64 +23,16 @@
     }
     .settings-item:last-child { border-bottom: none; }
     .settings-info { display: flex; flex-direction: column; gap: 3px; }
-    .settings-label { font-size: 16px; font-weight: 500; color: var(--text-primary); }
-    .settings-desc { font-size: 14px; color: var(--text-secondary); }
+    .settings-label { font-size: var(--font-size-body); line-height: var(--line-height-body); font-weight: 500; color: var(--text-primary); }
+    .settings-desc { font-size: var(--font-size-ui); line-height: var(--line-height-ui); color: var(--text-secondary); }
   </style>
+  <link rel="stylesheet" href="dark-theme.css" />
 </head>
 <body>
 <div class="app-layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="index.html" class="sidebar-logo" title="All Courses">
-      <img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img" />
-    </a>
-    <nav class="sidebar-nav">
-      <a href="course-home.html" class="sidebar-nav-item ">
-        <span class="material-icons">home</span>
-        <span class="sidebar-label">Home</span>
-      </a>
-      <a href="students.html" class="sidebar-nav-item ">
-        <span class="nav-icon-wrap">
-          <span class="material-icons">school</span>
-          <span class="sidebar-badge">1</span>
-        </span>
-        <span class="sidebar-label">Students</span>
-      </a>
-      <a href="assignments.html" class="sidebar-nav-item ">
-        <span class="material-icons">article</span>
-        <span class="sidebar-label">Assignments</span>
-      </a>
-      <a href="search-logs.html" class="sidebar-nav-item ">
-        <span class="material-icons">manage_search</span>
-        <span class="sidebar-label">Search Logs</span>
-      </a>
-      <a href="course-settings.html" class="sidebar-nav-item ">
-        <span class="material-icons">settings</span>
-        <span class="sidebar-label">Course Settings</span>
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <a href="personal-settings.html" class="sidebar-account-icon" title="Personal Settings">
-        <span class="material-icons">account_circle</span>
-      </a>
-      <div class="sidebar-user-expanded">
-        <div class="sidebar-user-row">
-          <div class="sidebar-user-info">
-            <span class="sidebar-user-name">May Wu</span>
-            <span class="sidebar-user-email">zw757@cornell.edu</span>
-          </div>
-          <a href="#" class="sidebar-logout-btn" title="Log out">
-            <span class="material-icons">exit_to_app</span>
-          </a>
-        </div>
-        <a href="personal-settings.html" class="sidebar-personal-settings-link">
-          <span class="material-icons">manage_accounts</span>
-          <span>Personal Settings</span>
-        </a>
-      </div>
-    </div>
-  </aside>
+  <cmsx-sidebar></cmsx-sidebar>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -95,6 +50,23 @@
           <button class="btn btn-primary" onclick="saveSettings()">
             <span class="material-icons">save</span> Save Changes
           </button>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div class="settings-card">
+        <div class="settings-card-title">
+          <span class="material-icons" aria-hidden="true">palette</span> Appearance
+        </div>
+        <div class="settings-item">
+          <div class="settings-info">
+            <label class="settings-label" for="dark-mode-toggle">Dark mode</label>
+            <span class="settings-desc">Use a darker theme across CMSX. Changes save automatically.</span>
+          </div>
+          <label class="toggle">
+            <input id="dark-mode-toggle" type="checkbox" aria-label="Dark mode" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
       </div>
 
@@ -160,5 +132,6 @@
 <script>
 function saveSettings() { alert('Personal settings saved.'); }
 </script>
+<cmsx-designer-tag name="sylvia" status="in-progress"></cmsx-designer-tag>
 </body>
 </html>

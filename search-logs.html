@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/theme-init.js"></script>
+  <script type="module" src="sidebar.js"></script>
+  <script type="module" src="designer-tag.js"></script>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CS4998 – Search Logs</title><link rel="stylesheet" href="styles.css">
   <style>
@@ -13,16 +16,10 @@
     .btn{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:0 15px;border-radius:6px;font-size:14px;font-weight:600}.btn .material-icons{font-size:19px}.btn-outlined{border:1px solid #bbb;background:#fff}.btn-outlined:hover{background:var(--bg)}
     @media(max-width:760px){.content-wrapper{padding:28px 20px}.logs-header{align-items:flex-start}.advanced{grid-template-columns:1fr}.results-note{display:none}}
   </style>
+  <link rel="stylesheet" href="dark-theme.css" />
 </head>
 <body><div class="app-layout">
-  <aside class="sidebar"><a href="index.html" class="sidebar-logo" title="All Courses"><img src="cmsx-logo.svg" alt="CMSX" class="sidebar-logo-img"></a><nav class="sidebar-nav">
-    <a href="course-home.html" class="sidebar-nav-item"><span class="material-icons">home</span><span class="sidebar-label">Home</span></a>
-    <a href="students.html" class="sidebar-nav-item"><span class="nav-icon-wrap"><span class="material-icons">school</span><span class="sidebar-badge">1</span></span><span class="sidebar-label">Students</span></a>
-    <a href="assignments.html" class="sidebar-nav-item"><span class="material-icons">article</span><span class="sidebar-label">Assignments</span></a>
-    <a href="search-logs.html" class="sidebar-nav-item active"><span class="material-icons">manage_search</span><span class="sidebar-label">Search Logs</span></a>
-    <a href="course-settings.html" class="sidebar-nav-item"><span class="material-icons">settings</span><span class="sidebar-label">Course Settings</span></a></nav>
-    <div class="sidebar-bottom"><a href="personal-settings.html" class="sidebar-account-icon"><span class="material-icons">account_circle</span></a><div class="sidebar-user-expanded"><div class="sidebar-user-row"><div class="sidebar-user-info"><span class="sidebar-user-name">May Wu</span><span class="sidebar-user-email">zw757@cornell.edu</span></div></div><a href="personal-settings.html" class="sidebar-personal-settings-link"><span class="material-icons">manage_accounts</span><span>Personal Settings</span></a></div></div>
-  </aside>
+  <cmsx-sidebar></cmsx-sidebar>
   <main class="main-content"><div class="content-wrapper logs-shell">
     <div class="page-header logs-header"><div class="page-title-group"><h1 class="page-title">Search Logs</h1><nav class="breadcrumbs"><a class="breadcrumb-link" href="index.html">CS4998 Intro to CMSX</a><span class="breadcrumb-sep"><span class="material-icons">chevron_right</span></span><span class="breadcrumb-link">Search Logs</span></nav></div><button class="btn btn-outlined" onclick="exportLogs()"><span class="material-icons">download</span>Export CSV</button></div>
     <section class="logs-card"><div class="search-area"><label class="search-label" for="search">Search course activity</label><div class="search-box"><span class="material-icons">search</span><input id="search" class="search-input" type="search" placeholder="Search by NetID, action, assignment, or IP address"><button id="searchClear" class="search-clear" aria-label="Clear search"><span class="material-icons">close</span></button></div>
@@ -45,4 +42,6 @@ function openLog(l){$('drawerBody').innerHTML=`<div class="event"><span class="t
 function closeLog(){$('backdrop').classList.remove('open');$('drawer').classList.remove('open');$('drawer').setAttribute('aria-hidden','true')}function clearAll(){search.value=category.value=action.value=date.value='';extras.forEach(e=>e.value='');render()}function filterUser(u){search.value=u;closeLog();render();search.focus()}
 function exportLogs(){const rows=[['Date','User','Action','Target','Category','Affected','Simulated','IP'],...visible.map(l=>[l.stamp,l.user,l.action,l.target,l.category,l.affected,l.simulated,l.ip])];const csv=rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='cmsx-logs.csv';a.click();URL.revokeObjectURL(a.href)}
 search.oninput=render;[category,action,date].forEach(e=>e.onchange=render);extras.forEach(e=>e.oninput=render);$('searchClear').onclick=()=>{search.value='';render();search.focus()};$('clear').onclick=clearAll;$('more').onclick=function(){const o=$('advanced').classList.toggle('open');this.setAttribute('aria-expanded',o)};$('close').onclick=$('backdrop').onclick=closeLog;document.onkeydown=e=>{if(e.key==='Escape')closeLog()};render();
-</script></body></html>
+</script>
+<cmsx-designer-tag name="erica" status="in-progress"></cmsx-designer-tag>
+</body></html>

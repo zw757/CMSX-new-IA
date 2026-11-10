@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/theme-init.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMSX – Grade Example Assignment 1A</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="sidebar.js"></script>
+    <script type="module" src="designer-tag.js"></script>
+    <link rel="stylesheet" href="assignment-grading.css" />
+  <link rel="stylesheet" href="dark-theme.css" />
+</head>
+<body class="grading-page">
+  <a class="grading-skip-link" href="#gradingWorkspace">Skip to grading workspace</a>
+
+  <cmsx-sidebar></cmsx-sidebar>
+
+  <main class="grading-main">
+    <header class="grading-header">
+      <div class="grading-heading-wrap">
+        <a class="grading-back" href="assignment-detail.html" aria-label="Back to assignment">
+          <span class="material-icons" aria-hidden="true">chevron_left</span>
+        </a>
+        <div>
+          <h1>Grading Example Assignment 1A</h1>
+          <nav class="grading-breadcrumbs" aria-label="Breadcrumb">
+            <a href="assignments.html">CS4998 Intro to CMSX</a>
+            <span class="material-icons" aria-hidden="true">chevron_right</span>
+            <a href="course-home.html">Home</a>
+            <span class="material-icons" aria-hidden="true">chevron_right</span>
+            <a href="students.html">Students</a>
+          </nav>
+        </div>
+      </div>
+
+    </header>
+
+    <div class="grading-workspace" id="gradingWorkspace">
+      <section class="submission-viewer" aria-labelledby="submissionViewerTitle">
+        <h2 class="sr-only" id="submissionViewerTitle">Student submission preview</h2>
+
+        <div class="submission-file-picker">
+          <button class="submission-file-trigger" id="fileTrigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span class="material-icons" aria-hidden="true">article</span>
+            <span id="selectedFileName">Submission_file_1.txt</span>
+            <span class="material-icons submission-file-chevron" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="submission-file-menu" id="fileMenu" role="listbox" aria-label="Submission files">
+            <button class="submission-file-option active" type="button" role="option" aria-selected="true" data-file="Submission_file_1.txt" data-src="/submissions/submission_file_1.txt" data-icon="article">
+              <span class="material-icons" aria-hidden="true">article</span>
+              <span>Submission_file_1.txt</span>
+            </button>
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_2.txt" data-src="/submissions/submission_file_2.txt" data-icon="article">
+              <span class="material-icons" aria-hidden="true">title</span>
+              <span>Submission_file_2.txt</span>
+            </button>
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_3.txt" data-src="/submissions/submission_file_3.txt" data-icon="article">
+              <span class="material-icons" aria-hidden="true">code</span>
+              <span>Submission_file_3.txt</span>
+            </button>
+            <button class="submission-file-option" type="button" role="option" aria-selected="false" data-file="Submission_file_4.txt" data-src="/submissions/submission_file_4.txt" data-icon="article">
+              <span class="material-icons" aria-hidden="true">image</span>
+              <span>Submission_file_4.txt</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="submission-viewer-tools">
+          <button class="submission-download" id="downloadSubmission" type="button">
+            <span class="material-icons" aria-hidden="true">download</span>
+            <span>Download</span>
+          </button>
+        </div>
+
+        <div class="submission-scroll" id="submissionScroll">
+          <div class="submission-pages" id="submissionPaper" aria-label="Preview of Submission file 1">
+            <div class="submission-pages-content" id="submissionText" tabindex="0">Loading submission…</div>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="rubric-panel" aria-labelledby="studentName">
+        <div class="rubric-panel-head">
+          <div>
+            <h2 id="studentName">May Wu (zw757)</h2>
+          </div>
+          <span class="grading-status"><span aria-hidden="true"></span>In Progress</span>
+        </div>
+
+        <div class="rubric-scroll" id="rubricScroll">
+          <section class="group-grades" id="groupGrades" aria-labelledby="groupGradesHeading" hidden>
+            <div class="group-grades-heading">
+              <div>
+                <h3 id="groupGradesHeading">Group grades <span class="group-grades-state" id="groupGradesState">Linked</span></h3>
+                <p id="groupGradesHelp">All members receive the group rubric score.</p>
+              </div>
+              <button class="group-grades-toggle" id="groupGradesToggle" type="button">Unlink grades</button>
+            </div>
+            <div class="group-grades-members" id="groupGradesMembers"></div>
+          </section>
+          <h3 class="rubric-title">Rubric Items</h3>
+
+          <div class="rubric-group" data-question="1">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 1</strong><span>Information architecture</span></span>
+              <span class="rubric-points"><span id="questionScore1">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="1" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Clear hierarchy and grouping</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="1" data-penalty="3" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 3 pts Key content is difficult to locate</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="1" data-penalty="4" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 4 pts Structure conflicts with user workflow</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="rubric-group" data-question="2">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 2</strong><span>Navigation and wayfinding</span></span>
+              <span class="rubric-points"><span id="questionScore2">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="2" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Navigation is predictable</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="2" data-penalty="2" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 2 pts Current location is unclear</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="2" data-penalty="3" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 3 pts Labels do not match destinations</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="rubric-group" data-question="3">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 3</strong><span>Accessibility and interaction</span></span>
+              <span class="rubric-points"><span id="questionScore3">6</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="3" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Fully keyboard accessible</span>
+              </label>
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="3" data-penalty="2" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 2 pts Incomplete keyboard focus states</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="3" data-penalty="4" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 4 pts Critical control lacks an accessible name</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="rubric-group" data-question="4">
+            <button class="rubric-group-head" type="button" aria-expanded="false">
+              <span><strong>Question 4</strong><span>Visual clarity and consistency</span></span>
+              <span class="rubric-points"><span id="questionScore4">8</span>/8 pts <span class="material-icons" aria-hidden="true">expand_more</span></span>
+            </button>
+            <div class="rubric-group-body">
+              <label class="rubric-choice selected">
+                <input type="checkbox" checked data-question="4" data-penalty="0" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 0 pts Consistent hierarchy and spacing</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="4" data-penalty="2" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 2 pts Inconsistent component spacing</span>
+              </label>
+              <label class="rubric-choice">
+                <input type="checkbox" data-question="4" data-penalty="3" />
+                <span class="rubric-box"><span class="material-icons" aria-hidden="true">check</span></span>
+                <span>− 3 pts Text contrast is insufficient</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="score-fields">
+            <section class="score-section" aria-labelledby="bonusHeading">
+              <div class="score-section-head">
+                <h3 id="bonusHeading">Bonus Points</h3>
+              </div>
+              <label for="bonusScore" class="sr-only">Bonus points</label>
+              <input class="rubric-number-input" id="bonusScore" type="number" inputmode="decimal" placeholder="Enter score" />
+            </section>
+
+            <section class="score-section" aria-labelledby="adjustmentHeading">
+              <div class="score-section-head">
+                <h3 id="adjustmentHeading">Adjustment Options</h3>
+                <span class="adjustment-help">
+                  <button class="adjustment-help-trigger" type="button" aria-label="Adjustment options help: Applies to entire group. Examples: plus 5, minus 10 percent, minus 15. Percentage adjustments are based on the student's grade, not the max score.">
+                    <span class="material-icons" aria-hidden="true">help_outline</span>
+                  </button>
+                  <span class="adjustment-help-tooltip" aria-hidden="true">
+                    <span>Applies to entire group: Examples: +5, −10%, −15</span>
+                    <span>Note: % adjustments are based on the student’s grade, not the max score</span>
+                  </span>
+                </span>
+              </div>
+              <label for="adjustmentScore" class="sr-only">Grade adjustment</label>
+              <input class="rubric-number-input" id="adjustmentScore" type="text" inputmode="decimal" placeholder="Enter score" />
+            </section>
+          </div>
+
+          <section class="grading-comments" aria-labelledby="commentsHeading">
+            <button class="grading-comments-toggle" id="commentsToggle" type="button" aria-expanded="true" aria-controls="commentsBody">
+              <span class="grading-comments-title">
+                <span class="material-icons" aria-hidden="true">chat_bubble_outline</span>
+                <span id="commentsHeading">Comments</span>
+                <span class="grading-comments-count" id="commentsCount">1 comment</span>
+              </span>
+              <span class="material-icons grading-comments-chevron" aria-hidden="true">expand_less</span>
+            </button>
+
+            <div class="grading-comments-body" id="commentsBody">
+              <div class="grading-comments-list" id="commentsList" aria-live="polite"></div>
+
+              <form class="grading-comment-composer" id="commentForm">
+                <div class="grading-comment-compose-head">
+                  <label id="commentInputLabel">Add comments</label>
+                  <div class="grading-comment-target">
+                    <label for="commentScope">Comment on</label>
+                    <select id="commentScope">
+                      <option value="general">General</option>
+                      <option value="question-1">Question 1 — Information architecture</option>
+                      <option value="question-2">Question 2 — Navigation and wayfinding</option>
+                      <option value="question-3">Question 3 — Accessibility and interaction</option>
+                      <option value="question-4">Question 4 — Visual clarity and consistency</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="comment-editor-frame">
+                  <div class="comment-editor-toolbar" id="commentToolbar" role="toolbar" aria-label="Comment formatting">
+                    <div class="comment-toolbar-group">
+                      <label class="comment-text-size" title="Text size"><img src="assets/announcement-editor/text-size.svg" alt="" /><select id="commentTextSize" aria-label="Text size" data-native-select><option value="2">Small</option><option value="3" selected>Medium</option><option value="5">Large</option></select></label>
+                    </div>
+                    <div class="comment-toolbar-group">
+                      <button type="button" data-command="bold" aria-label="Bold" aria-pressed="false" title="Bold"><img src="assets/announcement-editor/bold.svg" alt="" /></button>
+                      <button type="button" data-command="italic" aria-label="Italic" aria-pressed="false" title="Italic"><img src="assets/announcement-editor/italic.svg" alt="" /></button>
+                      <button type="button" data-command="underline" aria-label="Underline" aria-pressed="false" title="Underline"><img src="assets/announcement-editor/underline.svg" alt="" /></button>
+                    </div>
+                    <div class="comment-toolbar-group">
+                      <button type="button" id="commentAttachFile" aria-label="Attach file" title="Attach file"><img src="assets/announcement-editor/attachment.svg" alt="" /></button>
+                      <button type="button" id="commentInsertLink" aria-label="Insert link" title="Insert link"><img src="assets/announcement-editor/link.svg" alt="" /></button>
+                      <button type="button" id="commentInsertImage" aria-label="Insert image" title="Insert image"><img src="assets/announcement-editor/image.svg" alt="" /></button>
+                    </div>
+                    <div class="comment-toolbar-group">
+                      <button type="button" id="commentInsertTable" aria-label="Insert table" title="Insert table"><img src="assets/announcement-editor/table.svg" alt="" /></button>
+                      <button type="button" data-command="insertUnorderedList" aria-label="Bulleted list" aria-pressed="false" title="Bulleted list"><img src="assets/announcement-editor/list.svg" alt="" /></button>
+                      <button type="button" data-command="formatBlock" data-value="pre" aria-label="Code block" title="Code block"><img src="assets/announcement-editor/code.svg" alt="" /></button>
+                      <button type="button" id="commentInsertFormula" aria-label="Insert formula" title="Insert formula"><img src="assets/announcement-editor/formula.svg" alt="" /></button>
+                    </div>
+                  </div>
+                  <div class="comment-rich-text" id="commentInput" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="commentInputLabel" aria-describedby="commentEditorError" data-placeholder="Write a comment for this student"></div>
+                </div>
+                <input id="commentFileInput" type="file" multiple hidden />
+                <ul class="comment-attachments" id="commentAttachments" aria-label="Attached files" hidden></ul>
+                <p class="comment-editor-error" id="commentEditorError" role="status" hidden></p>
+                <div class="grading-comment-actions">
+                  <span class="grading-comment-guidance"><span class="material-icons" aria-hidden="true">visibility</span>Visible when grades are released</span>
+                  <button class="grading-comment-submit" id="addComment" type="submit" disabled>Add Comment</button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <section class="grading-log" aria-labelledby="logHeading">
+            <h3 class="grading-log-head">
+              <button class="grading-log-toggle" id="logToggle" type="button" aria-expanded="true" aria-controls="logTable">
+                <span class="grading-log-title" id="logHeading">Submission history</span>
+                <span class="grading-log-count" id="logCount">4 entries</span>
+                <span class="material-icons grading-log-chevron" aria-hidden="true">expand_less</span>
+              </button>
+            </h3>
+            <div class="grading-log-table" id="logTable" role="table" aria-label="Submission history">
+              <div class="grading-log-row header" role="row">
+                <span role="columnheader">Time</span>
+                <span role="columnheader">Actor</span>
+                <span role="columnheader">Activity</span>
+              </div>
+              <div id="logRows">
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 23, 2026</span>
+                  <span role="cell">acm22</span>
+                  <span role="cell">Regraded Submission_file_1 after a regrade request</span>
+                </div>
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 22, 2026</span>
+                  <span role="cell">acm22</span>
+                  <span role="cell">Staff member acm22 was assigned group ac263</span>
+                </div>
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 21, 2026</span>
+                  <span role="cell">zw757</span>
+                  <span role="cell">Student resubmitted Submission_file_1</span>
+                </div>
+                <div class="grading-log-row" role="row">
+                  <span role="cell">March 20, 2026</span>
+                  <span role="cell">acm22</span>
+                  <span role="cell">Opened submission for grading</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <footer class="grading-footer">
+          <div class="grading-total-row">
+            <strong id="totalScoreLabel">Total Score</strong>
+            <span class="grading-total-value"><span class="material-icons" aria-hidden="true">edit</span><span id="totalScore">30</span>/32 pts</span>
+          </div>
+          <div class="grading-footer-actions">
+            <button class="grading-button primary" id="updateGrade" type="button">Update Grade</button>
+            <button class="grading-button secondary" id="previousSubmission" type="button">Previous</button>
+            <button class="grading-button secondary" id="nextSubmission" type="button">Next</button>
+          </div>
+        </footer>
+      </section>
+    </div>
+  </main>
+
+  <div class="grading-toast" id="gradingToast" role="status" aria-live="polite"></div>
+  <cmsx-designer-tag name="may"></cmsx-designer-tag>
+  <script type="module" src="assignment-grading.js"></script>
+  </body>
+</html>

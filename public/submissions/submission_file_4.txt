@@ -1,0 +1,13 @@
+REFERENCES
+
+Cornell University Digital Accessibility guidance
+GOV.UK Design System accessibility patterns
+WAI-ARIA Authoring Practices Guide
+
+DESIGN PRINCIPLES
+
+1. Clarity over cleverness.
+2. Dense information with deliberate spacing.
+3. Progressive disclosure for advanced controls.
+4. Keyboard access and visible focus states.
+5. Specific feedback for consequential actions.
