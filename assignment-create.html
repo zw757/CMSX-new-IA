@@ -86,7 +86,7 @@
       min-height: 56px;
       padding: 8px 12px;
       border: 1px solid #ccd3da;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -136,7 +136,7 @@
       margin-top: 0;
       overflow: clip;
       border: 1px solid #e0e4e8;
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       background: #fff;
     }
     .section-rail { background: #f9fafb; border-right: 1px solid #e0e4e8; }
@@ -230,27 +230,27 @@
     }
     .rail-button {
       width: 100%;
-      min-height: 36px;
-      padding: 6px 16px;
+      min-height: var(--control-height);
+      padding: var(--control-padding-block) var(--control-padding-inline);
       border: 1px solid var(--primary);
-      border-radius: 4px;
+      border-radius: var(--border-radius);
       box-shadow: var(--shadow-2);
       font-size: var(--font-size-ui);
-      font-weight: 600;
+      font-weight: 500;
       line-height: var(--line-height-ui);
-      letter-spacing: .4px;
+      letter-spacing: .1px;
       color: var(--primary);
-      background: #fff;
+      background: var(--surface);
     }
-    .rail-button.primary { color: #fff; background: var(--primary); }
-    .rail-button:hover { background: #f3f9fc; }
+    .rail-button.primary { color: var(--on-primary); background: var(--primary); }
+    .rail-button:hover { background: var(--primary-light); }
     .rail-button.primary:hover { background: var(--primary-dark); }
     .danger-zone {
       width: 100%;
       margin-top: 8px;
       padding: 20px 24px;
       border: 1px solid #e8c9c5;
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       background: #fffafa;
     }
     .danger-zone h2 { font-size: var(--font-size-section); line-height: var(--line-height-section); font-weight: 600; }
@@ -259,7 +259,7 @@
       min-height: 40px;
       padding: 8px 16px;
       border: 1px solid #b42318;
-      border-radius: 4px;
+      border-radius: var(--border-radius);
       background: #fff;
       color: #b42318;
       font: inherit;
@@ -303,7 +303,7 @@
     .description-input {
       width: 100%;
       border: 1px solid #cbd2d9;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       color: var(--text-primary);
       background: #fff;
       font-size: var(--font-size-ui);
@@ -337,7 +337,7 @@
       min-height: 56px;
       padding: 8px 14px;
       border: 1px solid #d5dbe1;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -415,10 +415,10 @@
       color: rgba(0, 0, 0, .6);
     }
     .next-button {
-      min-height: 53px;
+      min-height: var(--control-height);
       padding: 10px 16px;
       border: 1px solid var(--primary);
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -429,15 +429,15 @@
       line-height: var(--line-height-ui);
       letter-spacing: .15px;
     }
-    .next-button:hover { background: #f3f9fc; }
-    .next-button .material-icons { font-size: 24px; }
+    .next-button:hover { background: var(--primary-light); }
+    .next-button .material-icons { font-size: 18px; }
     .form-message {
       position: fixed;
       right: 24px;
       bottom: 24px;
       z-index: 400;
       padding: 12px 18px;
-      border-radius: 4px;
+      border-radius: var(--border-radius);
       color: #fff;
       background: #2f3542;
       box-shadow: 0 4px 18px rgba(0, 0, 0, .18);
@@ -496,7 +496,7 @@
     .field-error { color: #b3261e; font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
     .field-error:empty { display: none; }
     .create-input[aria-invalid="true"] { border-color: #b3261e; }
-    .schedule-summary { padding: 16px; background: #f5f8fa; border-radius: 4px; }
+    .schedule-summary { padding: 16px; background: #f5f8fa; border-radius: var(--border-radius); }
     .schedule-summary h3 { color: var(--text-primary); font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 500; margin-bottom: 10px; }
     .schedule-summary ol { padding-left: 20px; display: grid; gap: 8px; }
     .schedule-summary strong { color: var(--text-primary); font-weight: 500; }
@@ -514,7 +514,7 @@
       max-height: calc(100vh - 32px);
       padding: 24px;
       border: 1px solid var(--divider);
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       background: #fff;
       color: var(--text-primary);
       box-shadow: 0 16px 48px rgba(0, 0, 0, .2);
@@ -527,7 +527,7 @@
     .review-list dt { color: #606572; }
     .review-list dd { margin: 0; font-weight: 500; }
     .review-actions { display: flex; justify-content: flex-end; gap: 10px; }
-    .review-actions button { min-height: 40px; padding: 8px 16px; border: 1px solid var(--primary); border-radius: 4px; font: inherit; }
+    .review-actions button { min-height: 40px; padding: 8px 16px; border: 1px solid var(--primary); border-radius: var(--border-radius); font: inherit; }
     .review-actions .review-cancel { background: #fff; color: var(--primary); }
     .review-actions .review-confirm { background: var(--primary); color: #fff; }
     .review-actions .delete-confirm { border-color: #b42318; background: #b42318; color: #fff; }
@@ -570,7 +570,7 @@
     .settings-card {
       width: 100%;
       border: 1px solid #d5dbe1;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       overflow: hidden;
     }
     .switch-setting {
@@ -663,7 +663,7 @@
       min-height: 56px;
       padding: 12px 16px;
       border: 1px solid #cbd2d9;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -716,7 +716,7 @@
       height: 48px;
       padding: 0 16px;
       border: 1px solid #cbd2d9;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       background: #fff;
       color: var(--text-primary);
       font: inherit;
@@ -863,7 +863,7 @@
             </div>
             <div class="rail-actions">
               <p class="save-note" id="save-note" role="status" aria-live="polite"></p>
-              <button class="rail-button primary" type="button" id="publish" aria-label="Review and save hidden assignment">Review &amp; save</button>
+              <button class="btn btn-primary rail-button primary" type="button" id="publish" aria-label="Review and save hidden assignment">Review &amp; save</button>
             </div>
           </aside>
 
@@ -928,7 +928,7 @@
               <textarea class="description-input" id="description" name="description" placeholder="Describe the work, requirements, and instructions students need." required></textarea>
             </label>
 
-            <button class="next-button" type="button" id="next-section">
+            <button class="btn btn-outlined next-button" type="button" id="next-section">
               <span>Next: Submission</span>
               <span class="material-icons" aria-hidden="true">arrow_forward</span>
             </button>
@@ -1023,8 +1023,8 @@
                 <p id="schedule-current-status"></p>
               </section>
               <div class="submission-footer">
-                <button class="next-button" type="button" id="back-section"><span class="material-icons" aria-hidden="true">arrow_back</span> Back: Basic Info</button>
-                <button class="next-button" type="button" id="submission-next"><span>Next: Grading</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
+                <button class="btn btn-outlined next-button" type="button" id="back-section"><span class="material-icons" aria-hidden="true">arrow_back</span> Back: Basic Info</button>
+                <button class="btn btn-outlined next-button" type="button" id="submission-next"><span>Next: Grading</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
               </div>
             </section>
 
@@ -1117,8 +1117,8 @@
               </label>
 
               <div class="step-footer">
-                <button class="next-button" type="button" id="grading-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span>Back: Submission</span></button>
-                <button class="next-button" type="button" id="grading-next"><span id="grading-next-label">Next: Group Options</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
+                <button class="btn btn-outlined next-button" type="button" id="grading-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span>Back: Submission</span></button>
+                <button class="btn btn-outlined next-button" type="button" id="grading-next"><span id="grading-next-label">Next: Group Options</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
               </div>
             </section>
 
@@ -1158,8 +1158,8 @@
               </div>
 
               <div class="step-footer">
-                <button class="next-button" type="button" id="group-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span>Back: Grading</span></button>
-                <button class="next-button" type="button" id="group-next"><span>Next: Content</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
+                <button class="btn btn-outlined next-button" type="button" id="group-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span>Back: Grading</span></button>
+                <button class="btn btn-outlined next-button" type="button" id="group-next"><span>Next: Content</span><span class="material-icons" aria-hidden="true">arrow_forward</span></button>
               </div>
             </section>
 
@@ -1187,7 +1187,7 @@
               <button class="add-file-button" type="button" id="add-content-file">+ Add file</button>
 
               <div class="step-footer">
-                <button class="next-button" type="button" id="content-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span id="content-back-label">Back: Group Options</span></button>
+                <button class="btn btn-outlined next-button" type="button" id="content-back"><span class="material-icons" aria-hidden="true">arrow_back</span><span id="content-back-label">Back: Group Options</span></button>
               </div>
             </section>
             <section class="danger-zone" id="danger-zone" aria-labelledby="danger-zone-heading" hidden>
@@ -1207,16 +1207,16 @@
     <p>Check the configured visibility and deadlines. This prototype saves settings in this browser only.</p>
     <dl class="review-list" id="review-list"></dl>
     <div class="review-actions">
-      <button class="review-cancel" type="button" id="review-cancel">Back to editing</button>
-      <button class="review-confirm" type="button" id="review-confirm">Save</button>
+      <button class="btn btn-outlined review-cancel" type="button" id="review-cancel">Back to editing</button>
+      <button class="btn btn-primary review-confirm" type="button" id="review-confirm">Save</button>
     </div>
   </dialog>
   <dialog class="review-dialog" id="delete-review" aria-labelledby="delete-heading">
     <h2 id="delete-heading">Delete assignment?</h2>
     <p id="delete-description">This assignment will move to Deleted Items. You can restore it from the Assignments page.</p>
     <div class="review-actions">
-      <button class="review-cancel" type="button" id="delete-cancel">Cancel</button>
-      <button class="delete-confirm" type="button" id="delete-confirm">Delete assignment</button>
+      <button class="btn btn-outlined review-cancel" type="button" id="delete-cancel">Cancel</button>
+      <button class="btn btn-danger delete-confirm" type="button" id="delete-confirm">Delete assignment</button>
     </div>
   </dialog>
   <cmsx-designer-tag name="abolaji"></cmsx-designer-tag>

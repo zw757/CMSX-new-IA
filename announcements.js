@@ -265,7 +265,7 @@ function initAnnouncementEditor() {
   });
 
   document.getElementById('deleteAnnouncementButton').addEventListener('click', () => {
-    if (!window.confirm('Move this announcement to Deleted Items?')) return;
+    if (!window.confirm('Move this announcement to Deleted items?')) return;
     const announcements = getAnnouncements();
     const deleted = getDeletedAnnouncements();
     const index = announcements.findIndex(item => item.id === current.id);

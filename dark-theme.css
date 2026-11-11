@@ -4,6 +4,12 @@ html[data-theme="dark"] {
   --primary: #4daafc;
   --primary-dark: #85c6ff;
   --primary-light: #263e52;
+  --on-primary: #111111;
+  --danger: #b42318;
+  --danger-hover: #912018;
+  --on-danger: #ffffff;
+  --warning-text: #ffd28a;
+  --warning-surface: #483c27;
   --status-hidden: #9d9d9d;
   --status-open: #4daafc;
   --status-graded-open: #e2b56b;
@@ -132,7 +138,7 @@ html[data-theme="dark"] .students-page .slip-days-value.is-low { color: #e6b965;
 html[data-theme="dark"] .students-page .dot-green { background: var(--status-graded); }
 
 /* Assignment list and calendar */
-html[data-theme="dark"] .assignments-list-page { --assignment-muted: #9d9d9d; --assignment-secondary: var(--text-secondary); --assignment-progress: #4daafc; }
+html[data-theme="dark"] .assignments-list-page { --assignment-muted: var(--text-secondary); --assignment-secondary: var(--text-secondary); --assignment-progress: var(--primary); }
 html[data-theme="dark"] :is(.assignments-status-counts > div, .assignments-view-toggle > button[aria-pressed="true"]) { background: var(--bg); color: var(--text-secondary); }
 html[data-theme="dark"] .assignment-data-row:hover { background: var(--bg); }
 html[data-theme="dark"] :is(.assignment-data-row.is-expanded, .assignment-data-row.is-expanded:hover) { background: var(--selection-bg); }
@@ -204,7 +210,8 @@ html[data-theme="dark"] .grading-comment-request { color: #ffd28a; }
 html[data-theme="dark"] .grading-comment-quote { background: var(--bg); border-color: var(--divider); color: var(--text-secondary); }
 html[data-theme="dark"] .grading-button.primary,
 html[data-theme="dark"] .grading-comment-submit:not(:disabled) { color: #111; }
-html[data-theme="dark"] .grading-button.secondary { background: var(--surface); border-color: var(--divider); color: var(--text-primary); }
+html[data-theme="dark"] .grading-button.secondary { background: transparent; border-color: var(--primary); color: var(--primary); }
+html[data-theme="dark"] .grading-button.secondary:hover { background: var(--primary-light); }
 html[data-theme="dark"] .grading-button.secondary:disabled { background: var(--bg); border-color: var(--divider); color: var(--text-disabled); }
 html[data-theme="dark"] .grading-comment-submit:disabled { background: var(--bg); border-color: var(--divider); color: var(--text-disabled); }
 html[data-theme="dark"] .submission-paper,

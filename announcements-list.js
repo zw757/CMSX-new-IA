@@ -42,7 +42,7 @@ function renderFilters() {
 function renderSections() {
   const items = visible();
   if (!items.some(item => item.id === selectedId)) selectedId = items[0]?.id;
-  const periods = showingDeleted ? ['Deleted Items'] : [...new Set(['This Week', 'Last Week', 'This Month', ...items.map(item => item.period || 'This Week')])];
+  const periods = showingDeleted ? ['Deleted items'] : [...new Set(['This Week', 'Last Week', 'This Month', ...items.map(item => item.period || 'This Week')])];
   sections.innerHTML = periods.map(period => {
     const group = showingDeleted ? items : items.filter(item => (item.period || 'This Week') === period);
     if (!group.length) return '';
@@ -115,7 +115,7 @@ function bindActions(container) {
     writeStored(showingDeleted ? DELETED_KEY : STORAGE_KEY, from.filter(entry => entry.id !== id));
     openMenu = '';
     render();
-    showToast(showingDeleted ? 'Announcement restored.' : 'Moved to Deleted Items.');
+    showToast(showingDeleted ? 'Announcement restored.' : 'Moved to Deleted items.');
   }));
 }
 function focusMenuOrigin() {
@@ -142,7 +142,7 @@ deletedButton.addEventListener('click', () => {
   activeCategory = '';
   openMenu = '';
   deletedButton.setAttribute('aria-pressed', String(showingDeleted));
-  deletedButton.querySelector('span').textContent = showingDeleted ? 'Back to Announcements' : 'Deleted Items';
+  deletedButton.querySelector('span').textContent = showingDeleted ? 'Back to Announcements' : 'Deleted items';
   render();
 });
 document.addEventListener('click', event => {

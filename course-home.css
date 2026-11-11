@@ -1,15 +1,15 @@
 .course-dashboard-page {
   --dashboard-rail: 68px;
-  --dashboard-card-border: #e7e9ed;
-  --dashboard-muted-surface: #f5f6f8;
-  --dashboard-blue: #006699;
+  --dashboard-card-border: var(--divider);
+  --dashboard-muted-surface: var(--bg);
+  --dashboard-blue: var(--primary);
   --dashboard-dark-blue: #2f6f95;
   --dashboard-light-blue: #68bfe5;
   --dashboard-chart-axis: rgba(0, 0, 0, 0.62);
   --dashboard-chart-rule: rgba(0, 0, 0, 0.25);
   --dashboard-chart-grid: rgba(0, 0, 0, 0.1);
   background: var(--bg-page);
-  color: #202124;
+  color: var(--text-primary);
 }
 
 .dashboard-skip-link {
@@ -18,8 +18,8 @@
   top: 12px;
   z-index: 500;
   transform: translateY(-150%);
-  border-radius: 4px;
-  background: #fff;
+  border-radius: var(--border-radius);
+  background: var(--surface);
   color: var(--dashboard-blue);
   padding: 10px 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -68,8 +68,8 @@
 .dashboard-card {
   overflow: hidden;
   border: 1px solid var(--dashboard-card-border);
-  border-radius: 5px;
-  background: #fff;
+  border-radius: var(--border-radius);
+  background: var(--surface);
   box-shadow: 0 1px 3px rgba(18, 28, 45, 0.06);
 }
 
@@ -90,7 +90,7 @@
   align-items: center;
   gap: 6px;
   border: 1px solid #86b5cb;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: var(--dashboard-blue);
   padding: 4px 12px;
   font-size: var(--font-size-ui); line-height: var(--line-height-ui);
@@ -159,8 +159,8 @@
   justify-content: space-between;
   gap: 24px;
   border: 1px solid var(--dashboard-card-border);
-  border-radius: 5px;
-  background: #fff;
+  border-radius: var(--border-radius);
+  background: var(--surface);
   padding: 22px 19px 20px 24px;
   box-shadow: 0 1px 3px rgba(18, 28, 45, 0.05);
 }
@@ -196,7 +196,7 @@
 }
 
 .communication-menu:hover,
-.communication-menu:focus-visible { background: #f0f2f4; color: #202124; }
+.communication-menu:focus-visible { background: #f0f2f4; color: var(--text-primary); }
 .communication-menu .material-icons { font-size: 21px; }
 
 .empty-communications {
@@ -206,7 +206,7 @@
   justify-content: center;
   gap: 8px;
   border: 1px dashed #ccd1d6;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   color: rgba(0, 0, 0, 0.52);
   padding: 12px 16px;
   font-size: var(--font-size-ui); line-height: var(--line-height-ui);
@@ -222,7 +222,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: var(--dashboard-muted-surface);
   color: rgba(0, 0, 0, 0.74);
   font-family: inherit;
@@ -241,7 +241,7 @@
   min-height: 68px;
   flex-direction: column-reverse;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: var(--dashboard-muted-surface);
   padding: 11px 15px;
 }

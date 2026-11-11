@@ -7,7 +7,7 @@
 .attachment-dropzone { display: flex; flex: 1; min-height: 0; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px 20px; border: 1px dashed #b1b6c2; border-radius: var(--border-radius); background: var(--surface); }
 .attachment-dropzone.is-dragging { border-color: var(--primary); background: var(--primary-light); }
 .attachment-dropzone > p { color: #606572; font-size: var(--font-size-ui); line-height: var(--line-height-body); }
-.attachment-add-button { min-height: 38px; box-shadow: var(--shadow-2); text-transform: uppercase; }
+.attachment-add-button { min-height: 38px; box-shadow: var(--shadow-2); text-transform: none; }
 .attachment-list { width: 100%; overflow: auto; list-style: none; }
 .announcement-attachment { display: flex; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--divider); font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
 .announcement-attachment a { flex: 1; min-width: 0; color: var(--primary); text-decoration: underline; overflow-wrap: anywhere; }
@@ -56,12 +56,12 @@
 .announcement-version-current .announcement-version-date { color: var(--primary-dark); }
 .announcement-version-caption, .announcement-history-empty { color: var(--editor-copy); font-size: var(--font-size-ui); line-height: var(--line-height-ui); }
 .announcement-version-current-label { margin-top: -4px; }
-.announcement-version-restore { color: var(--primary); text-transform: uppercase; font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 500; letter-spacing: 0.4px; }
+.announcement-version-restore { color: var(--primary); text-transform: none; font-size: var(--font-size-ui); line-height: var(--line-height-ui); font-weight: 500; letter-spacing: 0.1px; }
 .announcement-version-restore:hover { text-decoration: underline; }
 .announcement-history-empty { padding: 20px; }
 .announcement-edit-page .announcement-form-footer { margin-top: 32px; gap: 24px; }
 .announcement-edit-page .announcement-form-actions { gap: 32px; margin-left: auto; }
-.announcement-edit-page .editor-delete-button { min-height: 38px; box-shadow: var(--shadow-2); text-transform: uppercase; white-space: nowrap; }
+.announcement-edit-page .editor-delete-button { min-height: 38px; box-shadow: var(--shadow-2); text-transform: none; white-space: nowrap; }
 .announcement-edit-page .editor-delete-button[hidden] { display: none; }
 .announcement-edit-page .editor-delete-button img { width: 24px; height: 24px; }
 .announcement-edit-page .editor-post-button, .announcement-edit-page .editor-cancel-button { width: 180px; min-height: 36px; font-weight: 500; }

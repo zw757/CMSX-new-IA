@@ -71,8 +71,8 @@
 }
 
 .announcement-new-button {
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  text-transform: none;
+  letter-spacing: 0.1px;
 }
 
 .announcement-filter-row {
@@ -127,8 +127,8 @@
   font-size: var(--font-size-ui);
   font-weight: 500;
   line-height: var(--line-height-ui);
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  letter-spacing: 0.1px;
+  text-transform: none;
 }
 
 .deleted-items-button:hover,
@@ -290,7 +290,7 @@
   flex: 0 0 28px;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: var(--text-primary);
 }
 
@@ -307,7 +307,7 @@
   width: 112px;
   overflow: hidden;
   border: 1px solid rgba(0,0,0,0.10);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: white;
   box-shadow: var(--shadow-2);
 }
@@ -337,7 +337,7 @@
   gap: 20px;
   overflow: hidden;
   padding: 16px 20px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: white;
 }
 
@@ -414,7 +414,7 @@
   min-height: 240px;
   place-items: center;
   border: 1px dashed var(--divider);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: rgba(255,255,255,0.68);
   color: var(--text-secondary);
   text-align: center;
@@ -452,7 +452,7 @@
   min-height: 56px;
   padding: 12px;
   border: 2px solid var(--primary);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   outline: none;
   background: white;
   color: var(--text-primary);
@@ -511,7 +511,7 @@
   height: 34px;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   color: var(--text-primary);
 }
 .toolbar-button:hover,
@@ -526,7 +526,7 @@
   align-items: center;
   gap: 3px;
   padding: 7px 8px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: #e8e8e8;
 }
 .toolbar-size-control .material-icons { font-size: 24px; }
@@ -584,9 +584,9 @@
   min-height: 36px;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  border-radius: var(--border-radius);
+  text-transform: none;
+  letter-spacing: 0.1px;
 }
 
 .editor-cancel-button {
@@ -619,8 +619,8 @@
   font-size: var(--font-size-ui);
   font-weight: 500;
   line-height: var(--line-height-ui);
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  letter-spacing: 0.1px;
+  text-transform: none;
   white-space: nowrap;
 }
 .thread-action:hover { color: var(--text-primary); }
@@ -632,7 +632,7 @@
   margin-top: 8px;
   padding: 12px;
   border: 1px solid var(--divider);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: white;
   color: #606572;
   font-size: var(--font-size-ui); line-height: var(--line-height-ui);
@@ -660,7 +660,7 @@
 .thread-message-body {
   padding: 16px 12px;
   border: 1px solid rgba(0,0,0,0.23);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: white;
   color: #606572;
   font-size: var(--font-size-body);
@@ -697,7 +697,7 @@
   height: 36px;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: var(--primary);
   color: white;
   box-shadow: var(--shadow-2);
@@ -713,7 +713,7 @@
   z-index: 1000;
   max-width: 360px;
   padding: 10px 14px;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background: #263238;
   color: white;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
