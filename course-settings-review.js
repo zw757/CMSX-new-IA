@@ -42,7 +42,8 @@ function field(label, value, before = value) {
 function enabledRow(label, description, change = 'same', mutedRemoval = false) {
   const row = el('div', 'review-enabled-row'); const copy = el('div', 'settings-copy');
   if (change !== 'same') {
-    row.classList.add(change === 'removed' && mutedRemoval ? 'review-feature-removed' : `review-diff-${change}`);
+    row.classList.add(`review-diff-${change}`);
+    if (change === 'removed' && mutedRemoval) row.classList.add('review-feature-removed');
     row.dataset.change = change;
     copy.append(el('span', 'staff-sr-only', change === 'added' ? 'Enabled: ' : 'Disabled: '));
   }
