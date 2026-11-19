@@ -77,9 +77,7 @@ enabled access permissions, individual staff privileges, selected course feature
 and custom filetypes. The confirmation view compares the draft with the last saved
 settings: additions appear in green, removed values appear in red with a strike,
 and removed preferences use the same red highlight with muted text. Staff and filetype changes
-are matched by identity, so sorting does not change the comparison.
-Toggling a main access checkbox highlights its entire audience section; individual
-permission changes highlight only their own rows. **Back to
+are matched by identity, so sorting does not change the comparison. **Back to
 Editing** preserves all pending entries. **Confirm**
 saves the reviewed configuration as one browser-local snapshot. Staff imports,
 inline changes and notification preferences remain pending until this confirmation.

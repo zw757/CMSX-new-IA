@@ -422,8 +422,6 @@ html[data-theme='dark'] .section-chevron, html[data-theme='dark'] .course-settin
 .review-diff-added, .review-diff-removed { border-radius: var(--border-radius); }
 .review-diff-added { background: var(--review-added-background); }
 .review-diff-removed { background: var(--review-removed-background); }
-.review-access-group:is(.review-diff-added, .review-diff-removed) { padding: 12px; }
-.review-access-group:is(.review-diff-added, .review-diff-removed) .review-enabled-row { background: transparent; }
 :is(ins, del).review-diff-added, :is(ins, del).review-diff-removed {
   padding: 2px 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
