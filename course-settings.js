@@ -32,7 +32,9 @@ document.addEventListener('course-staff:changed', event => notify(event.detail.m
 function syncAccess() {
   for (const audience of ['cornell', 'guest']) {
     const enabled = document.getElementById(`${audience}-access`).checked;
-    document.getElementById(`${audience}-access-options`).disabled = !enabled;
+    const options = document.getElementById(`${audience}-access-options`);
+    if (!enabled) options.querySelectorAll('input[type="checkbox"]').forEach(option => { option.checked = false; });
+    options.disabled = !enabled;
   }
 }
 

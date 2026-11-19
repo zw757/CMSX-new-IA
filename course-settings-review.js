@@ -55,7 +55,6 @@ function accessGroup(settings, previous, audience, title, description, labels) {
   const header = el('div', 'review-access-heading'), copy = el('div', 'settings-copy');
   const accessChange = booleanChange(previous[`${audience}Access`], enabled);
   if (accessChange !== 'same') {
-    header.classList.add(`review-diff-${accessChange}`);
     header.append(el('span', 'staff-sr-only', accessChange === 'added' ? 'Access enabled: ' : 'Access disabled: '));
   }
   copy.append(el('h3', '', title), el('p', 'settings-description', enabled ? description : audience === 'guest'
