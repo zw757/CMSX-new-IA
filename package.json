@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --test assessment-schedule.test.mjs",
+    "test": "node --test assessment-schedule.test.mjs course-staff-import.test.mjs course-staff-state.test.mjs course-settings-state.test.mjs course-settings-navigation.test.mjs course-settings-diff.test.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port 5000"

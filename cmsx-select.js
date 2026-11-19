@@ -42,9 +42,10 @@ function closeMenu(returnFocus = false) {
 }
 
 function positionMenu(control) {
-  const { trigger, menu } = control;
+  const { select, trigger, menu } = control;
   const rect = trigger.getBoundingClientRect();
-  menu.style.width = `${Math.min(Math.max(rect.width, 190), window.innerWidth - 16)}px`;
+  const minimumWidth = select.hasAttribute('data-match-trigger-width') ? rect.width : 190;
+  menu.style.width = `${Math.min(Math.max(rect.width, minimumWidth), window.innerWidth - 16)}px`;
   menu.hidden = false;
   const menuHeight = menu.getBoundingClientRect().height;
   menu.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8))}px`;
@@ -181,3 +182,6 @@ function initializeSelects() {
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeSelects, { once: true });
 else initializeSelects();
+
+// Dynamic tables reuse the same select component and keyboard behavior.
+export { enhanceSelect, closeMenu as closeSelectMenu };
