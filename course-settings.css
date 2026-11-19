@@ -254,7 +254,8 @@ html[data-theme='dark'] .section-chevron, html[data-theme='dark'] .course-settin
 .review-access-group { min-width: 0; }
 .review-access-group.is-locked h3 { color: var(--text-secondary); }
 .review-access-group.is-locked > .review-access-heading > img { opacity: .24; }
-.review-access-options { border-top: 1px solid var(--divider); margin-top: 8px; padding-left: 48px; display: flex; flex-direction: column; gap: 8px; }
+.review-access-options { --review-access-indent: 48px; border-top: 1px solid var(--divider); margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.review-access-options > :is(.review-enabled-row, .review-empty-note) { padding-left: var(--review-access-indent); }
 .review-enabled-row { display: flex; align-items: center; gap: 16px; min-height: 58px; padding: 8px 0; }
 .review-enabled-row > img { flex: 0 0 42px; }
 .review-access-options .settings-label { font-weight: 400; }
@@ -289,14 +290,14 @@ html[data-theme='dark'] .section-chevron, html[data-theme='dark'] .course-settin
 .filetypes-table .staff-row-actions .btn:last-child { min-width: 56px; }
 .filetype-actions { margin-top: 0; }
 .settings-review :is(tbody tr:hover td) { background: var(--surface); }
-@media (max-width: 1200px) { .settings-review::before { left: -32px; } .review-access-options { padding-left: 24px; } }
+@media (max-width: 1200px) { .settings-review::before { left: -32px; } .review-access-options { --review-access-indent: 24px; } }
 @media (max-width: 760px) {
   .settings-review::before { display: none; }
   .review-general { min-height: 0; }
   .course-settings-content .page-header { flex-wrap: wrap; gap: 16px; }
   .settings-header-actions { margin-left: auto; }
 }
-@media (max-width: 480px) { .review-access-options { padding-left: 0; } .review-staff-card { padding-inline: 16px; } }
+@media (max-width: 480px) { .review-access-options { --review-access-indent: 0px; } .review-staff-card { padding-inline: 16px; } }
 
 /* Keep the name column bounded and share spare width across role and permissions.
    Reduce cell padding before reducing controls; scroll below the readable minimum. */
